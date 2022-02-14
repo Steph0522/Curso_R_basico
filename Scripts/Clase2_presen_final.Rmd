@@ -136,7 +136,7 @@ Podemos convertir las matrices en *dataframes* usando la función `as.data.frame
 as.data.frame(mat)
 ```
 
-## Creando subconjuntos
+## Creando subconjuntos o Indexación
 
 En R, podemos obtener subconjuntos de nuestras estructuras de datos, es decir, podemos extraer partes de una estructura de datos (nuestro conjunto).
 
@@ -607,3 +607,36 @@ while(valor < umbral) {
 Para revisar las demás estructuras, podemos revisar la referencia citada[^1]
 
 [^1]: <https://bookdown.org/jboscomendoza/r-principiantes4/estructuras-de-control.html>
+
+## Extra: Tratando con datos NA
+### 1. Probando qué tenemos NA en nuestros datos:
+```{r, eval=FALSE}
+data <- data.frame(x1 = c(NA, 5, 6, 8, 9),   
+                        x2 = c(2, 4, NA, NA, 1), 
+                        x3 = c(3,6,7,0,3), 
+                        x4 = c("Hola", "algo",
+                               NA, "Chao", NA)) 
+is.na(data) 
+is.na(data$x2)
+which(is.na(data))
+sum(is.na(data))
+```
+### 2. Omitir NAs
+```{r eval=FALSE}
+mean(data$x1, na.rm=TRUE) 
+data[complete.cases(data),]
+na.omit(data)
+data[!is.na(data$x2),]
+```
+
+## Extra: Tratando con datos NA
+### 3. Reemplazar NA's
+```{r, eval=FALSE}
+#reemplazar con 0
+data[is.na(data)] <- 0
+#reemplazar con el promedio o mediana
+data$x1[is.na(data$x1)] <- mean(data$x1, na.rm = TRUE)
+data$x2[is.na(data$x2)] <- median(data$x2, na.rm = TRUE)
+```
+
+Para ver soluciones más complejas podemos buscar los paquetes *Hmisc* (impute), *mice* (mice) y *rpart* (repart).
