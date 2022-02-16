@@ -1,0 +1,46 @@
+---
+title: "Cruso básico de R para ciencia de datos"
+author: "Stephanie Hereira Pacheco"
+output:
+  pdf_document:
+    toc: false
+  html_document: default
+editor_options: 
+  markdown: 
+    wrap: sentence
+---
+
+# Proyecto 1
+
+## Parte 1
+
+1.  Escoger un dataset para trabajar: En este primer paso podemos escoger algunos de los datasets vistos o trabajar con uno de nuestro trabajo/carrera/investigación (importarlo a R).
+    Recuerda que usando la función data() tenemos acceso a todos los datos disponibles en tu R.
+
+2.  Crear un proyecto nuevo que se llame "Proyecto_1" y crea un script nuevo también que se llame "Proyecto_1.Rmd" y en este script escribe todo lo que vayamos a hacer en este primer proyecto.
+    Describe cada paso que des usando el "\#" para los comentarios y explicando cada paso en detalle.
+    *(Recuerda usar getwd() y setwd() para asegurarte en qué carpeta estas trabajando y si tienes en este tu data que vas a trabajar).*
+
+3.  Importa el dataset que vas a utilizar o llamalo como un objeto nuevo y explora este dataset, mira cuantas columnas y filas tiene, qué tipo de datos tiene cada columna y haz los cambios necesarios (coercionando datos o cambiando numéricos a categóricos).
+    Nota: Poner todos estos pasos en el script
+
+4.  De este dataset de estudio escoge la o las variables a estudiar.
+    Identifica cuales son los factores (usualmente son caracteres y categóricos) y las variables de respuesta (usalmente son numéricos).
+
+5.  Detalla los estadísticos descriptivos de tu data y variables (min, max, sd, mean, median. . . todos los que quieras!).
+
+6.  Escoge y aplica tres estadísticos básicos de los que vimos (Por ejemplo, anova, cor, lm, t.test y los demás vistos).
+
+7.  Trata de hacer 1 gráfico al menos de tus datos (si quieres y puedes, haz más).
+
+8.  Analiza tus datos.
+    Con tus palabras explica los resultados obtenidos.
+
+## Parte 2
+
+Descargamos el excel llamado "peliculas.xls", lo importamos a R y vamos a contestar las siguientes preguntas en nuestro script poniendo los códigos que usamos para conseguir las respuestas:
+
+1.  ¿Cuál es el nombre de la décima película de nuestra data?
+2.  ¿Cuáles son los 4 géneros de las películas?
+3.  ¿Cuáles son los nombres de las películas que hicieron antes de 1990?
+4.  ¿Cuántas películas son dramas y cuántas comedias?
