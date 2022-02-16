@@ -1,0 +1,406 @@
+---
+title: "R básico para ciencia de datos - Clase 3"
+author: | 
+  | Ph D.Stephanie Hereira-Pacheco 
+  | CTBC
+  | UATx
+date: "`16 - 02 - 2022`"
+output: 
+ beamer_presentation:
+   theme: "Madrid"
+fontsize:  9 pt
+---
+
+## Estadísticos básicos en R - Día 3
+
+-   Estadísticos descriptivos
+
+-   Gráficos descriptivos
+
+-   Correlación y Regresión
+
+-   ANOVA (1 vía y 2 vías)
+
+-   Prueba de Tukey, entre otras...
+
+## Data
+
+```{r, echo=FALSE}
+img_path <- "/home/steph/Documents/CURSOS/My_repositories/Curso_R_Básico/Rafa_book/R_básico/images/"
+```
+
+Para la revisión de los estadísticos básicos en R trabajaremos con el dataset `iris`.
+
+```{r}
+data(iris)
+cols<- c("Largo_Sepalo", "Ancho_Sepalo", "Largo_Petalo", 
+         "Ancho_Petalo", "Especies")
+colnames(iris)<- cols
+```
+
+Veamos la estructura de los datos:
+
+```{r}
+str(iris)
+```
+```{r, eval=FALSE}
+dim(iris)
+nrow(iris)
+ncol(iris)
+```
+
+
+## Data
+
+Como vemos, posee 4 variables de respuesta y un factor que sería la especie de flor.
+
+```{r,  echo=FALSE,   out.width="45%"}
+knitr::include_graphics(file.path(img_path,"flores.jpg"))
+knitr::include_graphics(file.path(img_path,"flores3.png"))
+```
+
+## Estadísticos descriptivos
+
+Utilizando la función `summary()` podemos obtener información sobre nuestra data, como el valor mínimo, máximo, el promedio, la mediana y el rango intercuartil.
+
+```{r}
+summary(iris)
+```
+
+## Estadísticos descriptivos
+
+```{r}
+mean(iris$Largo_Sepalo)
+min(iris$Largo_Sepalo)
+max(iris$Largo_Sepalo)
+median(iris$Largo_Sepalo)
+quantile(iris$Largo_Sepalo, 0.25) # primer cuartil
+quantile(iris$Largo_Sepalo, 0.75) # tercer cuartil
+```
+
+## Otros estadísticos descriptivos...
+
+```{r}
+sd(iris$Largo_Sepalo)  #desviación estándar
+range(iris$Largo_Sepalo) #min y max
+IQR(iris$Largo_Sepalo) #diferencia entre el tercer y primer cuartil
+var(iris$Largo_Sepalo) #varianza
+sd(iris$Largo_Sepalo) / mean(iris$Largo_Sepalo) #Coeficiente variación
+```
+
+Para conocer la desviación estándar de todas las columnas numéricas, usamos la función `apply()` como anteriormente vimos:\
+
+```{r, eval=FALSE}
+lapply(iris[, 1:4], sd)
+```
+
+## Gráficos descriptivos
+
+Si queremos explorar cómo es la variación de la longitud del sepalo por cada especie:\
+
+```{r, fig.width=4, fig.height=4, fig.align='center'}
+boxplot(iris$Largo_Sepalo ~ iris$Especies)
+```
+
+## Gráficos descriptivos
+
+```{r, fig.width=4, fig.height=2.5, warning=FALSE, message=FALSE, fig.align='center'}
+library(ggpubr)
+ggbarplot(data = iris, x = "Especies", y = "Largo_Sepalo", add = "mean_sd")
+```
+
+## Explorando normalidad en los datos
+
+-   Existen diversas gráficas que podemos realizar para probar o explorar si nuestros datos siguen una distribución normal (también llamada distribución gaussiana) y su gráfica debe tener una forma acampanada y simétrica.
+
+-   La aplicación de muchas pruebas y estadísticos depende de si los datos siguen esta distribución o no.
+
+-   Por esto es importante antes de aplicar cualquier prueba estadística, explorar la distribución de nuestros datos y si la prueba o estadístico que aplicamos asume que nuestros datos sean normales o no.
+
+-   Para este ejemplo, usaremos el ancho del sepalo en vez del largo del sépalo.
+
+## Explorando normalidad en los datos
+
+```{r,  out.width="45%", echo=FALSE}
+hist(iris$Ancho_Sepalo)
+plot(density(iris$Ancho_Sepalo))
+```
+
+## Explorando normalidad en los datos
+
+```{r, out.width='80%', echo=FALSE}
+qqnorm(iris$Ancho_Sepalo)
+qqline(iris$Ancho_Sepalo)
+```
+
+## Explorando normalidad en los datos
+
+```{r, warning=FALSE, message=FALSE}
+library(car) # cargamos el paquete car
+qqPlot(iris$Ancho_Sepalo )
+```
+
+## Explorando normalidad en los datos
+
+Al parecer nuestros datos tienen una distribución normal, según los gráficos, sin embargo, para estar seguros de esto, haremos una prueba llamada test de Shapiro que nos permitirá confirmar esto:
+
+```{r}
+shapiro.test(iris$Ancho_Sepalo)
+```
+
+La hipótesis nula en esta prueba es que la distribución es normal y considerando un valor de probabilidad de 0.05 y dado que 0.1012 \> 0.05, entonces aceptamos la hipótesis nula. En caso que este valor de p-value \< 0.05 entonces los datos no serían normales.
+
+## Correlación y Regresión
+
+Correlación: Describe cómo dos variables están relacionadas. Es una herramienta común para describir relaciones simples sin hacer afirmaciones sobre causa y efecto. Estas relaciones pueden ser o no lineales, pero usualmente se busca o se desea saber si esta relación es lineal.
+
+Por ejemplo, queremos saber si existe una relación entre el largo y el ancho del pétalo de estas flores sin importar la especie:
+
+```{r}
+cor.test(iris$Largo_Petalo, iris$Ancho_Petalo)
+```
+
+## Correlación y Regresión
+
+-   Los valores que más nos interesan aquí son el *cor* y el *p-value*:
+
+-   Para un valor de cor de +1 quiere decir que dos variables están perfectamente correlacionadas positivamente. Es decir, al aumentar una, aumenta la otra.
+
+-   Un valor de -1 significa que las dos variables están perfectamente relacionadas negativamente, es decir, mientras una aumenta, la otra disminuye en la misma medida.
+
+-   Un valor 0 significa que no hay correlación en las dos variables.
+
+-   El valor p es la probabilidad de obtener un valor de cor más extremo que el cor observado, dado los grados de libertad y si cor fuera 0. Igualmente valores menores a 0.05 son significativos.
+
+## Correlación y Regresión
+
+Hay otra función que nos permite obtener solo el coeficiente de correlación, de manera más práctica:
+
+```{r}
+#datos normales (correlación pearson)
+cor(iris$Largo_Petalo, iris$Ancho_Petalo)    
+
+#datos no normales (correlación spearman)
+cor(iris$Largo_Petalo, iris$Ancho_Petalo, method = "spearman")
+```
+
+## Correlación y Regresión
+
+Ahora bien, ya sabemos que estas dos variables están correlacionadas positivamente, así que si quiero construir un modelo que permite predecir valores en base a otros no medidos podemos aplicar una ***regresión lineal.***
+
+Una regresión lineal es un modelo lineal que describe la ecuación de dos variables de interés definidas en una función lineal: y = ax + b,
+
+donde a es la pendiente y b el intercepto.
+
+La regresión lineal debe aplicarse sobre datos normales. Así que verifiquemos la normalidad.
+
+Primero, construimos el modelo y luego graficamos.
+
+El modelo se construye con la variable de respuesta al lado izquiero de la ecuación y la variable que la explique a la derecha divididos por un signo de **"\~"** .\
+
+```{r, eval=FALSE}
+modelo <- lm(Ancho_Petalo ~ Largo_Petalo, data = iris) 
+plot(modelo, which = 2)
+```
+
+## Correlación y Regresión
+
+```{r,echo=FALSE}
+modelo <- lm(Ancho_Petalo ~ Largo_Petalo, data = iris) 
+plot(modelo, which = 2)
+```
+
+## Correlación y Regresión 
+
+Son solo pocos puntos que se salen de la gráfica, así que asumimos normalidad.
+
+Exploremos el modelo:
+
+```{r}
+summary(modelo)
+```
+
+## Correlación y Regresión 
+
+Con *summary()* podemos ver los coeficientes de la ecuación, en este caso son: para el intercepto -0.36 y para la pendiente es 0.41. De nuevo los valores p están por debajo de 0.05. Así que la ecuación queda -\> Ancho_Petalo = Largo_Petalo\*0.4157 - 0.3630
+
+Otro resultado importante es el R cuadrado que nos dice la bondad del ajuste del modelo, esto es la fracción de mis datos que es explicado por el modelo en este caso si miramos el valor ajustado, el modelo explica el 92% de mis datos.
+
+## ANOVA (1 vía)
+
+ANOVA o análisis de varianza es un método estadístico que nos permite comparar las varianzas entre las medias (promedios) de diferentes grupos.
+
+El ANOVA tiene varios supuestos:
+
+1.  Independencia: cada observación es independiente de otra (por ejemplo, si tenemos mediciones del mismo individuo a lo largo del tiempo, esta medida es dependiente al individuo).
+
+2.  Normalidad : Que los datos siguen una distribución normal (como verificamos anteriormente).
+
+3.  Homocedasticidad: varianzas equivalentes entre grupos.\
+
+Para la condición 1, en ningún lado nos dice que son muestras longitudinales, es decir, del mismo individuo a lo largo del tiempo, así que asumimos independencia. Vamos a ver con estas dos gráficas si efectivamente se cumplen las condiciones 2 y 3.
+
+## ANOVA (1 vía)
+
+```{r, echo=FALSE, out.width="45%"}
+modelo_ancho <- lm(Ancho_Sepalo ~ Especies, data = iris) 
+plot(modelo_ancho, which = c(1,2) )
+```
+
+## ANOVA (1 vía)
+
+Este gráfico muestra si los residuos tienen patrones no lineales. Si encuentra residuos igualmente distribuidos alrededor de una línea horizontal sin patrones distintos, es una buena indicación de que no tiene relaciones no lineales. La línea roja debe ser más o menos recta, no debe estar curvada, entre más recta mejor.
+
+## ANOVA (1 vía)
+
+```{r}
+anova(modelo_ancho)
+```
+
+## ANOVA (1 vía)
+
+En un sentido aplicado el número que más nos interesa es el valor F, sin embargo, se ha extendido la importancia del valor p que se define como la probabilidad de encontrar valores F más extremos que el observado y en este sentido la probabilidad es muy baja, mucho menor que el valor establecido como umbral que suele ser 0.05. Así que rechazamos la hipótesis nula, lo que quiere decir que las medias de las especies son diferentes para el ancho del sépalo.
+
+## Prueba de Tukey
+
+ANOVA nos dice que hay diferencias en el ancho del sépalo por especie, pero no nos dice cuál es más grande o cuál es menor, o cuál es diferente a cuál. Para esto hacemos una prueba de Tukey. La función `aov()` realiza lo mismo que la de `anova()`.
+
+```{r}
+fm1<- aov(modelo_ancho)
+TukeyHSD(fm1, "Especies", ordered = TRUE)
+```
+
+## Prueba de Tukey
+
+```{r}
+library(agricolae)
+tuk<-HSD.test(fm1, "Especies", group = TRUE, console = FALSE)
+tuk$groups
+```
+
+Esta función aparte de mostrar las diferencias de medias, nos ordena con letras cuál es la mayor y cual es la menor. Veamoslo mejor en una gráfica de barras.\
+
+## Prueba de Tukey
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(ggpubr)
+ggbarplot(data = iris, x = "Especies" , y = "Ancho_Sepalo", fill="Especies",position = position_dodge(), add = c("mean_sd"), width = 0.4)+theme(legend.position = "none") +         annotate(geom = "text",     
+           label = c("a", "c", "b"),   
+           x = c(1, 2, 3),            
+           y = c(4, 3.5, 3.7),   
+           size = 5, fontface = "bold") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  theme(axis.line = element_line(size = 1.2)) +
+  theme(text = element_text(size = 12, color = "black", face = "bold")) +
+  theme(axis.text = element_text(size = 12, color = "black", face = "bold"))
+```
+
+\newpage
+
+## ANOVA (2 vías)
+
+El análisis de varianza de dos vías nos ayuda a estudiar la relación entre una variable dependiente cuantitativa y dos variables independientes cualitativas (factores) cada uno con varios niveles.
+
+Este método hace todas las asunciones o supuestos que el ANOVA de 1 vía sobre normalidad y demás. También es importante recalcar que para este tipo los grupos deben tener el mismo número de muestras o réplicas.
+
+El ANOVA de dos vías permite estudiar cómo influyen por si solos cada uno de los factores sobre la variable dependiente (modelo aditivo) así como la influencia de las combinaciones que se pueden dar entre ellas (modelo con interacción).
+
+## ANOVA (2 vías)
+
+-   Modelo aditivo: aov(variable_respuesta \~ factor1 + factor2, data)
+
+-   Modelo con interacción: aov(variable_respuesta \~ factor1 x factor2, data)\
+    Para este ejemplo usaremos el set de datos 'ToothGrowth' con el que trabajamos la clase pasada.\
+
+## ANOVA (2 vías)
+
+```{r}
+data("ToothGrowth")
+str(ToothGrowth)
+```
+
+Como podemos observar la variable de respuesta aquí sería la longitud de los dientes y los factores a evaluar son *'supp'* y *'dose'*, *supp* es la forma en que le dieron la vitamina C a los cerdos, si como OJ (jugo de naranja) o AS (ácido ascórbico) a diferentes dosis (*dose*) de 0.5, 1 y 2 mg/día.
+
+El factor 'dose' o dosis no aparece como factor sino como variable numérica.
+
+Esto puede ser un inconveniente al correr el ANOVA así que modificaremos esto en la data.\
+
+## ANOVA (2 vías)
+
+```{r}
+ToothGrowth$dose <- factor(ToothGrowth$dose, 
+                  levels = c(0.5, 1, 2),
+                  labels = c("D0.5", "D1", "D2"))
+head(ToothGrowth)
+
+```
+
+## ANOVA (2 vías)
+
+\
+Bien, visualizaremos nuestros datos para ver las tendencias de nuestros factores sobre nuestra variable de respuesta:\
+Boxplots :
+
+```{r, message=FALSE, warning=FALSE, out.width="45%", echo=FALSE}
+library(ggpubr)
+ggboxplot(data = ToothGrowth, x = "supp", y = "len", fill = "supp")+theme(text = element_text(size = 40))
+ggboxplot(data = ToothGrowth, x = "dose", y = "len", fill = "dose")+theme(text = element_text(size = 40))
+```
+
+## ANOVA (2 vías)
+
+```{r, echo=FALSE}
+ggboxplot(data = ToothGrowth, x = "dose", y = "len", fill = "supp")
+```
+
+## ANOVA (2 vías)
+
+Líneas:
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE, fig.height=5}
+ggline(ToothGrowth, x = "dose", y = "len", color = "supp", add = c("mean_se", "jitter"))
+```
+
+## ANOVA (2 vías)
+
+\
+Como pudimos ver aparentemente los factores podrían tener una interacción, en este caso podríamos correr una ANOVA dos vías o bien aditivo o bien mutiplicativo si queremos confirmar la interacción.\
+
+```{r}
+anova1<- aov(len ~ supp + dose, data = ToothGrowth)
+anova2<-  aov(len ~ supp * dose, data = ToothGrowth)
+```
+
+## ANOVA (2 vías)
+
+```{r}
+summary(anova1)
+summary(anova2)
+```
+
+## ANOVA (2 vías)
+
+Como notamos, los factores explican de buena manera la varianza de nuestra variable tanto en el modelo aditivo como en el multiplicativo.
+
+Sin embargo, el modelo multiplicativo, que es el que nos muestra la interacción, nos dice que efectivamente hay una interacción entre los factores, es decir, que el efecto de un factor depende del otro factor.
+
+Las pruebas que realizamos anteriormente son de las más comunes aplicadas para los conjuntos de datos. Pero hay otras que también podemos aplicar, por ejemplo, para hacer pruebas pareadas (dos niveles) con datos normales podemos utilizar `t.test`, o en caso de no ser normales `wilcoxon.test`. En el caso de mas niveles podemos usar la prueba no paramétrica `kruskal.test`.
+
+## Otras pruebas
+
+Por ejemplo:\
+
+```{r, eval=FALSE}
+#dos niveles
+t.test(len ~ supp, data = ToothGrowth, paired = TRUE)
+wilcox.test(len ~ supp, data = ToothGrowth, paired = TRUE)
+
+#más de dos niveles
+kruskal.test(len ~ dose, data = ToothGrowth)
+```
+
+## Otras pruebas
+
+\
+Hay otras pruebas que se aplican dependiendo de los datos que tengamos, el objetivo y la pregunta de investigación. Por ejemplo, Dunn.test, Duncan.test, Welch.test, entre otros. Hay muchos paquetes, además de los que trae por default R stats (que viene por default con R), tales como `agricolae`, `vegan`, `emmeans` , entre otros, que vienen con más funciones y pruebas aplicadas a datos biológicos, ecológicos, entre otros.
