@@ -1,0 +1,666 @@
+---
+title: "R básico para ciencia de datos - Clase 5"
+author: | 
+  | Ph D.Stephanie Hereira-Pacheco 
+  | CTBC
+  | UATx
+date: "`23 - 02 - 2022`"
+output: 
+ beamer_presentation:
+    theme: "Boadilla"
+    colortheme: "beaver"
+    fonttheme: "structurebold"
+fontsize:  9 pt
+---
+
+## *tidyverse*
+
+```{r, echo=FALSE,  out.width="45%"}
+img_path<- "../images/"
+knitr::include_graphics(file.path(img_path,"tid.png"))
+knitr::include_graphics(file.path(img_path,"tidyverse.jpeg"))
+
+```
+
+## *tidyverse*
+
+Hasta ahora hemos estado manipulando las tablas o *dataframes* creando subconjuntos mediante la indexación y utlizando otras funciones del Rbase.
+
+Sin embargo, existe todo un universo llamado *tidyverse* que nos perimte hacer todo esto que vimos y más de manera más intuitiva.
+
+## *tidyverse*
+
+Podemos cargar todos los paquetes del *tidyverse* a la vez al instalar y cargar el paquete **tidyverse**:
+
+```{r}
+library(tidyverse)
+```
+
+## Datos *tidy*
+
+Hemos estado trabajando con tablas o *dataframes*, sin embargo, el *tidyverse* presenta un nuevo tipo de forma de almacenamiento de datos. Decimos que una tabla de datos está en formato *tidy* si cada fila representa una observación y las columnas representan las diferentes variables disponibles para cada una de estas observaciones. El set de datos `us_rent_income` o como lo he denominado *rentas_us* es un ejemplo de un *data frame tidy*.
+
+```{r, echo=FALSE}
+rentas_us<-us_rent_income %>% rename(ID=GEOID,estado=NAME, estimado=estimate, valor=moe) %>%mutate(variable= if_else(variable=="income", "ingreso", "renta")) %>% dplyr::select(-ID, -valor) %>% head(10)
+knitr::kable(rentas_us)
+```
+
+## Datos *tidy*
+
+Ahora bien, también podemos ver la misma información pero organizada de otra forma:
+
+```{r, echo=FALSE}
+rentas_us2<- pivot_wider(rentas_us,
+             names_from = c(variable),
+             values_from = c(estimado),
+             names_sep = "_")
+library(knitr)
+rentas_us2 %>% kable()
+```
+
+## Datos *tidy*
+
+Se provee la misma información, pero hay dos diferencias importantes en el formato:
+
+1.  Cada fila incluye varias observaciones y
+
+2.  una de las variables, "variable", se almacena en el encabezado.
+
+Para que los paquetes del *tidyverse* se utilicen de manera óptima, le tenemos que cambiar la forma a los datos para que estén en formato *tidy*, como las primera tabla. Esto podemos hacerlo fuera de R o también R tiene funciones para hacerlo, que veremos más adelante.
+
+## Tibbles
+
+Los datos o tablas resultantes luego de aplicar funciones del *tidyverse* se conocen como **tibbles** y son prácticamente igual que los *dataframes* pero con unas ligeras diferencias. Veamos:\
+
+```{r}
+df<- data.frame(letras=c("a", "b", "c"),
+                números=1:3)
+tib<- as_tibble(df)
+```
+
+```{r}
+class(df)
+class(tib)
+```
+
+## Tibbles
+
+```{r}
+print(df)
+print(tib)
+```
+
+## Tibbles
+
+Se ven ligeramente diferentes, como que la tibble te muestra información como tipo de dato de columna y las dimensiones, además de omitir los rownames por defecto.
+
+Algunas funciones pueden dar error si no es de un tipo u otro, por ejemplo si en vez de ser un *dataframe* es un *tibble* pero en escencia son lo mismo y se manejan igual.
+
+De aquí en adelante nos dirijiremos indistintamente sobre las dos, aunque ya sabemos la diferencia entre una y otra.
+
+## Manipulación de *data frames*
+
+El paquete **dplyr** del *tidyverse* ofrece funciones que realizan algunas de las operaciones más comunes y que ya vimos el capítulo anterior con R base.
+
+Las funciones principales de *dplyr* son:
+
+-   *select*,
+
+-   *mutate*,
+
+-   *filter* y
+
+-   *summarise*.
+
+Pero antes, revisemos lo que es el *pipe*.
+
+## El *pipe*: `%>%`
+
+El *pipe* es la herramienta que nos permite darle *dplyr* las órdenes, comandos o funciones a realizar. Lo podemos poner con el atajo del teclado **"Ctrl + Shift + M (Windows/linux)"** y **"Cmd + Shift + M (Mac)"**.\
+
+Con **dplyr**, podemos realizar una serie de operaciones, por escoger una columna, crear una nueva, filtrar nuestras filas y demás . En Rbase tendríamos que hacer paso por paso, por ejemplo :\
+
+```{r}
+#asignando la data a la variable "mi_data"
+mi_data<-ToothGrowth
+head(mi_data)
+```
+
+## El *pipe*: `%>%`
+
+```{r}
+#escoger sólo las columnas len y dose
+mi_data<- mi_data[c("len", "dose")]
+head(mi_data)
+```
+
+```{r, eval=FALSE}
+#hacer una nueva columna declarando la variable "dose" como un factor 
+mi_data$dose<- factor(mi_data$dose, levels = c(0.5,1.0, 2.0),
+                      labels =c("D0.5", "D1", "2"))
+head(mi_data)
+```
+
+## El *pipe*: `%>%`
+
+```{r, echo=FALSE}
+#hacer una nueva columna declarando la variable "dose" como un factor 
+mi_data$dose<- factor(mi_data$dose, levels = c(0.5,1.0, 2.0),
+                      labels =c("D0.5", "D1", "2"))
+head(mi_data)
+```
+
+```{r}
+#filtrar solo los que sean de dosis = 1
+mi_data<- mi_data[mi_data$dose=="D1",]
+head(mi_data)
+```
+
+## El *pipe*: `%>%`
+
+En cambio en dplyr:
+
+```{r}
+mi_data<- ToothGrowth %>% select(len, dose) %>% mutate(
+  dose=case_when(dose==0.5~"D0.5",dose==1~"D1",
+                 dose==2~"D2")) %>% filter(dose=="D1")
+head(mi_data)
+```
+
+## El *pipe*: `%>%`
+
+Como vimos para realizar la secuencia de estos pasos y unir estas funciones en una sólo línea de código hicimos uso del *pipe* `%>%`.
+
+En general, el *pipe* envía el resultado que se encuentra en el lado izquierdo del *pipe* para ser el primer argumento de la función en el lado derecho del *pipe*. Aquí vemos un ejemplo sencillo:
+
+```{r}
+16 %>% sqrt()
+```
+
+Podemos continuar canalizando (*piping* en inglés) valores a lo largo de:
+
+```{r}
+16 %>% sqrt() %>% log2()
+```
+
+La declaración anterior es equivalente a:
+
+```{r}
+log2(sqrt(16))
+```
+
+## 1. Seleccionando columnas
+
+*dplyr* tiena una función muy intuitiva para seleccionar las columnas que queremos en un *dataframe* y es **select()**
+
+```{r}
+head(select(.data = ToothGrowth, len, dose))
+```
+
+Usandola con el *pipe* sería algo así:\
+
+```{r}
+#seleccionando columnas que queremos
+ToothGrowth %>% select(len, dose) %>% glimpse()
+```
+
+## 1. Seleccionando columnas
+
+También podemos seleccionar columnas con criterios, por ejemplo:\
+
+```{r, eval=FALSE}
+ToothGrowth %>% select(starts_with("d")) %>% glimpse()
+ToothGrowth %>% select(contains("ose")) %>% glimpse()
+ToothGrowth %>% select(ends_with("ose")) %>% glimpse()
+ToothGrowth %>% select(matches("o.+e")) %>% glimpse()
+```
+
+## 1. Seleccionando columnas
+
+Seleccionando usando un vector, notemos también que en el orden que ponemos el vector así va a apareciendo reordenando las columnas en nuestra tabla:
+
+```{r}
+colum <- c("supp", "len")
+ToothGrowth  %>%  select(!!colum) %>% glimpse()
+```
+
+## 1. Seleccionando columnas
+
+Cada función del *tidyverse* tiene tres variantes que son *at*, *if* y *all* que al combinarlos con nuestras funciones principales como *select* nos permiten hacer muchas cosas más.\
+Por ejemplo, si usamos *if* sería bajo un criterio como un tipo de dato :\
+
+```{r}
+#selección positiva
+ToothGrowth %>% select_if(is.numeric) %>% glimpse()
+#selección negativa
+ToothGrowth %>% select_if(~!is.numeric(.)) %>% glimpse()
+```
+
+## 1. Seleccionando columnas
+
+Con *all* podemos reformatear los nombres de nuestras columnas:
+
+```{r}
+ToothGrowth %>% select_all(toupper) %>% glimpse()
+```
+
+Y con *at* también podemos escoger columnas basadas en criterios, por ejemplo:
+
+```{r}
+ToothGrowth%>% select_at(vars(contains("ose"))) %>% glimpse()
+```
+
+## 2. Filtrando filas
+
+Para filtrar nuestra data a nivel de filas usamos la función *filter*:
+
+```{r}
+head(filter(ToothGrowth, supp=="OJ") )
+```
+
+o con el pipe:
+
+```{r}
+ToothGrowth %>% filter(supp=="OJ") %>% glimpse()
+```
+
+## 2. Filtrando filas
+
+Con varias condiciones:
+
+```{r}
+ToothGrowth %>% filter(supp=="OJ", len>30) %>% glimpse()
+```
+
+Filtrando basado en un vector:
+
+```{r}
+len_quiero<-c(26.4, 27.3 ,29.4, 23.0)
+ToothGrowth %>% filter(!len %in% len_quiero) %>% glimpse()
+```
+
+## 2. Filtrando filas
+
+Filtrando NA's (en caso de que este dataset tuviera NA's):
+
+```{r, eval=FALSE}
+ToothGrowth %>% filter(!is.na(len))
+```
+
+En el caso de *if* , *all* y *at* , nos permiten filtrar con condiciones y a través de varias columnas:
+
+```{r, eval=FALSE}
+ToothGrowth %>% filter_if(is.numeric, all_vars(between(.,2,20)))
+ToothGrowth %>% filter_all(any_vars(. > 30))
+ToothGrowth %>% filter_at(vars(len, dose), all_vars(.>1)) %>% head()
+```
+
+## 3. Creando una nueva columna
+
+\
+Para crear una nueva columna en *dplyr* usamos la función *mutate()*:
+
+```{r, message=FALSE}
+ToothGrowth %>% mutate(lenlog = log(len)) %>% head()
+```
+
+## 3. Creando una nueva columna
+
+Al igual que las funciones pasadas también podemos utilizar *if*, *all* y *at*:
+
+```{r}
+ToothGrowth %>% mutate_if(is.numeric, round) %>% head()
+ToothGrowth %>% mutate_all(tolower) %>% head()
+```
+
+## 3. Creando una nueva columna
+
+La acción de mutar o la función que se pone después del argumento (como round y tolower), muchas veces se pone sin paréntesis pero otras las requiere. Vemos también que usando el *mutate_all* cambia todas las columnas (lo que quiere decir que las numéricas las convierte en character).
+
+En estos casos es mejor usar if, como vimos en el ejemplo anterior, *all* aplica mejor si tenemos una data con el mismo tipo de datos (números, caracterres, factores). Ahora bien, *at* nos permite hacer cambios a columnas específicas:
+
+## 3. Creando una nueva columna
+
+```{r}
+ToothGrowth %>%  mutate_at(vars(contains("ose")), ~(.*100)) %>% head()
+ToothGrowth %>%  mutate_at("dose", ~(.*100)) %>% head()
+```
+
+## Datos discretos
+
+Existen varias herramientas que nos sirven para trabajar con datos discretos, por ejemplo si queremos cambiar los datos de una columna y modificarlos:
+
+```{r}
+ToothGrowth %>%  mutate(supp2 = recode_factor(supp,
+                        "OJ" = "Jugo",
+                        "VC" = "Ascórbico",
+                        .default = "other",
+                        .ordered = TRUE)) %>% tail()
+```
+
+## Datos discretos
+
+Otra cosa que podemos hacer es crear una nueva columna con valores discretos usando valores numéricos, por ejemplo:
+
+```{r}
+ToothGrowth%>%  mutate(dose2 = ifelse(dose > 1, "alto", "bajo")) %>% head()
+```
+
+## Datos discretos
+
+Y si queremos renombrar los datos en una columna, entonces:
+
+```{r}
+ToothGrowth%>%mutate(dose = case_when(
+    dose == 0.5 ~ "D_0.5",
+    dose == 1 ~ "D_1",
+    dose == 2 ~ "D_2")) %>%  mutate(
+      dose = factor(dose, levels = c("D_2", "D_1", "D_0.5"))) %>% head()
+```
+
+## Datos discretos
+
+Para separar o unir datos de una columna con data discreta (caracter), podemos usar las funciones *unite()* y *separate()*, por ejemplo:
+
+```{r}
+ToothGrowth %>% unite("interaccion", supp:dose, sep = "_") %>% head()
+```
+
+## Datos discretos
+
+Para ejemplifcar *separate* usaremos el ejemplo anterior:
+
+```{r}
+ToothGrowth%>%mutate(dose = case_when(
+    dose == 0.5 ~ "D_0.5",
+    dose == 1 ~ "D_1",
+    dose == 2 ~ "D_2")) %>% separate(dose, c("D", "dose"),
+                                     sep = "_") %>% head()
+```
+
+## Resumiendo los datos
+
+Hay varias funciones en *tidyverse* que nos permiten hacer un resumen de nuestros datos, como por ejemplo la función *count()*:\
+
+```{r}
+ToothGrowth %>% count(supp, sort=TRUE)
+ToothGrowth %>% count(dose, supp, sort=TRUE)
+```
+
+## Resumiendo los datos
+
+Otra forma es usar *group_by()* que nos permite agrupar nuestros datos bajo alguna condición y luego aplicar una función a estos:
+
+```{r}
+ToothGrowth %>% group_by(supp) %>%count()
+```
+
+Con este *group_by()* podemos aplicar cualquier cantidad de funciones, por ejemplo para en vez que me de el conteo me de el promedio, mediana, cuenta, suma, etc; para esto, debemos ocupar una nueva función muy útil llamada *summarise()*:
+
+## Resumiendo los datos
+
+```{r}
+ToothGrowth %>% group_by(supp) %>% summarise(promedio = mean(len),
+                                             suma = sum(len),
+                                             n = n(),
+                                             mediana =median(len))
+```
+
+## Resumiendo los datos
+
+Esta función también viene en todas las presentaciones, es decir, *at*, *if* y *all*, Ejemplos:
+
+```{r, eval=FALSE}
+ToothGrowth %>%  group_by(supp) %>% summarise_if(is.numeric, mean)
+ToothGrowth%>%  group_by(supp) %>% summarise_at(vars(contains("ose")), mean)
+ToothGrowth %>%  group_by(supp) %>%  summarise_all(mean)
+```
+
+## Renombrando columnas Con *tidyverse*
+
+Existen diferentes formas de renombrar las columnas una es con la función *select()*:
+
+```{r}
+ToothGrowth %>% select(dosis=dose, longitud=len, suplemento=supp) %>% glimpse()
+```
+
+También existe la función rename en todas sus versiones, ejemplos:
+
+```{r}
+ToothGrowth %>% rename(dosis=dose) %>% glimpse()
+```
+
+## Renombrando columnas Con *tidyverse*
+
+```{r}
+ToothGrowth %>% rename_if(is.numeric, ~paste0("Num_", .)) %>% glimpse()
+ToothGrowth%>% rename_at(vars(contains("ose")), ~paste0("Num_", .)) %>% glimpse()
+ToothGrowth%>% rename_all(toupper) %>% glimpse()
+```
+
+## Ordenando tablas por un criterio o columna
+
+\
+Conocemos las funciones `order` y `sort`, pero para ordenar tablas enteras, la función `arrange` de **dplyr** es útil. Por ejemplo:
+
+```{r}
+ToothGrowth %>% arrange(len) %>% head()
+ToothGrowth %>% arrange(-len) %>% head()
+```
+
+## Ordenando tablas por un criterio o columna
+
+También podemos ordenar por varios criterios:
+
+```{r}
+ToothGrowth%>%  arrange(dose, supp) %>%  head()
+```
+
+## Uniendo tablas
+
+Para la unión de tablas usaremos una familia de funciones denominadas **joins**.
+
+Las diferentes presentaciones de esta función nos permite juntar tablas:\
+
+-   inner_join() : incluye todas las filas en x y y (es decir la intersección o las que comparten).
+
+-   left_join(): incluye todas las filas en x.
+
+-   right_join(): incuye todas las filas en y.
+
+-   full_join(): incluye todas las filas en x o y (este incluye todos, incluso las que no comparten)
+
+## Uniendo tablas
+
+```{r}
+band_members; band_instruments
+```
+
+## Uniendo tablas
+
+```{r}
+band_members %>% full_join(band_instruments)
+band_members %>% inner_join(band_instruments, by = "name")
+```
+
+## Uniendo tablas
+
+```{r}
+band_members %>% left_join(band_instruments)
+band_members %>% right_join(band_instruments)
+```
+
+## Funciones adicionales del *tydiverse*
+
+Anteriormente, usamos la función `head` para evitar que la página se llene con todo el set de datos. Si queremos ver una mayor proporción, podemos usar la función `top_n`.
+
+Esta función toma un *data frame* como primer argumento, el número de filas para mostrar en el segundo y la variable para filtrar en el tercero. Aquí hay un ejemplo de cómo ver las 5 filas superiores:\
+
+```{r}
+ToothGrowth %>% top_n(5, len)
+```
+
+## Funciones adicionales del *tydiverse*
+
+También hay otras funciones que son útiles en los diferentes análisis donde a veces ocupamos los rownames o a veces no, estas funciones nos permiten hacer una columna que sea rownames y viceversa, por ejemplo:\
+
+```{r}
+ToothGrowth %>% rownames_to_column(var = "row") %>% head()
+```
+
+```{r}
+ToothGrowth %>% rownames_to_column(
+  var = "row") %>% column_to_rownames(var = "row") %>% head()
+```
+
+## Funciones adicionales del *tydiverse*
+
+\
+Si queremos convertir las tablas como al principio del capítulo, es decir, convertir una tabla que no está en formato *tidy* a una que sí esté y viceversa podemos usar las funciones **pivot_longer()** y **pivot_wider()**.\
+
+```{r}
+data(iris)
+data_iris<- iris %>% select(Sepal.Length, Sepal.Width) %>% rownames_to_column(var = "ids")
+head(data_iris)
+```
+
+## Funciones adicionales del *tydiverse*
+
+\
+Vamos a cambiarla a formato tidy:\
+
+```{r}
+tidy_iris<-pivot_longer(names_to = "variable", 
+             values_to = "longitud", 
+             data = data_iris, 
+             cols = Sepal.Length:Sepal.Width) 
+head(tidy_iris)
+```
+
+## Funciones adicionales del *tydiverse*
+
+\
+Y si queremos regresar a como lo teníamos:\
+
+```{r}
+notidy_iris<- tidy_iris  %>% pivot_wider(names_from = variable,
+                          values_from = longitud)
+head(notidy_iris)
+```
+
+## Ejemplo Aplicado
+
+```{r, echo=FALSE}
+primera<- data.frame(Nombre= c("Astrid", "Lea", "Sarina", "Remon", "Letizia", 
+                               "Babice", "Jonas", "Wendy", "Nivedithia", "Gioia"),
+                     Sexo= c("F", "F", "F", "M", "F", "F", "M", "F", "F", "F"),
+                     Edad= c(30,25,25,29,22,22,35,19,32,21))
+segunda<- data.frame(Nombre= c("Astrid", "Lea", "Sarina", "Remon", "Letizia", 
+                               "Babice", "Jonas", "Wendy", "Nivedithia", "Gioia"),
+                     Superhéroe= c("Batman", "Superman", "Batman", "Spiderman", "Batman", 
+                                   "Antman", "Batman", "Superman", "Maggot", "Superman"),
+                     Tatuajes= c(11,15,12,5,65,3,9,13,900,0))
+
+```
+
+```{r,echo=FALSE, warning=FALSE, message=FALSE}
+library(kableExtra)
+library(knitr)
+kable(primera, "latex", booktabs = T) %>%
+  kable_styling(font_size = 5)
+kable(segunda, "latex", booktabs = T) %>%
+  kable_styling(font_size = 5)
+```
+
+## Ejemplo Aplicado
+
+Para hacer:
+
+1.  Combina las dos tablas en una sola y completa las siguientes asignaciones.
+
+2.  ¿Cuál es la edad media de las mujeres y hombres por separado?
+
+3.  ¿Cuál fue el número más alto de tatuajes en un hombre?
+
+4.  ¿Cuál es el porcentaje de personas debajo de 32 años que son mujeres?
+
+5.  Agrega una nueva columna a a la data llamada `tatuajes.por.año` que muestre cuántos tatuajes por año se ha hecho cada persona por cada año en su vida.
+
+6.  ¿Cuál persona tiene el mayor número de tatuajes por año?
+
+7.  ¿Cuáles son los nombres de las mujeres a las que su superheroe favorito es superman?
+
+8.  ¿Cuál es la mediana del número de tatuajes de cad apersona que está por encima de los 20 años y que su personaje favorito es Batman?\
+
+## Ejemplo Aplicado
+
+1.Combina las dos tablas en una sola y completa las siguientes asignaciones.\
+
+```{r}
+encuestas<-primera %>% full_join(segunda)
+```
+
+\
+2. ¿Cuál es la edad media de las mujeres y hombres por separado?\
+
+```{r}
+encuestas %>% group_by(Sexo) %>% summarise_at(c("Edad"), mean)
+```
+
+## Ejemplo Aplicado
+
+\
+3. ¿Cuál fue el número más alto de tatuajes en un hombre?\
+
+```{r}
+encuestas %>% filter(Sexo=="M") %>% filter(Tatuajes == max(Tatuajes)) 
+```
+
+\
+4. ¿Cuál es el porcentaje de mujeres debajo de 32 años?\
+
+```{r}
+fem<- encuestas %>% filter(Sexo=="F")
+fem_32<- encuestas %>% filter( Sexo=="F", Edad<32)
+(nrow(fem_32)/nrow(fem))*100
+```
+
+## Ejemplo Aplicado
+
+\
+5. Agrega una nueva columna a a la data llamada `tatuajes.por.año` que muestre cuántos tatuajes por año se ha hecho cada persona por cada año en su vida.\
+
+```{r}
+encuestas<- encuestas %>% mutate("tatuajesporaño"=Tatuajes/Edad)
+encuestas$tatuajesporaño
+```
+
+\
+6. ¿Cuál persona tiene el mayor número de tatuajes por año?\
+
+```{r}
+encuestas  %>% filter(tatuajesporaño == max(tatuajesporaño)) 
+
+```
+
+## Ejemplo Aplicado
+
+\
+7. ¿Cuáles son los nombres de las mujeres a las que su superheroe favorito es superman?\
+
+```{r}
+encuestas %>% filter(Sexo=="F", Superhéroe=="Superman") %>% select(Nombre)
+```
+
+\
+8. ¿Cuál es la mediana del número de tatuajes de cada persona que está por encima de los 20 años y que su personaje favorito es batman?\
+
+```{r}
+encuestas %>% filter(Edad>20, Superhéroe =="Batman") %>% summarise(mediana=median(Tatuajes))
+```
+
+## Por último...
+
+```{r, out.width="140px", fig.align='center', echo=FALSE}
+knitr::include_graphics(file.path(img_path,"tidy.jpg"))
+```

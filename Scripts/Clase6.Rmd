@@ -1,0 +1,776 @@
+---
+title: "Curso básico R studio - Clase 6"
+author: "Stephanie Hereira Pacheco"
+output:
+  pdf_document:
+    toc: true
+    toc_depth: 2
+  html_document: default
+editor_options: 
+  markdown: 
+    wrap: sentence
+---
+
+# Gráficas R base
+
+R cuenta con un sistema de generación de gráficas poderoso y flexible.
+En este capítulo revisaremos como crear las gráficas más comunes con R base y luego un poco más complejas usando *ggplot2* del *tidyverse*.
+
+## La función *plot()*
+
+La función *plot()* es usada de manera general para generar gráficos.
+Esta función es muy especial porque depende del tipo de datos que le demos generará diferentes tipos de gráficos.
+El argumento principal que pide esta función es *"x"* también podemos poner *"y"*.
+Y depende de estos el tipo de gráfica que se generará.
+Diremos:
+
+-   **Continuo**: Cuando nos referimos a un vector numérico, entero, lógico o complejo.
+
+-   **Discreto**: Cuando nos referimos a un vector de factores o cadenas de texto.
+
+| x        | y        | Tipo Gráfico                        |
+|----------|----------|-------------------------------------|
+| Continuo | Continuo | Dispersión /Scatter                 |
+| Continuo | Discreto | Dispersión y coercionada a numérica |
+| Continuo | Ninguno  | Dispersión por número de renglón    |
+| Discreto | Continuo | Boxplot/Cajas                       |
+| Discreto | Discreto | Mosaico                             |
+| Discreto | Ninguno  | Barras                              |
+
+\newpage
+
+```{r,eval=FALSE,out.width='1\\linewidth', fig.asp=0.5, fig.ncol = 1, fig.cap="output",fig.align = "center"}
+#Ejemplos
+par(mfrow= c(2,3) )
+plot(x=iris$Sepal.Length, y=iris$Sepal.Width)
+plot(x=iris$Sepal.Length, y = iris$Species)
+plot(x=iris$Sepal.Length)
+plot(x = iris$Species, y = iris$Sepal.Length)
+plot(x=iris$Species, y=iris$Species)
+plot(x=iris$Species)
+```
+
+\
+
+```{r,echo=FALSE,fig.align = "center"}
+#Ejemplos
+par(mfrow= c(2,3))
+plot(x=iris$Sepal.Length, y=iris$Sepal.Width)
+plot(x=iris$Sepal.Length, y = iris$Species)
+plot(x=iris$Sepal.Length)
+plot(x = iris$Species, y = iris$Sepal.Length)
+plot(x=iris$Species, y=iris$Species)
+plot(x=iris$Species)
+```
+
+\
+
+Además de estas, también hay otras funciones de Rbase que nos permiten graficar tipos específicos como son *barplot()*, *boxplot()* o *hist()*.
+
+\
+
+## Histrogramas
+
+Los histogramas ya los vimos en el capítulo de estadísticos.
+Sabemos que nos permiten ver la distribución de nuestros datos (si son normales o no).
+Sin embargo, podemos usar más argmentos para darle formato, veamoslo con un ejemplo:
+
+```{r, fig.height=4, fig.width=5, fig.align='center'}
+hist(x = iris$Sepal.Length, main = "Histograma de longitud de sepalo", 
+     xlab = "Longitud", ylab = "Frecuencia",
+     col = "purple")
+
+```
+
+Como vemos en este ejemplo hay argumentos que aplicamos que puede ser aplicados para todos los gráficos de Rbase, tales como:
+
+-   *main* : Titulo de la gráfica
+
+-   *xlab* y *ylab*: Títulos de los axis x y y
+
+-   *col* : color de las barras o gráfica.
+
+## Diagramas de dispersión
+
+Estos diagramas nos son útiles para ver las relaciones que hay entre dos variables continuas.
+En el siguiente ejemplo veremos la relación entre las variables longitud y ancho del pétalo, pero en este caso los colorearemos por especies:
+
+```{r, fig.height=4, fig.width=5, fig.align='center'}
+plot(x = iris$Petal.Length, y = iris$Petal.Width, col = iris$Species, xlab = "Largo", ylab = "Ancho")
+```
+
+Si queremos agregar una leyenda a alguna de nuestras figuras de Rbase, usamos la función *legend()*:
+
+`legend()` siempre nos pide siempre los siguientes argumentos.
+
+-   `legend`: Las etiquetas de los datos que queremos describir con la leyenda.
+    Por ejemplo, si tenemos cuatro categorías a describir, proporcionamos un vector de cuatro cadenas de texto.
+
+-   `fill`: Los colores que acompañan a las etiquetas definidas con `legend`.
+    Estos colores tienen que coincidir con los que hemos usado en el gráfico.
+
+-   `x` y `y`: Las coordenadas en pixeles, en las que estará ubicada la leyenda.
+    Podemos dar como argumento a `x` alguno de los siguientes, para ubicar automáticamente la leyenda: "bottomright", "bottom", "bottomleft", "left", "topleft", "top", "topright", "right", "center".
+
+-   `title`: Para poner título a la leyenda.
+
+\
+Veámoslo con el mismo ejemplo, primero ponemos *plot()* con la gráfica que queremos y debajo *legend()* para ponerlo encima de la figura que ya habíamos hecho:
+\
+
+```{r}
+plot(x = iris$Petal.Length, y = iris$Petal.Width, col = iris$Species, 
+     main = "Pétalo Iris por especie", xlab = "Largo", ylab = "Ancho")
+legend(x = "topleft", legend = c("Setosa", "Versicolor", "Virginica"), 
+       fill = c("black", "red", "green"), title = "Especie")
+
+```
+
+\newpage
+
+## Boxplots o diagramas de cajas
+
+Los diagramas de cajas o boxplots son gráficos que nos muestran la distribución de una variable mostrando sus cuartiles (parte baja primer cuartil y parte alta tercer cuartil), de manera que podamos ver su distribución y simetría.
+La línea horizontal media representa la "mediana" y las dos líneas verticales que muestran el valor máximo y mínimo.
+Veamos un ejemplo:\
+
+```{r,fig.height=3.5, fig.width=4, fig.align='center'}
+plot(x=iris$Species, y = iris$Sepal.Length, xlab = "Especie", ylab = "Longitud Sépalo", 
+     col = c("purple", "pink", "blue"))
+```
+
+También podemos usar la función *boxplot()*.
+En esta segunda forma de hacer diagramas de cajas necesitamos declarar dos argumentos principales:
+
+-   `formula`: Para esta función las fórmulas tienen el formato `y ~ x`, donde x es el nombre de la variable continua a graficar, y la x es la variable que usaremos como agrupación.
+
+-   `data`: Es el data frame del que serántomadas las variables.
+
+Además declarar los demás argumentos extras como colores, títulos y demás.\
+
+```{r, fig.height=3.5, fig.width=4, fig.align='center'}
+boxplot(formula = Sepal.Length ~ Species, data =  iris, xlab = "Especie", 
+        ylab = "Longitud Sépalo", col = c("purple", "pink", "blue"))
+```
+
+### Otros gráficos
+
+Usando la función *plot()* podemos dibujar más gráficos de los vistos que son los estándares, como fue el caso cuando graficas modelos lineales.
+También existe otro argumento de esta función que se denomina *type* y nos permite escoger otros tipos de gráficos.
+Esto lo podemos ver usando el '?'
+para ver la ayuda y los argumentos.\
+
+```{r, eval=FALSE}
+?plot
+```
+
+Son posibles los siguientes valores: "p" para puntos, "l" para líneas, "b" para puntos y líneas, "c" para puntos vacíos unidos por líneas, "o" para puntos sobretrazados y líneas, "s" y "S" para escalones y "h" para líneas verticales similares a histogramas.
+Finalmente, "n" no produce ningún punto o línea.
+Veamos algunos ejemplos:\
+
+```{r}
+#dataset de ensayo
+df<- data.frame(x= c(1:5),
+                y= c(200, 400, 600, 700, 500))
+par(mfrow = c(2, 3))
+plot(df$x, df$y, type = "p", main = 'type = "p"')
+plot(df$x, df$y, type = "l", main = 'type = "l"')
+plot(df$x, df$y, type = "b", main = 'type = "b"')
+plot(df$x, df$y, type = "c", main = 'type = "c"')
+plot(df$x, df$y, type = "s", main = 'type = "s"')
+plot(df$x, df$y, type = "h", main = 'type = "h"')
+
+```
+
+\newpage
+
+Ahora bien, en cuanto a líneas podemos escoger el tipo de línea con el argumento *lty*:\
+
+```{r}
+par(mfrow = c(2, 3))
+plot(df$x, df$y, type = "l", lty=1, main = 'type = "l1"')
+plot(df$x, df$y, type = "l", lty=2, main = 'type = "l2"')
+plot(df$x, df$y, type = "l", lty=3, main = 'type = "l3"')
+plot(df$x, df$y, type = "l", lty=4, main = 'type = "l4"')
+plot(df$x, df$y, type = "l", lty=5, main = 'type = "l5"')
+plot(df$x, df$y, type = "l", lty=6, main = 'type = "l6"')
+```
+
+\
+\
+
+## Barplots o gráficas de barras
+
+\
+Las gráficas de barras nos permiten ver los valores de una manera diferente a las líneas:
+\
+
+```{r, fig.height=3.4, fig.width=4, fig.align='center'}
+barplot(y ~ x , data = df, main = "Barplot", col = "darkred")
+```
+
+También hay capas que podemos agregarle a las gráficas, como la capa *text* o la capa *abline* para agregar texto y líneas sobre la gráfica, por ejemplo:
+
+```{r, fig.height=3.5, fig.width=4, fig.align='center'}
+plot(df$x, df$y, type = "p", main = 'type = "p-capas"')
+abline(h=400, v=3, col="red", lty=2)
+text(df, labels=rownames(df), cex=0.7, pos=2, col="blue")
+```
+
+### Guardando una gráfica
+
+Para guardar o exportar una gráfica debemos:
+
+1.  Indicar las instrucciones de cómo exportaremos la imagen
+
+2.  Usar *plot()* y graficarla y luego,
+
+3.  *dev.off*() para quitarla del panel y exportarla
+
+```{r, eval=FALSE}
+png(filename="gráfica1.png", width=648, height=432)
+plot(df$x, df$y, type = "p", main = 'type = "p"')
+dev.off()
+```
+
+# Gráficas con *ggplot2()*
+
+Las gráficas con *ggplot2()* es quizás de las cosas más poderosas y atractivas de R si lo comparamos con otros lenguajes y/o programas.
+*ggplot2* es generalmente más intuitiva porque usa una gramática de gráficos además de ser visualmente agradable.
+
+La limitación de ggplot2 es que está diseñado para trabajar exclusivamente con tablas de datos en formato tidy (donde las filas son observaciones y las columnas son variables).
+Sin embargo,ya vimos en anteriores temas cómo podemos convertir nuestras tablas para que tengan este formato.
+
+Para usar ggplot2, tendrán que aprender varias funciones y argumentos.
+Estos son difíciles de memorizar, por lo que les recomendamos que tengan a mano la hoja de referencia de ggplot2.
+Pueden obtener una copia en línea o simplemente realizar una búsqueda en internet de "ggplot2 cheat sheet." y econtraran algo como esto:
+
+\
+
+```{r, echo=FALSE, out.width= "500px", fig.align='center'}
+img_path<- "../images/"
+knitr::include_graphics(file.path(img_path,"ggplot.png"))
+```
+
+\
+
+O también en este link: [***cheaseet***](https://www.rstudio.com/resources/cheatsheets/ "cheaseet"), donde podrán ver además estas hojas con indicaciones de otros paquetes de R que nos facilitarán un poco más las cosas.
+
+Es fácil de usar, pero puedes crear figuras complejas con una sintaxis bastante simple.
+
+"gg" significa gramática gráfica - Significa que se superponen diferentes capas de objetos y elementos sobre los anteriores para generar la figura.
+
+En esta parte se repasará las diferentes características de ggplot2:
+
+1.  geomas o "geoms"
+
+2.  escalas o "scales"
+
+3.  guías o "guides"
+
+4.  temas o "theme"
+
+5.  facetas o "facets"
+
+El primer paso para aprender **ggplot2** es poder separar un gráfico en componentes.
+Las figuras aquí, se construyen por capas.
+Los tres componentes principales para considerar son:
+
+-   **Data**: nuestro set de datos o *dataframe*
+
+-   **Mapeo estético o 'aes'**: El gráfico usa varias señales visuales para representar la información proveída por el set de datos.
+    Las dos señales más importantes en este gráfico son las posiciones de los puntos en el eje-x y el eje-y.
+
+-   **Geometría**: Nos indica el tipo de gráfica a realizar.
+    Unas posibles geometrías son diagrama de barras, dispersión, histograma, densidades suaves (*smooth densities* en inglés), gráfico Q-Q y diagrama de cajas.
+
+-   **Elementos adicionales**: temas, guías, colores, etc.
+
+Para esta parte usaremos como ejemplo el set de Datos de "ToothGrotwth" de nuevo y contruiremos por partes la gráfica.
+
+## ggplot
+
+El primer paso para crear un gráfico **ggplot2** es definir un objeto `ggplot`.
+Hacemos esto con la función `ggplot`, que inicializa el gráfico.
+
+Esta parte podemos hacerla evaluando dentro de la función o usando el pipe, así:
+
+```{r, fig.height=2, fig.width=2, warning=FALSE, message=FALSE, eval=FALSE}
+data("ToothGrowth")
+library(dplyr)
+library(ggplot2)
+ggplot(data = ToothGrowth)
+ToothGrowth %>% ggplot()
+```
+
+```{r, echo=FALSE,fig.height=2.5, fig.width=3,warning=FALSE, message=FALSE, fig.align='center'}
+library(dplyr)
+library(ggplot2)
+ggplot(data = ToothGrowth)
+```
+
+El código crea un gráfico, en este caso una pizarra en blanco ya que no se ha definido la geometría.
+La única opción de estilo que vemos es un fondo gris.
+
+También dentro de esta capa de *ggplot()* se declara algo que se conoce como ***mapeo estético*** que describe cómo las propiedades de los datos se conectan con las características del gráfico.
+En otras palabras, más coloquiales, qué con qué graficamos, también podemos colocar aquí si queremos colorear o llenar un factor.
+Por ejemplo, con la data de ToothGrowth, queremos graficar el tamaño o longitud de los dientes versus la dosis aplicada y destacando o coloreando el método de aplicación de la vitamina C.\
+
+```{r, fig.height=3.5, fig.width=4, fig.align='center'}
+ToothGrowth %>% ggplot(aes(x = dose, y = len, fill=supp))
+```
+
+Aquí ya vemos que el eje x y el eje y ya aparecen con nombres de las variables, pero aún no nos muestra ningún gráfico, esto es porque no le indicamos aún que geometría o qué tipo de gráfico queremos.
+
+## Geometrías
+
+Esta es la siguiente capa en *ggplot2*.
+Los nombres de las funciones de geometría siguen el patrón: `geom_$` donde \$ es el nombre de la geometría.
+Algunos ejemplos incluyen `geom_bar`, `geom_point` y `geom_histogram`.\
+Digamos que queremos ahora sí dibujar la gráfica del paso anterior pero usando puntos, para esto usamos la geometría `geom_point` .
+Luego de cada capa de *ggplot2* en vez de usar pipe usamos el signo **+** y así vamos agregando cada capa.
+\
+
+```{r, fig.height=3, fig.width=4, fig.align='center'}
+ToothGrowth %>% ggplot(aes(x = dose, y = len, color=supp)) +
+  geom_point()
+```
+
+Ahora sí podemos ver lo que queríamos, cómo lucen los datos de longitud en cada dosis aplicada destacando o coloreando el modo de administración.
+Si en vez de puntos quisieramos, líneas, pues sólo cambiamos la capa de geometría:
+
+```{r, fig.height=3, fig.width=4, fig.align='center'}
+ToothGrowth %>% ggplot(aes(x = dose, y = len, color=supp)) +
+  geom_line()
+```
+
+También podemos combinar lo visto en *tidyverse* con *ggplot2* por ejemplo si queremos hacer un boxplot o barplot debemos cambiar la variable de dosis para hacerla discreta en vez de numérica o continua.
+
+```{r, fig.height=3, fig.width=4, fig.align='center'}
+ToothGrowth %>%  mutate(dose=case_when(
+  dose==0.5~"D0.5",dose==1~"D1", dose==2~"D2")) %>% ggplot(
+    aes(x = dose, y = len, color=supp)) +  geom_boxplot()
+```
+
+En el caso de *geom_bar* debemos cambiar y poner más argumentos, por ejemplo, como las barras son huecas en vez de usar 'color' usamos 'fill' y dentro de la geomtría escogemos una `stat` y una `position` , esto es para indicar cómo estarán las barras ubicadas y representadas.
+Los argumentos más usados para barras tradicionales los presento a continuación:
+
+```{r, fig.height=3.5, fig.width=4, fig.align='center'}
+ToothGrowth %>%  mutate(dose=case_when(
+  dose==0.5~"D0.5",dose==1~"D1", dose==2~"D2")) %>% ggplot(
+    aes( x = dose, y = len, fill=supp)) +  geom_bar(stat = "identity", position = "dodge")
+```
+
+Podemos también agregar más de una capa de geometría y así hacer gráficas combinadas, por ejemplo:\
+
+```{r, fig.height=2.5, fig.width=4, fig.align='center'}
+ToothGrowth %>% ggplot(aes(x = dose, y = len, color=supp)) +
+  geom_point()+
+  geom_text(aes(label=rownames(ToothGrowth)))+
+  geom_line()
+```
+
+En la gráfica pasada combinamos tres geometrías, puntos, texto y línea.
+De esta forma podemos hacer gráficas más elaboradas y mejor representadas.
+
+## Colores, títulos, escalas y otros ajustes.
+
+\
+Hasta ahora hemos construido gráficas con *ggplot2()* declarando el mapa estético y las diferentes geometrías.
+Sin embargo podemos notar de todas nuestras figuras anteriores que lucen muy parecidas en formato, mismos colores, mismo fondo y demás.
+
+Todos estos parámetros podemos modificarlos para personalizar nuestras figuras.
+
+### Colores
+
+*ggplot2()* tiene su escala personalizadas de colores, como lo vimos anteriormente.
+Sin embargo esto podemos cambiarlo usando una capa denominada `scale_color_$`, tomando `$` varias formas, como `scale_color_manual()`, `scale_color_continuous()`,`scale_color_discrete()`, `scale_color_brewer()` , entre otros.
+
+Todas estas opciones son depende de nuestro tipo de datos o del tipo de escala que queremos utilizar.
+Para declarar los colores en R podemos utilizar los nombres de los colores inglés como lo hicimos en la parte de R base o usando el formato de colores de html.
+También hay muchas paletas de varios paquetes ya definidas como la de `RColorBrewer` y `viridis`.
+
+Para buscar los colores en formato html pomos usar el siguiente link: [***html-colors***](https://htmlcolorcodes.com/es/ "html-colors")***.*** El código html se ve de esta manera:\
+
+```{r, echo=FALSE, out.width= "300px", fig.align='center'}
+img_path<- "../images/"
+knitr::include_graphics(file.path(img_path,"colors.jpg"))
+```
+
+\
+Y de esta manera los declaramos en nuestra gráfica usando `scale_color_manual()`:\
+
+```{r, fig.height=2.5, fig.width=4, fig.align='center'}
+ToothGrowth %>%  mutate(dose=case_when(
+  dose==0.5~"D0.5",dose==1~"D1", dose==2~"D2")) %>% ggplot(
+    aes(x = dose, y = len, col=supp)) +  geom_boxplot()+
+  scale_color_manual(values = c("#FF00FF","#00FFFF"))
+```
+
+\
+Ahora bien, como les mencioné anteriormente los diagramas de cajas y barras son elementos huecos entonces cuando indicados *col* lo que realmente coloreamos son los bordes, pero si queremos colorear las cajas adentro debemos usar *fill* como usamos en el *geom_bar()*, pero, en este caso en vez de usar `scale_color_$`, usamos `scale_fill_$` y de esta manera podemos reemplazarlo por todas las opciones anteriormente mencionadas:
+\
+
+```{r, fig.height=2.5, fig.width=4, fig.align='center'}
+ToothGrowth %>%  mutate(dose=case_when(
+  dose==0.5~"D0.5",dose==1~"D1", dose==2~"D2")) %>% ggplot(
+    aes(x = dose, y = len, fill=supp)) +  geom_boxplot()+
+  scale_fill_manual(values = c("#FF00FF","#00FFFF"))
+```
+
+\
+Ahora, si dudamos mucho o no estamos seguros de cómo escoger los colores, podemos utilizar paletas de colores ya determinadas como las que mencioné `RColorBrewer` y `viridis`. Estas son las paletas de `RColorBrewer` y `viridis`:
+
+```{r, out.width="50%", echo=FALSE, fig.align='center'}
+knitr::include_graphics(file.path(img_path,"rcolor.png"))
+knitr::include_graphics(file.path(img_path,"viridis.png"))
+```
+
+\
+Y así las podemos usar:
+\
+
+```{r, fig.height=2.5, fig.width=4, fig.align='center'}
+ToothGrowth %>%  mutate(dose=case_when(
+  dose==0.5~"D0.5",dose==1~"D1", dose==2~"D2")) %>% ggplot(
+    aes(x = dose, y = len, fill=supp)) +  geom_boxplot()+
+  scale_fill_brewer(palette = "Dark2")
+
+ToothGrowth %>%  mutate(dose=case_when(
+  dose==0.5~"D0.5",dose==1~"D1", dose==2~"D2")) %>% ggplot(
+    aes(x = dose, y = len, fill=supp)) +  geom_boxplot()+
+  scale_fill_viridis_d(option = "C")
+```
+
+\
+
+Entonces para *brewer* ponemos el nombre de la paleta que queremos uscar y el *viridis* ponemos la opción de paleta que queremos: "magma" (o "A"), "inferno" ("B"), "plasma" ("C"), "viridis" ("D", default) and "cividis" (o "E").
+
+### Títulos
+
+Para asignar los títulos al eje x y al eje y podemos usar las capas `xlab()` y `ylab()`.
+Y para el título principal usamos `ggtitle()` .
+Así:
+
+```{r, fig.height=2.5, fig.width=4, fig.align='center'}
+ToothGrowth %>%  mutate(dose=case_when(
+  dose==0.5~"D0.5",dose==1~"D1", dose==2~"D2")) %>% ggplot(
+    aes(x = dose, y = len, fill=supp)) +  geom_boxplot()+
+  ylab("Longitud diente")+
+  xlab("Dosis")+
+  ggtitle("Longitud de dientes por Dosis aplicada")
+```
+
+### Escalas
+
+Para establecer o cambiar las escalas de nuestra figura usamos las funciones `scale_x_discrete()` o `scale_y_continuos()`dependiendo del tipo de datos que tengamos (cotinuos o numéricos y discretos o categóricos) en cada axis (x o y) y.
+
+```{r, fig.height=2.5, fig.width=4, fig.align='center'}
+ToothGrowth %>%  mutate(dose=case_when(
+  dose==0.5~"D0.5",dose==1~"D1", dose==2~"D2")) %>% ggplot(
+    aes(x = dose, y = len, fill=supp)) +  geom_boxplot()+
+  ylab("Longitud diente")+
+  xlab("Dosis")+
+  ggtitle("Longitud de dientes por Dosis aplicada") +
+  scale_x_discrete(limits = c("D2", "D0.5", "D1"), position ="bottom" )+
+  scale_y_continuous(breaks = c(0, 20,40), limits = c(0,40), labels = c("L0", "L20", "L40"))
+```
+
+Como vemos, podemos explorar y probar diferentes parámetros para cambiar en el eje x y en el eje y sin tener que modificar nuestros datos sino solamente para ser graficado.
+
+### Otros ajustes
+
+Hay otros ajustes más geneales o específicos que podemos realizar a nuestros gráficos.
+Por ejemplo, los temas.
+*ggplot2()* usa como *default* el tema `theme_grey()` pero hay otros que podemos usar para cambiar el formarto de nuestras figuras.
+Veamos algunos ejemplos:
+
+```{r, echo=FALSE}
+par(mfrow= c(2,3))
+a1<-ToothGrowth %>%  mutate(dose=case_when(
+  dose==0.5~"D0.5",dose==1~"D1", dose==2~"D2")) %>% ggplot(
+    aes(x = dose, y = len, fill=supp)) +  geom_boxplot()+ theme_classic()+
+  ggtitle("theme_classic()")
+
+a2<-ToothGrowth %>%  mutate(dose=case_when(
+  dose==0.5~"D0.5",dose==1~"D1", dose==2~"D2")) %>% ggplot(
+    aes(x = dose, y = len, fill=supp)) +  geom_boxplot()+ theme_linedraw()+
+  ggtitle("theme_linedraw()")
+
+a3<-ToothGrowth %>%  mutate(dose=case_when(
+  dose==0.5~"D0.5",dose==1~"D1", dose==2~"D2")) %>% ggplot(
+    aes(x = dose, y = len, fill=supp)) +  geom_boxplot()+ theme_bw()+
+  ggtitle("theme_bw()")
+
+a4<-ToothGrowth %>%  mutate(dose=case_when(
+  dose==0.5~"D0.5",dose==1~"D1", dose==2~"D2")) %>% ggplot(
+    aes(x = dose, y = len, fill=supp)) +  geom_boxplot()+ theme_get()+
+  ggtitle("theme_get()")
+
+a5<-ToothGrowth %>%  mutate(dose=case_when(
+  dose==0.5~"D0.5",dose==1~"D1", dose==2~"D2")) %>% ggplot(
+    aes(x = dose, y = len, fill=supp)) +  geom_boxplot()+ theme_dark()+
+  ggtitle("theme_dark()")
+
+a6<-ToothGrowth %>%  mutate(dose=case_when(
+  dose==0.5~"D0.5",dose==1~"D1", dose==2~"D2")) %>% ggplot(
+    aes(x = dose, y = len, fill=supp)) +  geom_boxplot()+ theme_light()+
+  ggtitle("theme_light()")
+
+library(cowplot)
+plot_grid(a1,a2,a3,a4,a5,a6, ncol = 3, nrow = 3)
+
+```
+
+\
+
+Y así muchos otros más, los podemos explorar dando theme\_ y usando la tecla TAB para ver las demás opciones que nos aparecen.
+
+Otros ajustes más específicos como tamaño y color de letras, posición de la leyenda, entre otros, los hacemos usando la capa denominada `theme()`.
+Vamos a dar un ejemplo de cómo hacer esto, pero para usar **thene()** es todo un capítulo muy extenso para entrar en detalles, si queremos conocer muchos de estos detalles hacemos **?theme()** y nos depliega la página de ayuda y veremos los argumentos posibles.
+
+```{r, fig.height=3.5, fig.width=4, fig.align='center'}
+ToothGrowth %>%  mutate(dose=case_when(
+  dose==0.5~"D0.5",dose==1~"D1", dose==2~"D2")) %>% ggplot(
+    aes(x = dose, y = len, fill=supp)) +  geom_boxplot()+ 
+  theme(axis.title = element_text(size = "14", colour = "blue"),
+        title = element_text(size = 16, colour = "red"),
+        legend.position = "top")
+```
+
+## Figuras Multi-panel / Facets
+
+Para dibujar varias figuras en una misma página o output hay varias estrategias.
+Varias de ellas están fuera del alcance de este curso, pero para mencionarlas:
+
+-   par (multi-panel con R base)[^1]
+
+-   cowplot (ggplot2)[^2]
+
+-   grid.arrange(ggplot2)[^3]
+
+-   Facets
+
+[^1]: <https://bookdown.org/ndphillips/YaRrr/arranging-plots-with-parmfrow-and-layout.html>
+
+[^2]: <https://cran.r-project.org/web/packages/cowplot/vignettes/introduction.html>
+
+[^3]: <https://cran.r-project.org/web/packages/egg/vignettes/Ecosystem.html>
+
+### Facets
+
+\
+Esta forma de graficar en multi-panel es quizás la más sencilla por ser una capa de *ggplot2()*. Para esta hay dos funciones `facet_grid()`y `facet_wrap()`. Los trataremos como ejemplos porque en detalle no son del alcance del presente curso.
+\
+
+Para facet_grid() hay dos opciones, presentarla por columnas o por filas:\
+
+```{r, eval=FALSE}
+ToothGrowth %>%  mutate(dose=case_when(
+  dose==0.5~"D0.5",dose==1~"D1", dose==2~"D2")) %>% ggplot(
+    aes(x = dose, y = len, fill=supp)) +  geom_boxplot()+ 
+  facet_grid(supp~.)
+
+
+ToothGrowth %>%  mutate(dose=case_when(
+  dose==0.5~"D0.5",dose==1~"D1", dose==2~"D2")) %>% ggplot(
+    aes(x = dose, y = len, fill=supp)) +  geom_boxplot()+ 
+  facet_grid(.~supp)
+```
+
+```{r, echo=FALSE, fig.height=3.5, fig.width=10, fig.align='center'}
+b1<-ToothGrowth %>%  mutate(dose=case_when(
+  dose==0.5~"D0.5",dose==1~"D1", dose==2~"D2")) %>% ggplot(
+    aes(x = dose, y = len, fill=supp)) +  geom_boxplot()+ 
+  facet_grid(supp~.)
+
+b2<-ToothGrowth %>%  mutate(dose=case_when(
+  dose==0.5~"D0.5",dose==1~"D1", dose==2~"D2")) %>% ggplot(
+    aes(x = dose, y = len, fill=supp)) +  geom_boxplot()+ 
+  facet_grid(.~supp)
+cowplot::plot_grid(b1,b2)
+```
+
+\newpage
+
+Y con facet_wrap() podemos combinar columnas y filas, por ejemplo:\
+
+```{r, fig.height=2.5, fig.width=4, fig.align='center'}
+ToothGrowth %>%  mutate(dose=case_when(
+  dose==0.5~"D0.5",dose==1~"D1", dose==2~"D2")) %>% ggplot(
+    aes(x = dose, y = len, fill=supp)) +  geom_boxplot()+ 
+  facet_wrap(~supp+dose, ncol = 3, nrow = 2)
+```
+
+### Guardando una gráfica en ggplot2
+
+Para guardar una gráfica de tipo *ggplot2()* usamos la función *ggsave()*
+
+```{r, eval=FALSE}
+ggsave(filename = "plot.png", plot = a1, dpi = 300,width = 4, height = 3.5)
+```
+
+# Extras
+
+## stat_summary() y stat_smoot()
+
+Esta es una capa que nos permite poner desviaciones estándar o líneas que representan el promedio de los datos, por ejemplo:
+
+```{r, fig.height=2.5, fig.width=4, fig.align='center'}
+ToothGrowth %>% 
+  ggplot(aes(x = dose, y = len)) +
+  stat_summary(geom = "line", fun = mean, aes(group = supp, color = supp), size = 1.2) + 
+  stat_summary(geom = "errorbar", fun.data = mean_se, aes(group = supp), width = 0.1)
+```
+
+stat_smooth() nos permite colorear o resaltar la línea que representa nuestro modelo lineal:
+
+```{r, fig.height=2.5, fig.width=4, fig.align='center'}
+ggplot(iris, aes(x = Petal.Width, y = Sepal.Length)) + 
+  geom_point() +
+  stat_smooth(method = "lm", col = "red")
+```
+
+## *ggpubr()*
+
+*ggpubr()* es una paqutería tipo compatible con *ggplot2()* pero un poco más fácil de declarar y más intuitivo.
+
+Veamos algunos pocos ejemplos de sus utilidades:
+
+```{r, fig.height=3, fig.width=4, fig.align='center', warning=FALSE, message=FALSE}
+library(ggpubr)
+ggboxplot(ToothGrowth, x = "dose", y = "len", color = "dose",add = "jitter", shape = "dose")
+```
+
+```{r, fig.height=3, fig.width=4, fig.align='center', warning=FALSE, message=FALSE}
+ggbarplot(ToothGrowth, x = "dose", y = "len", fill = "dose", add = "mean_se")
+```
+
+\
+Vemos que los parámetros se definen similarmente pero con algunas diferencias, además que nos permite agregarles más elementos sin agregar más capas.
+Y el 'output' o tipo de gráfica es igual del tipo **ggplot2()**.\
+\
+
+Otras funciones interesantes de este paquete son **facet.by** que es un argumento que puede ser declarado dentro de la función principal y nos permite hacer las gráficas multi-panel y otro que es muy útil es el de **stat_compare_means()** que nos permite agregar una capa que hace análisis estátidísticos como t.test, wilcoxon, kruskal.walis, anova, entre otros y que nos evita hacer análisis fuera y que podamos agragarlas a la gráfica en un sólo paso.\
+
+```{r, fig.height=3, fig.width=4, fig.align='center', warning=FALSE, message=FALSE}
+ggboxplot(ToothGrowth, x = "dose", y = "len", color = "dose",facet.by = "supp")
+
+
+comparaciones <- list( c("0.5", "1"), c("1", "2"), c("0.5", "2") )
+
+ggbarplot(ToothGrowth, x = "dose", y = "len", fill = "dose", add = "mean_sd")+
+  stat_compare_means(comparisons = comparaciones, label = "p.signif")
+```
+
+\newpage
+
+## Misceláneos: *ggcats()*[^4]
+
+[^4]: <https://r-charts.com/es/miscelanea/>
+
+*ggplot2()* nos permite usar diversos paquetes desarrollados por muchos usarios con fines divertidos o misceláneos, podemos verlo en el pie de página el link para explorar todos los que hay.
+Veremos *ggcats()*.
+Estas son las opciones que podemos usar:
+
+```{r, warning=FALSE, message=FALSE}
+# install.packages("magick")
+# remotes::install_github("R-CoderDotCom/ggcats@main")
+library(ggcats)
+grid <- expand.grid(1:5, 3:1)
+
+df <- data.frame(x = grid[, 1],
+                 y = grid[, 2],
+                 image = c("nyancat", "bongo",
+                           "colonel", "grumpy",
+                           "hipster", "lil_bub",
+                           "maru", "mouth",
+                           "pop", "pop_close", 
+                           "pusheen", "pusheen_pc",
+                           "toast", "venus",
+                           "shironeko"))
+ggplot(df) +
+ geom_cat(aes(x, y, cat = image), size = 5) +
+    geom_text(aes(x, y - 0.5, label = image), size = 2.5) +
+    xlim(c(0.25, 5.5)) + 
+    ylim(c(0.25, 3.5))
+```
+
+\
+Entonces, por ejemplo si queremos usarlos como puntos de nuestra gráfica, sería algo así:
+\
+
+```{r}
+#hacemos la variable cats para escoger los que queremos
+ToothGrowth$cats <- factor(ToothGrowth$dose,
+                           levels = c(0.5,1,2),
+                           labels = c("mouth", "grumpy", "pusheen_pc"))
+
+ToothGrowth %>%  ggplot(aes(y = len, x = dose)) + 
+  geom_cat(aes(cat = cats), size = 4)  +  xlim(c(0.25, 2.25))
+
+```
+
+## Misceláneos: *ggtexttable()*
+
+Esta función me permite hacer mis tablas como figuras que puedo exportar como imágenes y darle formato.
+Hace parte del paquete **ggpubr()** que vimos anteriormente.
+
+Haremos un ejemplo con los primeros cuatro datos de **iris**:
+
+```{r}
+library(dplyr)
+df<- iris %>% slice(c(1:4))
+ggtexttable(df, rows = NULL)
+```
+
+También podemos cambiar el tema con el que se formatea la tabla, por ejemplo:
+
+```{r, eval=TRUE}
+ggtexttable(df, rows = NULL, theme = ttheme("blank"))
+ggtexttable(df, rows = NULL, theme = ttheme("light"))
+ggtexttable(df, rows = NULL, theme = ttheme("classic"))
+ggtexttable(df, rows = NULL, theme = ttheme("minimal"))
+ggtexttable(df, rows = NULL, theme = ttheme("lVioletWhite"))
+ggtexttable(df, rows = NULL, theme = ttheme("mVioletWhite"))
+
+```
+
+```{r, eval=FALSE, echo=FALSE, warning=FALSE, message=FALSE}
+library(cowplot)
+a<-ggtexttable(df, rows = NULL, theme = ttheme("blank"))
+b<-ggtexttable(df, rows = NULL, theme = ttheme("light"))
+c<-ggtexttable(df, rows = NULL, theme = ttheme("classic"))
+d<-ggtexttable(df, rows = NULL, theme = ttheme("minimal"))
+e<-ggtexttable(df, rows = NULL, theme = ttheme("lVioletWhite"))
+f<-ggtexttable(df, rows = NULL, theme = ttheme("mVioletWhite"))
+
+plot_grid(a,b,c,d,e,f, labels=c("blank", "light", "classic", 
+                                "minimal", "lVioletWhite", "mVioletWhite"), ncol = 2, nrow = 3)
+```
+
+Para ver otros temas: <https://rpkgs.datanovia.com/ggpubr/files/ggtexttable-theme.pdf>
+
+Otros formateos:
+
+-   Poner en negrita una celda:
+
+    ```{r}
+    ggtexttable(df, rows = NULL,  theme = ttheme("classic")) %>%  
+      table_cell_font(row = 3, column = 2, face = "bold", color = "red")
+    ```
+
+-   Resaltar una columna:
+
+    ```{r}
+    ggtexttable(df, rows = NULL,  theme = ttheme("classic")) %>% 
+      table_cell_bg(row = 2:5, column = 3, fill="yellow")
+    ```
+
+-   Poner títulos y pies de notas:
+
+    ```{r}
+    ggtexttable(df, rows = NULL,  theme = ttheme("classic")) %>% 
+      tab_add_title(text = "Data iris",  size = 14, face="bold") %>%
+      tab_add_footnote(text = "*Alguna nota", size = 10, face = "italic")
+    ```

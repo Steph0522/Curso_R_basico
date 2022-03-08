@@ -1,0 +1,290 @@
+---
+title: "R básico para ciencia de datos - Clase extra"
+author: | 
+  | Ph D.Stephanie Hereira-Pacheco 
+  | CTBC
+  | UATx
+date: "`02 - 03 - 2022`"
+output: 
+ beamer_presentation:
+    theme: "CambridgeUS"
+    colortheme: "default"
+    fonttheme: "structurebold"
+fontsize:  9 pt
+---
+
+## PCA - Análisis de componentes principales
+
+-   El PCA o Análisis de componentes principales es una de las técnicas de aprendizaje no supervisado, las cuales suelen aplicarse como parte del análisis exploratorio de los datos.
+
+-   Una de las aplicaciones de PCA es la reducción de dimensionalidad (variables), perdiendo la menor cantidad de información (varianza) posible, esto, cuando contamos con un gran número de variables cuantitativas posiblemente correlacionadas (indicativo de existencia de información redundante).
+
+-   El PCA permite reducirlas a un número menor de variables transformadas (componentes principales) que expliquen gran parte de la variabilidad en los datos. Cada dimensión o componente principal generada por PCA será una combinación lineal de las variables originales.
+
+## PCA - Análisis de componentes principales
+
+-   El PCA también sirve como herramienta para la visualización de datos.
+
+-   El PCA puede considerarse como una rotación de los ejes del sistema de coordenadas de las variables originales a nuevos ejes ortogonales, de manera que estos ejes coincidan con la dirección de máxima varianza de los datos.
+
+-   En un PCA nos interesa conocer la proporción de varianza explicada por cada uno de los componentes principales, o dicho de otra manera, cuanta información presente en los datos se pierde por la proyección de las observaciones sobre los primeros componentes principales.
+
+## PCA en R
+
+Existen diversas librerías y/o funciones que podemos usar en R para obtener nuestro PCA, tales como:
+
+*library(stats)*
+
+• `prcomp()` -\> Forma rápida de implementar PCA sobre una matriz de datos.
+
+*library(vegan)*
+
+• `rda()`
+
+*library(FactoMineR)*
+
+• `PCA()` -\> PCA con resultados más detallados. Los valores ausentes se reemplazan por la media de cada columna. Pueden incluirse variables categóricas suplementarias. Estandariza automáticamente los datos.
+
+## PCA en R
+
+*library(factoextra)*
+
+• `get_pca()` -\> Extrae la información sobre las observaciones y variables de un análisis PCA.
+
+• `get_pca_var()` -\> Extrae la información sobre las variables.
+
+• `get_pca_ind()` -\> Extrae la información sobre las observaciones.
+
+\
+***Visualizaciones***:
+
+*library(FactoMineR)*
+
+• `fviz_pca_ind()` -\> Representación de observaciones sobre componentes principales.
+
+• `fviz_pca_var()` -\> Representación de variables sobre componentes principales.
+
+• `fviz_screeplot()` -\> Representación (gráfico barras) de eigenvalores.
+
+• `fviz_contrib()` -\> Representa la contribución de filas/columnas de los resultados de un pca.
+
+## Ejemplo de PCA - prcomp()
+
+Utilizaremos la data de iris para estos ejemplos, data que ya conocemos:
+
+```{r}
+data(iris)
+head(iris)
+```
+
+Ahora aplicaremos la función de R base prcomp(), quitando los datos categóricos o factores y si observamos los elementos de este archivo de salida (en forma de lista), podemos notar:
+
+```{r}
+pca_prcomp<- prcomp(iris[,-5], scale. = TRUE)
+names(pca_prcomp)
+```
+
+## Ejemplo de PCA - prcomp()
+
+Los elementos `"center"` y `"scale"` se corresponden con las medias y las desviaciones estándar originales de las variables previo escalado e implementación del PCA.
+
+La matriz `"rotation"`proporciona los loadings de los componentes principales (cada columna contiene el vector de loadings de cada componente principal). La función los denomina matriz de rotación ya que si multiplicáramos la matriz de datos por rotation, obtendríamos las coordenadas de los datos en el nuevo sistema rotado de coordenadas.
+
+Estas coordenadas se corresponden con los scores de los componentes principales. Los vectores de los scores son x y la desviación estándar de cada componente principal es sdev.
+
+En términos prácticos `"rotation"` son nuestras variables proyectadas en nuestro PCA y`"x"` son las observaciones. Si queremos extraer estos datos sencillmente usamos el operador '\$'.
+
+## Ejemplo de PCA - prcomp()
+
+```{r}
+head(pca_prcomp$x)
+head(pca_prcomp$rotation)
+```
+
+## Ejemplo de PCA - prcomp()
+
+La varianza explicada por cada componente principal la obtenemos elevando al cuadrado la desviación estándar y dividiendo entre la suma de todas:
+
+```{r}
+pca_prcomp$sdev^2
+pca_prcomp$sdev^2 / sum(pca_prcomp$sdev^2)
+```
+## Ejemplo de PCA - prcomp()
+
+```{r, fig.align='center', fig.height=3.5, fig.width=6}
+biplot(x = pca_prcomp, scale = 0, cex = 0.6, col = c("blue4", "brown3"))
+```
+
+Esta es una primera y básica aproximación. Ahora veremos como podemos reproducir esto con **vegan()**.
+
+## Ejemplo de PCA - rda()
+
+```{r, warning=FALSE, message=FALSE}
+library(vegan)
+pca_vegan<- rda(iris[,-5], scale=TRUE)
+#summary(pca_vegan)
+pca_vegan_sum<-summary(pca_vegan)
+names(pca_vegan_sum)
+```
+
+## Ejemplo de PCA - rda()
+
+En términos prácticos `"species"` son nuestras variables proyectadas en nuestro PCA y`"sites"` son las observaciones. Si queremos extraer estos datos sencillmente usamos el operador '\$'.
+
+```{r, fig.align='center', fig.height=4, fig.width=6.8}
+biplot(pca_vegan, type = c("text","points"))
+ordihull(pca_vegan, group = iris$Species, col = c("red","green","blue"))
+spp.names <- levels(iris$Species)
+legend("topright", col = c("red","green","blue"), lty = 1, legend = spp.names)
+```
+
+## Ejemplo de PCA - PCA()
+
+```{r, warning=FALSE, message=FALSE}
+library(FactoMineR)
+pca_facto <- PCA(iris[,-5], graph = FALSE)
+print(pca_facto)
+```
+
+## Ejemplo de PCA - PCA()
+
+El "eig_coord" nos muestra la explicación de los componentes principales, "ind_coord" los individuale u observaciones y "var" las variables. Sin embargo para extraerlo y visualizarlos de mejor manera se utiliza el paquete **factoextra**. Primero grafiquemos las variables:
+
+## Ejemplo de PCA - PCA()
+
+```{r, warning=FALSE, message=FALSE, fig.height=2.5, fig.width=3, fig.align='center'}
+library(factoextra)
+fviz_pca_var(pca_facto, col.var="steelblue", labelsize=2)
+```
+
+## Ejemplo de PCA - PCA()
+
+Y ahora las observaciones o individuales:
+
+```{r, warning=FALSE, message=FALSE, fig.height=2.5, fig.width=6, fig.align='center'}
+fviz_pca_ind(pca_facto, geom.ind = "point",  axes = c(1, 2),  habillage=iris$Species,
+             addEllipses=TRUE, ellipse.level=0.95) 
+```
+
+## Ejemplo de PCA - PCA()
+
+Ahora juntando:
+
+```{r, warning=FALSE, message=FALSE, fig.height=4, fig.width=10, fig.align='center'}
+fviz_pca_biplot(pca_facto,  habillage = iris$Species, 
+  addEllipses = TRUE, col.var = "red",  label = "var", labelsize=3) 
+```
+
+## Ejemplo de PCA - PCA()
+
+Otro gráfico que puede ser útil en el PCA es la variación a través de los componentes principales:
+
+```{r, warning=FALSE, message=FALSE, fig.height=2.5, fig.width=3, fig.align='center'}
+fviz_screeplot(pca_facto)
+```
+
+## PCA gráfica con ggplot2
+
+Para esta gráfica usaremos el objeto obtenido de **prcomp**, de hecho si extraemos la información de las coordenadas de las variables y observaciones podemos realizar este gráfico, usaré este ejemplo porque es el paquete que viene por defecto en R.
+
+Para esto entonces extraemos la información de nuestro objeto en varias datas:
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+```
+
+## PCA gráfica con ggplot2
+
+```{r, warning=FALSE, message=FALSE, fig.align='center', fig.height=8, fig.width=8}
+individuales <- data.frame(pca_prcomp$x) %>% select(PC1, PC2)%>% rownames_to_column(
+  var="inds") %>% inner_join(iris %>% rownames_to_column(var="inds"))
+vars<-data.frame(pca_prcomp$rotation) %>% select(PC1, PC2)%>% rownames_to_column(var="vars")
+componentes<-pca_prcomp$sdev^2 / sum(pca_prcomp$sdev^2)
+PC1_label <- paste("PC1", round(componentes[1]*100,1), "%")
+PC2_label <- paste("PC2", round(componentes[2]*100,1), "%")
+```
+## PCA gráfica con ggplot2
+
+
+Ahora vamos a constuir la gráfica por capas, primero los individuales u observaciones:
+
+```{r, warning=FALSE, message=FALSE, fig.align='center', fig.height=2.5, fig.width=4}
+ggplot() +
+geom_point(data = individuales, aes(x=PC1, y=PC2, color =Species), size=2)
+```
+
+## PCA gráfica con ggplot2
+
+Siguiente agregramos las variables en forma de vectores o segmentos:
+
+```{r, warning=FALSE, message=FALSE, fig.align='center', fig.height=2.5, fig.width=4}
+ggplot() +
+geom_point(data = individuales, aes(x=PC1, y=PC2, color =Species), size=2)+
+geom_segment(data=vars, aes(x=0, xend=PC1, y=0, yend=PC2),
+             arrow = arrow(length = unit(0.3,"cm")))
+```
+
+## PCA gráfica con ggplot2
+
+La última capa es el texto de las variables:
+
+```{r, warning=FALSE, message=FALSE, fig.align='center', fig.height=1.8, fig.width=4}
+ggplot() +
+geom_point(data = individuales, aes(x=PC1, y=PC2, color =Species), size=1)+
+geom_segment(data=vars %>% mutate(PC1=PC1*2, PC2=PC2*2),
+             aes(x=0, xend=PC1, y=0, yend=PC2),
+             arrow = arrow(length = unit(0.3,"cm")))+
+  geom_text(data=vars %>% mutate(PC1=PC1*2, PC2=PC2*2), 
+            aes(x=PC1, y=PC2, label= vars),
+            nudge_x = 0.7, nudge_y = 0.2)
+```
+
+## PCA gráfica con ggplot2
+
+Lo último es lo de más de formato:
+
+```{r, eval=FALSE}
+ggplot() +
+geom_point(data = individuales, aes(x=PC1, y=PC2, color =Species), size=2)+
+geom_segment(data=vars %>% mutate(PC1=PC1*2, PC2=PC2*2), aes(x=0, xend=PC1, y=0, yend=PC2),
+             arrow = arrow(length = unit(0.3,"cm")))+
+  geom_text(data=vars %>% mutate(PC1=PC1*2, PC2=PC2*2), aes(x=PC1, y=PC2, label= vars),
+            nudge_x = 0.7, nudge_y = 0.2)+
+  geom_vline(xintercept = 0, linetype = 5) +
+  geom_hline(yintercept = 0, linetype = 5) +theme_classic()+
+    stat_ellipse(data = individuales, aes(x=PC1, y=PC2, color =Species))+
+  scale_color_manual(values = c("red", "blue", "green"))+
+  ylab(PC2_label)+xlab(PC1_label)
+
+```
+## PCA gráfica con ggplot2
+
+```{r, echo=FALSE, fig.height=5, fig.width=8}
+ggplot() +
+geom_point(data = individuales, aes(x=PC1, y=PC2, color =Species), size=2)+
+geom_segment(data=vars %>% mutate(PC1=PC1*2, PC2=PC2*2),
+             aes(x=0, xend=PC1, y=0, yend=PC2),
+             arrow = arrow(length = unit(0.3,"cm")))+
+  geom_text(data=vars %>% mutate(PC1=PC1*2, PC2=PC2*2), 
+            aes(x=PC1, y=PC2, label= vars),
+            nudge_x = 0.7, nudge_y = 0.2)+
+  geom_vline(xintercept = 0, linetype = 5) +
+  geom_hline(yintercept = 0, linetype = 5) +theme_classic()+
+    stat_ellipse(data = individuales, aes(x=PC1, y=PC2, color =Species))+
+  scale_color_manual(values = c("red", "blue", "green"))+
+  ylab(PC2_label)+xlab(PC1_label)
+```
+
+## PCA gráfica con ggplot2
+
+Si queremos entonces colocar dos axis para cada grupo de datos, sería:
+
+```{r, warning=FALSE, message=FALSE, fig.align='center', fig.height=1.8, fig.width=4, eval=TRUE}
+coef<- 2
+ggplot() +
+geom_point(data = individuales, aes(x=PC1, y=PC2, color =Species), size=2)+
+geom_segment(data=vars[-1]*coef, aes(x=0, xend=PC1, y=0, yend=PC2),
+             arrow = arrow(length = unit(0.3,"cm")))+
+  scale_y_continuous(name = "Individuals", sec.axis = sec_axis(
+    ~./coef, name="vars"))+theme_linedraw()+xlab("")
+```

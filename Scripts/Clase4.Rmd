@@ -1,0 +1,386 @@
+---
+title: "Curso básico R studio - Clase 4"
+author: "Stephanie Hereira Pacheco"
+output:
+  pdf_document:
+    toc: true
+    toc_depth: 2
+  html_document: default
+editor_options: 
+  markdown: 
+    wrap: sentence
+---
+
+\
+
+## Manipulación de datos con Rbase
+
+\
+
+## Filtrado y obtención de subconjuntos
+
+En los capítulos anteriores ya vimos algunos ejemplos de subconjuntos y filtrados, retomaremos algunos de estos y también veremos unos nuevos.
+Para ejemplificar mejor esta parte, de nuevo trabajaremos con el dataset de **ToothGrowth** y utilizaré la función **head()** para ver solo las 6 primeras filas:
+
+```{r}
+data("ToothGrowth")
+```
+
+## 1. Seleccionando columnas
+
+```{r}
+head(ToothGrowth[1:2])
+head(ToothGrowth[-3])
+head(ToothGrowth[c("dose", "len")])
+head(ToothGrowth[-1:-2,1:2])
+```
+
+\
+
+## 2. Filtrando filas
+
+Tradicionalmente indexando podemos filtrar nuestra tabla usando:
+
+```{r}
+head(ToothGrowth[-1:-2,])
+head(ToothGrowth[which(ToothGrowth$supp == "VC"),])
+ind<-ToothGrowth$len>27
+ind2<- ToothGrowth$sup=="OJ"
+head(ToothGrowth[ind,])
+head(ToothGrowth[ind2,])
+```
+
+Un detalle importante en los **dataframes** son la inserción de los llamados *"NA"* que son datos que no han sido introducidos por error o porque no se tienen los datos.
+En algunos análisis estos tipos de datos no son deseados porque pueden generar ruido por lo que se sugiere identificarlos, omitirlos y/o eliminarlos.
+Veamos un ejemplo:
+
+```{r}
+promedio_clases<- data.frame(clase=c("M", "M", "M", "B", "B", "B"),
+                             notas=c(7,8,9, 10, 9, NA))
+mean(promedio_clases$notas)
+```
+
+\
+Una opción que tenemos es colocar el argumento **na.rm=TRUE** para que nos ignore los NA's la función:
+
+```{r}
+mean(promedio_clases$notas, na.rm=TRUE)
+
+```
+
+\
+Pero si queremos identificar cuales son los datos que nos dan NA y filtrarlos usamos la función *is.na()*:
+
+```{r}
+is.na(promedio_clases$notas)
+```
+
+\
+Indexando podemos remover estos **NA**:
+
+```{r}
+promedio_clases[!is.na(promedio_clases$notas),]
+```
+
+\
+También R tiene una función que nos hace más fácil esto:
+
+```{r}
+na.omit(promedio_clases)
+```
+
+### Filtrando con *subset()*
+
+Hay una función en R básico que nos permite obtener subconjuntos o filtrar las filas de nuestras tablas de manera más intuitiva.
+Usaremos de nuevo la data de *ToothGrowth*:
+
+```{r}
+head(subset(ToothGrowth, dose=="0.5"))
+subset(ToothGrowth, dose=="0.5" & supp =="OJ" & len >10)
+```
+
+\
+
+## 3. Creando una nueva columna
+
+Para crear una nueva columna de una *dataframe* podemos utilizar varios métodos:\
+- El primero sería declarar una variable nueva de la dataframe y de ahí indicarle que se desea como nueva columna en el dataframe utilizando el *"\$"*. Creemos una data como la anterior de las notas:
+
+```{r}
+promedio_notas<- data.frame(estudiante = c("E1", "E2", "E3","E1", "E2", "E3"),
+                            clase=c("M", "M", "M", "B", "B", "B"),
+                             notas=c(7,8,9, 10, 9, 8))
+
+promedio_notas$ponderacion <- c(0.7,0.7,0.7, 0.3,0.3,0.3)
+
+promedio_notas
+```
+
+\
+- También podemos usar las funciones *within()* y *transform():*\
+
+```{r}
+promedio_notas<-within(promedio_notas,  nota_ponderada <- notas*ponderacion) 
+
+promedio_notas<-transform(promedio_notas,  nota_ponderada = notas*ponderacion) 
+
+promedio_notas
+```
+
+##  *aggregate()* : Resumiendo los datos 
+
+Con la función *aggregate()* podemos resumir nuestros datos, por ejemplo:\
+
+```{r}
+aggregate(notas ~ clase, data = promedio_notas, mean)
+
+aggregate(notas ~ estudiante, data = promedio_notas, median)
+
+aggregate(notas ~ clase+estudiante, data = promedio_notas, sum)
+```
+
+##  Renombrando columnas y datos 
+
+Para renombrar columnas podemo sólo reescribir el nuevo nombre por el viejo, por ejemplo:\
+
+```{r}
+colnames(promedio_notas)
+colnames(promedio_notas)[2] <- "curso"
+colnames(promedio_notas)
+```
+
+También si queremos cambiar todos los nombres de las columnas (no lo correré pero dejaré el ejemplo):
+
+```{r, eval=FALSE}
+names(promedio_notas) <- c("a", "b", "c", "d")
+```
+
+## Renombrando valores en una columna:
+
+```{r}
+promedio_notas$curso <- ifelse(promedio_notas$curso == "M", "Matemáticas", "Biología")   
+promedio_notas$curso 
+```
+
+## *cbind() y rbind()*
+
+*cbind()* y *rbind()* son funciones que nos permiten combinar y juntar vectores, matrices y tablas.
+
+"c" es para juntar por columnas (horizontalmente, una al lado de otra) y "r" para combinar combinar por filas (verticalmente, una abajo de otra).
+
+Ejemplos:
+
+cbind:
+
+```{r}
+correcion_nota<- c(10,9,8,8,9,10)
+cbind(promedio_notas, correcion_nota)
+cbind(promedio_notas, promedio_notas)
+```
+
+rbind:
+
+```{r, eval=FALSE}
+notas_fisica<- data.frame(estudiante = c("E1", "E2", "E3"),
+                            curso=c("F", "F", "F", "F", "F", "F"),
+                             notas=c(7, 9, 8))
+rbind(promedio_notas, notas_fisica)
+```
+
+Error in rbind(deparse.level, ...) : numbers of columns of arguments do not match\
+Vemos este error es debido a que tanto para hacer el cbind o el rbind se necesitan tener las mismas dimensiones entre objetos (tablas, vectores y matrices).
+Y en el caso del rbind, deben tener el mismo nombre de columnas (colnames).
+En este caso quería agregar unas filas abajo en esta tabla pero nos faltó la columna de ponderación, probemos de nuevo:
+\
+
+```{r}
+notas_fisica<- data.frame(estudiante = c("E1", "E2", "E3"),
+                            curso=c("Fisica", "Fisica", "Fisica"),
+                             notas=c(7, 9, 8),
+                            ponderacion = c(0.1, 0.1, 0.1), 
+                          nota_ponderada= c(10, 9, 8))
+rbind(promedio_notas, notas_fisica)
+```
+
+\
+
+## Uniendo tablas con *merge()*
+
+Con la funcion *merge()* podemos unir dos *dataframes* con nombres de columnas y filas comunes:
+
+```{r}
+x <- data.frame(k1 = c(1,3,3,4,5), k2 = c("a1","a2","a3","a4","a5"), data = 1:5)
+y <- data.frame(k3 = c(2,2,6,4,5), k2 = c("a1","a2","a3","a4","a5"), data = 1:5)
+
+merge(x, y, by = "k2") 
+merge(x, y, by = c("k2", "data"), all = TRUE) 
+```
+
+Vimos como se pueden unir tablas con columnas en común estas pueden ser una o más y preferiblemente que tengan nombres diferentes las columnas que no se van a unir.
+
+## Ordenando tablas por un criterio o columna
+
+Podemos ordenar nuestra tabla con uno o más criterios:
+
+```{r}
+promedio_notas <- promedio_notas[order(promedio_notas$notas, decreasing = TRUE),]
+promedio_notas
+```
+
+```{r}
+promedio_notas <- promedio_notas[order(promedio_notas$notas, promedio_notas$ponderacion),]
+promedio_notas
+```
+
+## Funciones adicionales de agregación 
+
+para calcular fácilmente los promedos o sumas de todas las columnas y las filas usamos rowMeans(), colMeans(), rowSums() y colSums().
+
+```{r}
+examen <- data.frame("q1" = c(1, 0, 0, 0, 0),
+                     "q2" = c(1, 0, 1, 1, 0),
+                     "q3" = c(1, 0, 1, 0, 0),
+                     "q4" = c(1, 1, 1, 1, 1),
+                     "q5" = c(1, 0, 0, 1, 1))
+
+```
+
+```{r}
+rowMeans(examen)
+colMeans(examen)
+```
+
+```{r}
+rowSums(examen)
+colSums(examen)
+```
+
+\
+
+También si queremos saber cuántas columnas y filas tienen nuestros datos además de *dim()* y *str()* podemos usar:
+
+```{r}
+nrow(examen)
+ncol(examen)
+```
+
+\newpage
+
+## Ejemplo aplicado[^1]
+
+[^1]: <https://bookdown.org/ndphillips/YaRrr/test-your-r-might-pirates-and-superheroes.html>
+
+Las siguientes dos tablas muestran los resultados de dos encuestas hechas a 10 personas.
+En la primera encuesta preguntaron su género y su edad.
+Y en la segunda preguntaron su superhéroe favorito y cantidad de tatuajes que tenía.
+
+```{r}
+primera<- data.frame(Nombre= c("Astrid", "Lea", "Sarina", "Remon", "Letizia", 
+                               "Babice", "Jonas", "Wendy", "Nivedithia", "Gioia"),
+                     Sexo= c("F", "F", "F", "M", "F", "F", "M", "F", "F", "F"),
+                     Edad= c(30,25,25,29,22,22,35,19,32,21))
+segunda<- data.frame(Nombre= c("Astrid", "Lea", "Sarina", "Remon", "Letizia", 
+                               "Babice", "Jonas", "Wendy", "Nivedithia", "Gioia"),
+                     Superhéroe= c("Batman", "Superman", "Batman", "Spiderman", "Batman", 
+                                   "Antman", "Batman", "Superman", "Maggot", "Superman"),
+                     Tatuajes= c(11,15,12,5,65,3,9,13,900,0))
+knitr::kable(primera); knitr::kable(segunda)
+```
+
+Para hacer:
+
+1.  Combina las dos tablas en una sola y completa las siguientes asignaciones.
+
+2.  ¿Cuál es la edad media de las mujeres y hombres por separado?
+
+3.  ¿Cuál fue el número más alto de tatuajes en un hombre?
+
+4.  ¿Cuál es el porcentaje de personas debajo de 32 años que son mujeres?
+
+5.  Agrega una nueva columna a a la data llamada `tatuajes.por.año` que muestre cuántos tatuajes por año se ha hecho cada persona por cada año en su vida.
+
+6.  ¿Cuál persona tiene el mayor número de tatuajes por año?
+
+7.  ¿Cuáles son los nombres de las mujeres a las que su superheroe favorito es superman?
+
+8.  ¿Cuál es la mediana del número de tatuajes de cad apersona que está por encima de los 20 años y que su personaje favorito es Batman?\
+
+### Resolviendo
+
+1.  Combina las dos tablas en una sola y completa las siguientes asignaciones.\
+
+```{r}
+encuestas<- merge(primera, segunda, by = "Nombre")
+```
+
+\
+2.
+¿Cuál es la edad media de las mujeres y hombres por separado?
+cómo podemos hacer esto?
+\
+
+```{r}
+aggregate(Edad ~ Sexo, data = encuestas, mean)
+```
+
+\
+3.
+¿Cuál fue el número más alto de tatuajes en un hombre?
+\
+
+```{r}
+males<- subset(encuestas, Sexo=="M")
+max(males$Tatuajes)
+```
+
+\
+4.
+¿Cuál es el porcentaje de mujeres debajo de 32 años?
+\
+
+```{r}
+fem<- subset(encuestas, Sexo=="F")
+fem_32<- fem[fem$Edad<32,]
+
+(nrow(fem_32)/nrow(fem))*100
+```
+
+\
+5.
+Agrega una nueva columna a a la data llamada `tatuajes.por.año` que muestre cuántos tatuajes por año se ha hecho cada persona por cada año en su vida.
+\
+
+```{r}
+encuestas$tatuajes.por.año<- encuestas$Tatuajes/encuestas$Edad
+encuestas$tatuajes.por.año
+```
+
+\
+6.
+¿Cuál persona tiene el mayor número de tatuajes por año?
+\
+
+```{r}
+mayor_tatuaje<-which.max(encuestas$tatuajes.por.año)
+encuestas[mayor_tatuaje,]
+```
+
+\
+7.
+¿Cuáles son los nombres de las mujeres a las que su superheroe favorito es superman?
+\
+
+```{r}
+sup<-fem[fem$Superhéroe=="Superman",]
+sup$Nombre
+```
+
+\
+8.
+¿Cuál es la mediana del número de tatuajes de cada persona que está por encima de los 20 años y que su personaje favorito es superman?
+\
+
+```{r}
+ocho<- subset(encuestas, Edad>20 & Superhéroe =="Batman")
+median(ocho$Tatuajes)
+```
