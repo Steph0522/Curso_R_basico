@@ -4,4 +4,5 @@ Este git contiene todo el material del curso de R básico que se impartió a los
 
 Si quieres seguir este curso con las clases grabadas, ve estos vídeos en youtube:
 https://youtu.be/l6r4xwxt2zc
-[48 Stephanie.PDF](https://github.com/Steph0522/Curso_R_basico/files/8884441/48.Stephanie.PDF)
+
+![48 Stephanie-1](https://user-images.githubusercontent.com/46801667/173198850-dc156080-30ae-4d64-ae56-0f937bebf2d4.png)
