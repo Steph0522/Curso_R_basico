@@ -2,9 +2,10 @@
 title: "R básico para ciencia de datos - Clase 2"
 author: | 
   | Ph D.Stephanie Hereira-Pacheco 
+  | Ph D.Selene Gómez Acata 
   | CTBC
   | Universidad Autónoma de Tlaxcala
-date: "`15 - 02 - 2022`"
+date: "`07 - 02 - 2023`"
 output: 
  beamer_presentation:
    theme: "Warsaw"
