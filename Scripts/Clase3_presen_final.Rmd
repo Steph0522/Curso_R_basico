@@ -4,7 +4,7 @@ author: |
   | Ph D.Stephanie Hereira-Pacheco 
   | CTBC
   | UATx
-date: "`16 - 02 - 2022`"
+date: "`08 - 10 - 2025`"
 output: 
  beamer_presentation:
    theme: "Madrid"
@@ -26,7 +26,7 @@ fontsize:  9 pt
 ## Data
 
 ```{r, echo=FALSE}
-img_path <- "/home/steph/Documents/CURSOS/My_repositories/Curso_R_Básico/Rafa_book/R_básico/images/"
+img_path <- "C:/Users/HP/Documents/Curso_R_basico/images/"
 ```
 
 Para la revisión de los estadísticos básicos en R trabajaremos con el dataset `iris`.
@@ -56,7 +56,7 @@ Como vemos, posee 4 variables de respuesta y un factor que sería la especie de 
 
 ```{r,  echo=FALSE,   out.width="45%"}
 knitr::include_graphics(file.path(img_path,"flores.jpg"))
-knitr::include_graphics(file.path(img_path,"flores3.png"))
+knitr::include_graphics(file.path(img_path,"flores2.png"))
 ```
 
 ## Estadísticos descriptivos
