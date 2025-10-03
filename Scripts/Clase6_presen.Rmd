@@ -4,7 +4,7 @@ author: |
   | Ph D.Stephanie Hereira-Pacheco 
   | CTBC
   | UATx
-date: "`28 - 02 - 2022`"
+date: "`20 - 10 - 2025`"
 output: 
  beamer_presentation:
     theme: "CambridgeUS"
@@ -520,7 +520,7 @@ Otros ajustes más específicos como tamaño y color de letras, posición de la 
 ToothGrowth %>%  mutate(dose=case_when(  dose==0.5~"D0.5",dose==1~"D1",
   dose==2~"D2")) %>% ggplot(aes(x = dose, y = len, fill=supp)) + 
   geom_boxplot()+ 
-  theme(axis.title = element_text(size = "14", colour = "blue"),
+  theme(axis.title = element_text(size = 14, colour = "blue"),
   title = element_text(size = 16, colour = "red"), legend.position = "top")
 ```
 
