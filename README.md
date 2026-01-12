@@ -1,4 +1,4 @@
-# Curso_R_básico
+# Curso_R_básico 
 
 Este git contiene todo el material del curso de R básico que se imparte a los estudiantes del posgrado del CTBC de la Universidad Autónoma de Tlaxcala en diferentes años:
 
