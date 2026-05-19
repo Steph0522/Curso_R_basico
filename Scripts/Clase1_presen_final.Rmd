@@ -4,7 +4,7 @@ author: |
   | Ph D.Stephanie Hereira-Pacheco 
   | Ph D.Nina Montoya Ciriaco
   | Universidad Autónoma de Tlaxcala
-date: "`06 - 10 - 2025`"
+date: "`19- 05 - 2026`"
 output: 
  beamer_presentation:
    theme: "Copenhagen"

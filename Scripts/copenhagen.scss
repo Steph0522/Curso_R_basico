@@ -1,0 +1,224 @@
+/*-- scss:defaults --*/
+$body-bg: #ffffff;
+$body-color: #1a1a1a;
+$link-color: #2b3a5a;
+$font-family-sans-serif: "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+/*-- scss:rules --*/
+
+/* ── Sección: padding lateral para el contenido ── */
+.reveal .slides section {
+  padding: 0 30px 20px 30px !important;
+  text-align: left;
+  font-size: 0.82em;
+}
+
+/* ── Barra de título estilo Copenhagen ── */
+/* Márgenes negativos para cancelar el padding de la sección → borde a borde */
+.reveal .slides section h2 {
+  background-color: #2b3a5a;
+  color: #ffffff !important;
+  padding: 8px 30px;
+  margin: 0 -30px 18px -30px;
+  font-size: 0.95em;
+  font-weight: bold;
+  text-align: left;
+  letter-spacing: 0.3px;
+  box-sizing: border-box;
+}
+
+/* Subtítulos dentro de la diapositiva */
+.reveal .slides section h3 {
+  color: #2b3a5a;
+  font-size: 0.82em;
+  margin-top: 0.6em;
+  margin-bottom: 0.2em;
+  font-weight: bold;
+  border-bottom: 1px solid #c8d4e8;
+  padding-bottom: 2px;
+}
+
+/* ── Pie de página estilo Copenhagen ── */
+.reveal .footer {
+  background-color: #2b3a5a !important;
+  color: #c8d4e8 !important;
+  font-size: 0.42em !important;
+  padding: 3px 14px !important;
+  height: 24px !important;
+  line-height: 24px !important;
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100vw !important;
+  z-index: 100 !important;
+  margin: 0 !important;
+  transform: none !important;
+}
+
+/* Número de diapositiva — dentro del pie de página */
+.reveal .slide-number {
+  position: fixed !important;
+  bottom: 0 !important;
+  right: 14px !important;
+  background-color: transparent !important;
+  color: #c8d4e8 !important;
+  font-size: 0.42em !important;
+  height: 24px !important;
+  line-height: 24px !important;
+  padding: 0 !important;
+  z-index: 101 !important;
+}
+
+.reveal .slide-number a {
+  color: #c8d4e8 !important;
+}
+
+/* ── Portada ── */
+#title-slide {
+  padding: 40px 30px !important;
+  text-align: center !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+#title-slide .title {
+  color: #2b3a5a !important;
+  font-size: 2em !important;
+  font-weight: bold !important;
+  margin-bottom: 0.3em !important;
+  text-align: center !important;
+}
+
+#title-slide .subtitle {
+  color: #4a6a9a !important;
+  font-size: 1em !important;
+  margin-bottom: 1em !important;
+  text-align: center !important;
+}
+
+#title-slide .author {
+  color: #1a1a1a !important;
+  font-size: 0.85em !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  margin-top: 0.8em !important;
+  text-align: center !important;
+}
+
+#title-slide .institute {
+  color: #444 !important;
+  font-size: 0.78em !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  margin-top: 0.3em !important;
+  text-align: center !important;
+}
+
+#title-slide .date {
+  color: #555 !important;
+  font-size: 0.75em !important;
+  margin-top: 0.8em !important;
+  text-align: center !important;
+}
+
+/* Listas */
+.reveal ul, .reveal ol {
+  margin-left: 1.2em;
+}
+
+.reveal li {
+  margin-bottom: 0.25em;
+}
+
+/* ── Código ── */
+.reveal pre {
+  font-size: 0.78em;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  border-left: 3px solid #2b3a5a;
+  border-radius: 2px;
+  margin: 8px 0;
+}
+
+.reveal code:not(pre code) {
+  color: #1a4080;
+  background-color: #eef2fa;
+  padding: 1px 4px;
+  border-radius: 2px;
+  font-size: 0.92em;
+}
+
+/* ── Tablas ── */
+.reveal table {
+  font-size: 0.82em;
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0;
+}
+
+.reveal table th {
+  background-color: #2b3a5a;
+  color: #ffffff;
+  padding: 4px 10px;
+  text-align: left;
+}
+
+.reveal table td {
+  padding: 3px 10px;
+  border-bottom: 1px solid #d0daea;
+}
+
+.reveal table tr:nth-child(even) td {
+  background-color: #f0f4fb;
+}
+
+/* ── Callout boxes ── */
+.callout {
+  margin: 8px 0;
+  padding: 6px 12px;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+.callout-tip {
+  border-left: 4px solid #2e7d32;
+  background-color: #e8f5e9;
+}
+
+.callout-warning {
+  border-left: 4px solid #b45309;
+  background-color: #fff8e1;
+}
+
+.callout-important {
+  border-left: 4px solid #8b1a1a;
+  background-color: #fde8e8;
+}
+
+.callout-note {
+  border-left: 4px solid #1a4a8a;
+  background-color: #e8eef8;
+}
+
+.callout-title {
+  font-weight: bold;
+  color: #2b3a5a;
+  margin-bottom: 3px;
+}
+
+/* ── Columnas ── */
+.reveal .columns {
+  display: flex !important;
+  gap: 20px;
+  align-items: flex-start;
+  flex-wrap: nowrap;
+}
+
+.reveal .column {
+  min-width: 0;
+  flex-shrink: 0;
+}

@@ -1,0 +1,455 @@
+---
+title: "R básico para ciencia de datos - Clase 4"
+author: "Ph D. Stephanie Hereira-Pacheco"
+institute: "Universidad Autónoma de Tlaxcala"
+date: "`r Sys.Date()`"
+format:
+  revealjs:
+    theme: [simple, copenhagen.scss]
+    slide-number: true
+    footer: "R básico para ciencia de datos · UAT 2026"
+    transition: none
+    background-transition: none
+    embed-resources: true
+    center: false
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## Manipulación de datos con R base — Clase 4
+
+- Filtrado y obtención de subconjuntos
+- Modificando valores en una columna
+- Juntando tablas: `cbind()`, `rbind()` y `merge()`
+- Resumiendo datos con `aggregate()`
+- Ordenando tablas
+- Funciones adicionales de agregación
+- Ejemplo aplicado
+
+## Dataset de trabajo
+
+Trabajaremos con el dataset `ToothGrowth` — efecto de vitamina C sobre el crecimiento dental:
+
+```{r}
+data("ToothGrowth")
+str(ToothGrowth)
+```
+
+## Dataset de trabajo: primeras filas
+
+```{r}
+head(ToothGrowth)
+```
+
+## Seleccionando columnas: por posición
+
+```{r}
+head(ToothGrowth[1:2], 4)      # primeras 2 columnas
+```
+
+```{r}
+head(ToothGrowth[-3], 4)       # excluir la 3ra columna
+```
+
+## Seleccionando columnas: por nombre
+
+```{r}
+head(ToothGrowth[c("dose", "len")], 4)    # por nombre
+```
+
+```{r}
+head(ToothGrowth[-1:-2, 1:2], 4)          # excluir filas 1-2, columnas 1-2
+```
+
+## Filtrando filas: por posición e índice
+
+```{r}
+head(ToothGrowth[-1:-2, ], 4)
+```
+
+```{r}
+head(ToothGrowth[which(ToothGrowth$supp == "VC"), ], 4)
+```
+
+## Filtrando filas: con índices lógicos
+
+```{r}
+ind  <- ToothGrowth$len > 27
+ind2 <- ToothGrowth$supp == "OJ"
+```
+
+```{r}
+head(ToothGrowth[ind, ], 4)
+head(ToothGrowth[ind2, ], 4)
+```
+
+## Filtrando filas: NA's
+
+Los **NA** pueden afectar los cálculos:
+
+```{r}
+promedio_clases <- data.frame(
+  clase = c("M", "M", "M", "B", "B", "B"),
+  notas = c(7, 8, 9, 10, 9, NA))
+
+mean(promedio_clases$notas)                    # NA contamina el resultado
+mean(promedio_clases$notas, na.rm = TRUE)      # ignorar NA
+```
+
+## Filtrando filas: eliminar NA's
+
+```{r}
+is.na(promedio_clases$notas)                       # detectar
+```
+
+```{r}
+promedio_clases[!is.na(promedio_clases$notas), ]   # filtrar con índice
+na.omit(promedio_clases)                            # equivalente
+```
+
+## Filtrando con `subset()`
+
+`subset()` permite filtrar de forma más intuitiva:
+
+```{r}
+head(subset(ToothGrowth, dose == "0.5"), 4)
+```
+
+```{r}
+subset(ToothGrowth, dose == "0.5" & supp == "OJ" & len > 10)
+```
+
+## Creando una nueva columna: operador `$`
+
+```{r}
+promedio_notas <- data.frame(
+  estudiante = c("E1", "E2", "E3", "E1", "E2", "E3"),
+  clase      = c("M", "M", "M", "B", "B", "B"),
+  notas      = c(7, 8, 9, 10, 9, 8))
+
+promedio_notas$ponderacion <- c(0.7, 0.7, 0.7, 0.3, 0.3, 0.3)
+promedio_notas
+```
+
+## Creando una nueva columna: `within()` y `transform()`
+
+```{r}
+promedio_notas <- within(promedio_notas,
+                         nota_ponderada <- notas * ponderacion)
+promedio_notas
+```
+
+```{r, eval=FALSE}
+# transform() es equivalente
+promedio_notas <- transform(promedio_notas,
+                            nota_ponderada = notas * ponderacion)
+```
+
+## `aggregate()`: por clase y por estudiante
+
+Calcula estadísticos por grupo con la sintaxis `variable ~ grupo`:
+
+```{r}
+aggregate(notas ~ clase, data = promedio_notas, mean)
+```
+
+```{r}
+aggregate(notas ~ estudiante, data = promedio_notas, median)
+```
+
+## `aggregate()`: combinación de factores
+
+```{r}
+aggregate(notas ~ clase + estudiante, data = promedio_notas, sum)
+```
+
+## Renombrando columnas
+
+```{r}
+colnames(promedio_notas)
+colnames(promedio_notas)[2] <- "curso"
+colnames(promedio_notas)
+```
+
+```{r, eval=FALSE}
+names(promedio_notas) <- c("a", "b", "c", "d", "e")   # renombrar todo
+```
+
+## Renombrando valores en una columna
+
+Con `ifelse()` se pueden sustituir valores:
+
+```{r}
+promedio_notas$curso <- ifelse(
+  promedio_notas$curso == "M", "Matemáticas", "Biología")
+promedio_notas$curso
+```
+
+```{r, echo=FALSE}
+promedio_notas$curso <- ifelse(
+  promedio_notas$curso == "Matemáticas", "M", "B")
+```
+
+## `cbind()` y `rbind()`
+
+- `cbind()` — une **columnas** (horizontalmente)
+- `rbind()` — une **filas** (verticalmente)
+
+```{r}
+correcion_nota <- c(10, 9, 8, 8, 9, 10)
+cbind(promedio_notas, correcion_nota)
+```
+
+## `cbind()`: unir dos tablas — código
+
+```{r, echo=FALSE}
+colnames(promedio_notas) <- c("estud", "notas", "ponder", "nota_pond")
+```
+
+```{r, eval=FALSE}
+knitr::kable(cbind(promedio_notas, promedio_notas))
+```
+
+## `cbind()`: unir dos tablas — resultado
+
+```{r, echo=FALSE}
+knitr::kable(cbind(promedio_notas, promedio_notas))
+```
+
+```{r, echo=FALSE}
+colnames(promedio_notas) <- c("estudiante", "curso", "notas", "ponderacion", "nota_ponderada")
+```
+
+## `rbind()`: agregar filas — código
+
+Las columnas deben tener el **mismo nombre** y mismas dimensiones:
+
+```{r, eval=FALSE}
+notas_fisica <- data.frame(
+  estudiante     = c("E1", "E2", "E3"),
+  curso          = c("F", "F", "F"),
+  notas          = c(7, 9, 8),
+  ponderacion    = c(0.1, 0.1, 0.1),
+  nota_ponderada = c(10, 9, 8))
+
+rbind(promedio_notas, notas_fisica)
+```
+
+::: {.callout-warning}
+Si las columnas no coinciden en nombre o número, `rbind()` generará un error.
+:::
+
+## `rbind()`: agregar filas — resultado
+
+```{r, echo=FALSE}
+notas_fisica <- data.frame(
+  estudiante     = c("E1", "E2", "E3"),
+  curso          = c("F", "F", "F"),
+  notas          = c(7, 9, 8),
+  ponderacion    = c(0.1, 0.1, 0.1),
+  nota_ponderada = c(10, 9, 8))
+
+rbind(promedio_notas, notas_fisica)
+```
+
+## `merge()`: preparar los datos
+
+Une dos *dataframes* por una o más columnas compartidas:
+
+```{r}
+x <- data.frame(k1   = c(1, 3, 3, 4, 5),
+                k2   = c("a1", "a2", "a3", "a4", "a5"),
+                data = 1:5)
+y <- data.frame(k3   = c(2, 2, 6, 4, 5),
+                k2   = c("a1", "a2", "a3", "a4", "a5"),
+                data = 1:5)
+```
+
+## `merge()`: unir por una columna
+
+```{r}
+merge(x, y, by = "k2")
+```
+
+## `merge()`: múltiples columnas y `all = TRUE`
+
+```{r}
+merge(x, y, by = c("k2", "data"), all = TRUE)
+```
+
+::: {.callout-note}
+`all = TRUE` conserva todas las filas aunque no haya coincidencia (*full outer join*). Se recomienda que las columnas no clave tengan nombres distintos entre tablas.
+:::
+
+## Ordenando tablas: un criterio
+
+Con `order()` podemos ordenar por uno o más criterios:
+
+```{r}
+promedio_notas <- promedio_notas[order(promedio_notas$notas,
+                                       decreasing = TRUE), ]
+promedio_notas
+```
+
+## Ordenando tablas: múltiples criterios
+
+```{r}
+promedio_notas <- promedio_notas[order(promedio_notas$notas,
+                                       promedio_notas$ponderacion), ]
+promedio_notas
+```
+
+## Funciones de agregación por filas y columnas
+
+```{r}
+examen <- data.frame(
+  q1 = c(1, 0, 0, 0, 0),
+  q2 = c(1, 0, 1, 1, 0),
+  q3 = c(1, 0, 1, 0, 0),
+  q4 = c(1, 1, 1, 1, 1),
+  q5 = c(1, 0, 0, 1, 1))
+```
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+rowMeans(examen)
+rowSums(examen)
+```
+:::
+::: {.column width="50%"}
+```{r}
+colMeans(examen)
+colSums(examen)
+```
+:::
+::::
+
+## Dimensiones: `nrow()` y `ncol()`
+
+Además de `dim()` y `str()`, podemos obtener filas y columnas por separado:
+
+```{r}
+nrow(examen)
+ncol(examen)
+```
+
+## Ejemplo aplicado: los datos
+
+Dos encuestas hechas a 10 personas:
+
+```{r}
+primera <- data.frame(
+  Nombre = c("Astrid","Lea","Sarina","Remon","Letizia",
+             "Babice","Jonas","Wendy","Nivedithia","Gioia"),
+  Sexo   = c("F","F","F","M","F","F","M","F","F","F"),
+  Edad   = c(30,25,25,29,22,22,35,19,32,21))
+
+segunda <- data.frame(
+  Nombre     = c("Astrid","Lea","Sarina","Remon","Letizia",
+                 "Babice","Jonas","Wendy","Nivedithia","Gioia"),
+  Superheroe = c("Batman","Superman","Batman","Spiderman","Batman",
+                 "Antman","Batman","Superman","Maggot","Superman"),
+  Tatuajes   = c(11,15,12,5,65,3,9,13,900,0))
+```
+
+## Ejemplo aplicado: vista de los datos
+
+:::: {.columns}
+::: {.column width="50%"}
+```{r, echo=FALSE}
+knitr::kable(primera)
+```
+:::
+::: {.column width="50%"}
+```{r, echo=FALSE}
+knitr::kable(segunda)
+```
+:::
+::::
+
+## Ejemplo aplicado: preguntas
+
+1. Combina las dos tablas en una sola.
+2. ¿Cuál es la edad media de mujeres y hombres por separado?
+3. ¿Cuál fue el número más alto de tatuajes en un hombre?
+4. ¿Cuál es el porcentaje de mujeres menores de 32 años?
+5. Agrega una columna `tatuajes.por.año` (tatuajes / edad).
+6. ¿Quién tiene más tatuajes por año?
+7. ¿Cuáles son los nombres de las mujeres cuyo superhéroe favorito es Superman?
+8. ¿Cuál es la mediana de tatuajes de personas mayores de 20 años cuyo favorito es Batman?
+
+## Resolviendo: preguntas 1 y 2
+
+**1. Unir las tablas:**
+
+```{r}
+encuestas <- merge(primera, segunda, by = "Nombre")
+```
+
+**2. Edad media por sexo:**
+
+```{r}
+aggregate(Edad ~ Sexo, data = encuestas, mean)
+```
+
+## Resolviendo: preguntas 3 y 4
+
+**3. Máximo de tatuajes en hombres:**
+
+```{r}
+males <- subset(encuestas, Sexo == "M")
+max(males$Tatuajes)
+```
+
+**4. Porcentaje de mujeres menores de 32 años:**
+
+```{r}
+fem    <- subset(encuestas, Sexo == "F")
+fem_32 <- fem[fem$Edad < 32, ]
+(nrow(fem_32) / nrow(fem)) * 100
+```
+
+## Resolviendo: preguntas 5 y 6
+
+**5. Nueva columna `tatuajes.por.año`:**
+
+```{r}
+encuestas$tatuajes.por.año <- encuestas$Tatuajes / encuestas$Edad
+encuestas$tatuajes.por.año
+```
+
+**6. Persona con más tatuajes por año:**
+
+```{r}
+mayor_tatuaje <- which.max(encuestas$tatuajes.por.año)
+encuestas[mayor_tatuaje, ]
+```
+
+## Resolviendo: preguntas 7 y 8
+
+**7. Mujeres cuyo superhéroe favorito es Superman:**
+
+```{r}
+sup <- fem[fem$Superheroe == "Superman", ]
+sup$Nombre
+```
+
+**8. Mediana de tatuajes (mayores de 20 años, Batman):**
+
+```{r}
+ocho <- subset(encuestas, Edad > 20 & Superheroe == "Batman")
+median(ocho$Tatuajes)
+```
+
+## Referencias
+
+::: {.nonincremental}
+- Irizarry, R.A. (2019). *Introduction to Data Science*. [rafalab.dfci.harvard.edu/dsbook](https://rafalab.dfci.harvard.edu/dsbook)
+- Wickham, H. & Grolemund, G. (2017). *R for Data Science*. [r4ds.had.co.nz](https://r4ds.had.co.nz)
+- Bosco Mendoza, J. (2019). *R para principiantes*. [bookdown.org/jboscomendoza/r-principiantes4](https://bookdown.org/jboscomendoza/r-principiantes4)
+- CRAN — Comprehensive R Archive Network: [cran.r-project.org](https://cran.r-project.org)
+- RStudio Education: [education.rstudio.com](https://education.rstudio.com)
+:::
