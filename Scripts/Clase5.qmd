@@ -1,0 +1,452 @@
+---
+title: "R básico para ciencia de datos - Clase 5"
+author: "Ph D. Stephanie Hereira-Pacheco"
+institute: "Universidad Autónoma de Tlaxcala"
+date: "`r Sys.Date()`"
+format:
+  revealjs:
+    theme: [simple, copenhagen.scss]
+    slide-number: true
+    footer: "R básico para ciencia de datos · UAT 2026"
+    transition: none
+    background-transition: none
+    embed-resources: true
+    center: false
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## Manipulación de datos con *tidyverse* — Clase 5
+
+- ¿Qué es el *tidyverse*?
+- El *pipe* `|>`
+- `select()` — seleccionar columnas
+- `filter()` — filtrar filas
+- `mutate()` — crear o modificar columnas
+- `group_by()` + `summarise()` — resumir por grupos
+- `arrange()` — ordenar
+- Unir tablas con *joins*
+- `pivot_longer()` y `pivot_wider()`
+- Ejemplo aplicado
+
+---
+
+## ¿Qué es el *tidyverse*?
+
+Un conjunto de paquetes de R diseñados para trabajar juntos, con una sintaxis consistente e intuitiva.
+
+```{r}
+library(tidyverse)
+```
+
+::: {style="text-align: center;"}
+| Paquete | Para qué sirve |
+|:---:|:---|
+| `dplyr` | Manipular tablas |
+| `tidyr` | Reorganizar la estructura de tablas |
+| `readr` | Importar datos |
+| `ggplot2` | Visualización |
+:::
+
+---
+
+## Datos *tidy*
+
+Una tabla está en formato ***tidy*** cuando:
+
+- Cada **fila** = una observación
+- Cada **columna** = una variable
+
+::: {.callout-note}
+Este formato es el que esperan casi todas las funciones del *tidyverse* y de `ggplot2`.
+:::
+
+---
+
+## El *pipe*: `|>`
+
+El *pipe* pasa el resultado de la izquierda como primer argumento de la función de la derecha:
+
+```{r}
+16 |> sqrt()
+16 |> sqrt() |> log2()
+```
+
+::: {.callout-tip}
+Atajo de teclado: **Ctrl + Shift + M** (Windows) · **Cmd + Shift + M** (Mac).
+
+El pipe nativo de R es `|>` — también verás `%>%` del paquete `magrittr`, funcionan igual.
+:::
+
+---
+
+## Por qué el *pipe* es útil
+
+Sin *pipe* — hay que leer de adentro hacia afuera:
+
+```{r, eval=FALSE}
+head(subset(ToothGrowth, supp == "OJ"), 4)
+```
+
+Con *pipe* — se lee de izquierda a derecha:
+
+```{r}
+ToothGrowth |> subset(supp == "OJ") |> head(4)
+```
+
+---
+
+## Por qué el *pipe* es útil: con `dplyr`
+
+Con las funciones de `dplyr` se vuelve aún más natural:
+
+```{r}
+ToothGrowth |> filter(supp == "OJ") |> head(4)
+```
+
+::: {.callout-note}
+A partir de aquí usaremos `dplyr` — las funciones reemplazan las operaciones de R base pero son más legibles y consistentes.
+:::
+
+---
+
+## `select()`: seleccionar columnas
+
+```{r}
+ToothGrowth |> select(len, dose) |> head(4)
+```
+
+Excluir una columna:
+
+```{r}
+ToothGrowth |> select(-supp) |> head(4)
+```
+
+---
+
+## `filter()`: filtrar filas
+
+```{r}
+ToothGrowth |> filter(supp == "OJ") |> head(4)
+```
+
+Varias condiciones:
+
+```{r}
+ToothGrowth |> filter(supp == "OJ", len > 20) |> head(4)
+```
+
+---
+
+## `filter()`: filtrar `NA`
+
+```{r, eval=FALSE}
+ToothGrowth |> filter(!is.na(len))
+```
+
+::: {.callout-tip}
+`!is.na(columna)` se lee "donde columna **no** es NA". Es la forma estándar de excluir faltantes al filtrar.
+:::
+
+---
+
+## `mutate()`: crear una nueva columna
+
+```{r}
+ToothGrowth |>
+  mutate(len_log = log(len)) |>
+  head(4)
+```
+
+---
+
+## `mutate()`: modificar una columna existente
+
+```{r}
+ToothGrowth |>
+  mutate(dose = factor(dose,
+                       levels = c(0.5, 1, 2),
+                       labels = c("D0.5", "D1", "D2"))) |>
+  head(4)
+```
+
+---
+
+## `mutate()`: crear categorías con `ifelse()`
+
+```{r}
+ToothGrowth |>
+  mutate(dosis_alta = ifelse(dose > 1, "alta", "baja")) |>
+  head(6)
+```
+
+---
+
+## `mutate()`: recodificar con `case_when()`
+
+Para más de dos categorías, `case_when()` es más claro que `ifelse()`:
+
+```{r}
+ToothGrowth |>
+  mutate(dosis_label = case_when(
+    dose == 0.5 ~ "Baja",
+    dose == 1.0 ~ "Media",
+    dose == 2.0 ~ "Alta")) |>
+  head(6)
+```
+
+---
+
+## `group_by()` + `summarise()`: resumir por grupos
+
+```{r}
+ToothGrowth |>
+  group_by(supp) |>
+  summarise(
+    promedio = mean(len),
+    desv_est = sd(len),
+    n        = n())
+```
+
+---
+
+## `group_by()` con más de un grupo
+
+```{r}
+ToothGrowth |>
+  group_by(supp, dose) |>
+  summarise(promedio = mean(len), .groups = "drop")
+```
+
+::: {.callout-note}
+`.groups = "drop"` elimina el agrupamiento al terminar.
+:::
+
+---
+
+## `arrange()`: ordenar tablas
+
+```{r}
+ToothGrowth |> arrange(len) |> head(4)
+ToothGrowth |> arrange(desc(len)) |> head(4)
+```
+
+---
+
+## `arrange()`: por varios criterios
+
+```{r}
+ToothGrowth |> arrange(supp, desc(len)) |> head(4)
+```
+
+::: {.callout-tip}
+`desc()` invierte el orden de esa columna — las demás siguen ascendente.
+:::
+
+---
+
+## Encadenar varias operaciones
+
+El poder del *pipe*: múltiples pasos en una cadena legible:
+
+```{r}
+ToothGrowth |>
+  filter(supp == "OJ") |>
+  mutate(len_log = log(len)) |>
+  group_by(dose) |>
+  summarise(promedio_log = mean(len_log), .groups = "drop") |>
+  arrange(desc(promedio_log))
+```
+
+---
+
+## Unir tablas: *joins*
+
+::: {style="text-align: center;"}
+| Función | ¿Qué conserva? |
+|:---:|:---|
+| `inner_join()` | Solo filas que coinciden en **ambas** tablas |
+| `left_join()` | Todas las filas de la tabla **izquierda** |
+| `right_join()` | Todas las filas de la tabla **derecha** |
+| `full_join()` | Todas las filas de **ambas** tablas |
+:::
+
+---
+
+## *Joins*: los datos
+
+```{r}
+band_members
+band_instruments
+```
+
+---
+
+## *Joins*: en acción
+
+```{r}
+band_members |> inner_join(band_instruments, by = "name")
+band_members |> full_join(band_instruments, by = "name")
+```
+
+::: {.callout-tip}
+`left_join()` es el más común: mantiene todos tus datos originales y agrega información de una segunda tabla.
+:::
+
+---
+
+## `pivot_longer()`: de ancho a largo
+
+```{r}
+data(iris)
+iris_sub <- iris |>
+  select(Sepal.Length, Sepal.Width) |>
+  head(4) |>
+  mutate(id = row_number())
+
+iris_sub |>
+  pivot_longer(cols = c(Sepal.Length, Sepal.Width),
+               names_to  = "variable",
+               values_to = "valor")
+```
+
+---
+
+## `pivot_wider()`: de largo a ancho
+
+```{r}
+iris_largo <- iris_sub |>
+  pivot_longer(cols = c(Sepal.Length, Sepal.Width),
+               names_to = "variable", values_to = "valor")
+
+iris_largo |>
+  pivot_wider(names_from = variable, values_from = valor)
+```
+
+::: {.callout-note}
+`pivot_longer()` es el más usado — `ggplot2` y la mayoría de funciones de análisis esperan datos en formato largo.
+:::
+
+---
+
+## Ejemplo aplicado: los datos
+
+```{r}
+primera <- data.frame(
+  Nombre = c("Astrid","Lea","Sarina","Remon","Letizia",
+             "Babice","Jonas","Wendy","Nivedithia","Gioia"),
+  Sexo   = c("F","F","F","M","F","F","M","F","F","F"),
+  Edad   = c(30,25,25,29,22,22,35,19,32,21))
+
+segunda <- data.frame(
+  Nombre     = c("Astrid","Lea","Sarina","Remon","Letizia",
+                 "Babice","Jonas","Wendy","Nivedithia","Gioia"),
+  Superheroe = c("Batman","Superman","Batman","Spiderman","Batman",
+                 "Antman","Batman","Superman","Maggot","Superman"),
+  Tatuajes   = c(11,15,12,5,65,3,9,13,900,0))
+```
+
+---
+
+## Ejemplo aplicado: preguntas
+
+1. Combina las dos tablas con `full_join()`.
+2. ¿Cuál es la edad media de mujeres y hombres por separado?
+3. ¿Cuál fue el número más alto de tatuajes en un hombre?
+4. ¿Qué porcentaje de mujeres tiene menos de 32 años?
+5. Agrega una columna `tatuajes_por_año`.
+6. ¿Quién tiene más tatuajes por año?
+7. ¿Nombres de mujeres cuyo superhéroe es Superman?
+8. ¿Mediana de tatuajes de personas mayores de 20 cuyo favorito es Batman?
+
+---
+
+## Resolviendo: 1 y 2
+
+**1. Unir las tablas:**
+
+```{r}
+encuestas <- primera |> full_join(segunda, by = "Nombre")
+```
+
+**2. Edad media por sexo:**
+
+```{r}
+encuestas |>
+  group_by(Sexo) |>
+  summarise(edad_media = mean(Edad), .groups = "drop")
+```
+
+---
+
+## Resolviendo: 3 y 4
+
+**3. Máximo de tatuajes en hombres:**
+
+```{r}
+encuestas |> filter(Sexo == "M") |> summarise(max(Tatuajes))
+```
+
+**4. Porcentaje de mujeres menores de 32 años:**
+
+```{r}
+mujeres    <- encuestas |> filter(Sexo == "F")
+mujeres_32 <- mujeres   |> filter(Edad < 32)
+(nrow(mujeres_32) / nrow(mujeres)) * 100
+```
+
+---
+
+## Resolviendo: 5 y 6
+
+**5. Nueva columna:**
+
+```{r}
+encuestas <- encuestas |>
+  mutate(tatuajes_por_año = Tatuajes / Edad)
+```
+
+**6. Persona con más tatuajes por año:**
+
+```{r}
+encuestas |>
+  filter(tatuajes_por_año == max(tatuajes_por_año)) |>
+  select(Nombre, tatuajes_por_año)
+```
+
+---
+
+## Resolviendo: 7
+
+**7. Mujeres cuyo superhéroe es Superman:**
+
+```{r}
+encuestas |>
+  filter(Sexo == "F", Superheroe == "Superman") |>
+  select(Nombre)
+```
+
+---
+
+## Resolviendo: 8
+
+**8. Mediana de tatuajes (mayores de 20, Batman):**
+
+```{r}
+encuestas |>
+  filter(Edad > 20, Superheroe == "Batman") |>
+  summarise(mediana = median(Tatuajes))
+```
+
+---
+
+## Referencias
+
+::: {.nonincremental}
+- Wickham, H. & Grolemund, G. (2017). *R for Data Science*. O'Reilly. [r4ds.had.co.nz](https://r4ds.had.co.nz)
+- Wickham, H. (2023). *dplyr documentation*. [dplyr.tidyverse.org](https://dplyr.tidyverse.org)
+- Irizarry, R.A. (2019). *Introduction to Data Science*. [rafalab.dfci.harvard.edu/dsbook](https://rafalab.dfci.harvard.edu/dsbook)
+- CRAN — Comprehensive R Archive Network: [cran.r-project.org](https://cran.r-project.org)
+:::

@@ -1,0 +1,377 @@
+---
+title: "R básico para ciencia de datos - Clase 6"
+author: "Ph D. Stephanie Hereira-Pacheco"
+institute: "Universidad Autónoma de Tlaxcala"
+date: "`r Sys.Date()`"
+format:
+  revealjs:
+    theme: [simple, copenhagen.scss]
+    slide-number: true
+    footer: "R básico para ciencia de datos · UAT 2026"
+    transition: none
+    background-transition: none
+    embed-resources: true
+    center: false
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## Gráficas en R — Clase 6
+
+- Gráficas con R base
+- Introducción a `ggplot2`
+- Geometrías: puntos, boxplot, histograma, barras
+- Colores y títulos
+- Temas
+- Facetas
+- Guardar gráficas
+- `ggpubr`: gráficas rápidas y bonitas
+- Ejercicios
+
+---
+
+## R tiene dos sistemas de gráficas
+
+:::: {.columns}
+::: {.column width="50%"}
+**R base**
+
+- Rápido para exploración
+- Sin instalar paquetes
+- Menos personalizable
+- Funciones: `plot()`, `hist()`, `boxplot()`
+:::
+::: {.column width="50%"}
+**ggplot2**
+
+- Más bonito y personalizable
+- Gramática de capas
+- Ideal para publicaciones
+- Requiere `library(ggplot2)`
+:::
+::::
+
+---
+
+## R base: histograma
+
+```{r, fig.width=4.5, fig.height=3.5, fig.align='center'}
+data(iris)
+hist(iris$Sepal.Length,
+     main = "Longitud del sépalo",
+     xlab = "Longitud (cm)",
+     ylab = "Frecuencia",
+     col  = "steelblue")
+```
+
+---
+
+## R base: boxplot
+
+```{r, fig.width=5, fig.height=3.5, fig.align='center'}
+boxplot(Sepal.Length ~ Species, data = iris,
+        main = "Longitud del sépalo por especie",
+        xlab = "Especie", ylab = "Longitud (cm)",
+        col  = c("orchid", "lightblue", "lightgreen"))
+```
+
+---
+
+## R base: diagrama de dispersión
+
+```{r, fig.width=4.5, fig.height=3.5, fig.align='center'}
+plot(x = iris$Petal.Length, y = iris$Petal.Width,
+     col  = iris$Species,
+     xlab = "Largo pétalo", ylab = "Ancho pétalo",
+     main = "Relación largo vs ancho del pétalo")
+legend("topleft", legend = levels(iris$Species),
+       fill = 1:3, title = "Especie")
+```
+
+---
+
+## Guardar una gráfica (R base)
+
+```{r, eval=FALSE}
+png(filename = "mi_grafica.png", width = 800, height = 600)
+
+hist(iris$Sepal.Length, col = "steelblue",
+     main = "Longitud del sépalo")
+
+dev.off()
+```
+
+::: {.callout-note}
+El archivo se guarda en el directorio de trabajo. Se puede usar `jpeg()`, `pdf()` o `tiff()` de la misma manera.
+:::
+
+---
+
+## Introducción a `ggplot2`
+
+`ggplot2` construye gráficas por **capas**:
+
+1. **Datos** — el dataframe
+2. **Estética (`aes`)** — qué variable va en x, en y, con qué color
+3. **Geometría (`geom_`)** — el tipo de gráfica
+
+```{r, eval=FALSE}
+library(ggplot2)
+
+ggplot(data = mis_datos, aes(x = variable_x, y = variable_y)) +
+  geom_punto_o_caja_o_histograma()
+```
+
+Las capas se unen con **`+`** (no con el pipe).
+
+---
+
+## `ggplot2`: la pizarra en blanco
+
+```{r, fig.height=3, fig.width=4, fig.align='center'}
+library(ggplot2)
+data("ToothGrowth")
+
+ggplot(data = ToothGrowth, aes(x = dose, y = len))
+```
+
+Sin `geom_`, ggplot solo muestra los ejes.
+
+---
+
+## `geom_point()`: diagrama de dispersión
+
+```{r, fig.width=5, fig.height=3.5, fig.align='center'}
+ggplot(ToothGrowth, aes(x = dose, y = len, color = supp)) +
+  geom_point()
+```
+
+---
+
+## `geom_boxplot()`: diagrama de cajas
+
+Primero convertimos `dose` a factor para que sea una variable discreta:
+
+```{r, fig.width=5, fig.height=3.2, fig.align='center'}
+library(tidyverse)
+ToothGrowth |>
+  mutate(dose = factor(dose)) |>
+  ggplot(aes(x = dose, y = len, fill = supp)) +
+  geom_boxplot()
+```
+
+---
+
+## `geom_histogram()`: histograma
+
+```{r, fig.width=5, fig.height=3.2, fig.align='center'}
+ggplot(iris, aes(x = Sepal.Length)) +
+  geom_histogram(bins = 15, fill = "steelblue", color = "white")
+```
+
+::: {.callout-tip}
+`bins` controla el número de barras. Prueba distintos valores para encontrar el más informativo.
+:::
+
+---
+
+## `geom_bar()`: gráfica de barras
+
+Para barras de conteo por grupo:
+
+```{r, fig.width=5, fig.height=3.2, fig.align='center'}
+ggplot(iris, aes(x = Species, fill = Species)) +
+  geom_bar()
+```
+
+---
+
+## Títulos y etiquetas: `labs()`
+
+```{r, fig.width=5, fig.height=3, fig.align='center'}
+ToothGrowth |>
+  mutate(dose = factor(dose)) |>
+  ggplot(aes(x = dose, y = len, fill = supp)) +
+  geom_boxplot() +
+  labs(title = "Longitud dental por dosis",
+       x     = "Dosis (mg/día)",
+       y     = "Longitud del diente",
+       fill  = "Suplemento")
+```
+
+---
+
+## Colores: `scale_fill_manual()`
+
+Para definir los colores exactos que quieres:
+
+```{r, fig.width=5, fig.height=3, fig.align='center'}
+ToothGrowth |>
+  mutate(dose = factor(dose)) |>
+  ggplot(aes(x = dose, y = len, fill = supp)) +
+  geom_boxplot() +
+  scale_fill_manual(values = c("OJ" = "#E69F00", "VC" = "#56B4E9"))
+```
+
+---
+
+## Colores: paletas listas para usar
+
+`scale_fill_brewer()` incluye paletas de colores probadas y accesibles:
+
+```{r, fig.width=5, fig.height=3, fig.align='center'}
+ToothGrowth |>
+  mutate(dose = factor(dose)) |>
+  ggplot(aes(x = dose, y = len, fill = dose)) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Set2")
+```
+
+::: {.callout-tip}
+Para ver todas las paletas: `RColorBrewer::display.brewer.all()`
+:::
+
+---
+
+## Temas: cambiar el aspecto general
+
+```{r, fig.width=5, fig.height=3, fig.align='center'}
+ToothGrowth |>
+  mutate(dose = factor(dose)) |>
+  ggplot(aes(x = dose, y = len, fill = dose)) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Set2") +
+  labs(title = "Crecimiento dental por dosis") +
+  theme_classic()
+```
+
+---
+
+## Temas disponibles
+
+| Tema | Estilo |
+|---|---|
+| `theme_grey()` | Default (fondo gris) |
+| `theme_bw()` | Blanco y negro |
+| `theme_classic()` | Limpio, sin cuadrícula |
+| `theme_minimal()` | Muy limpio, minimalista |
+| `theme_dark()` | Fondo oscuro |
+
+::: {.callout-tip}
+En RStudio: escribe `theme_` y presiona **Tab** para ver todas las opciones.
+:::
+
+---
+
+## Facetas: `facet_wrap()`
+
+Divide la gráfica en paneles según una variable categórica:
+
+```{r, fig.width=6, fig.height=3.5, fig.align='center'}
+ToothGrowth |>
+  mutate(dose = factor(dose)) |>
+  ggplot(aes(x = dose, y = len, fill = dose)) +
+  geom_boxplot() +
+  facet_wrap(~ supp) +
+  theme_bw()
+```
+
+---
+
+## Guardar con `ggsave()`
+
+```{r, eval=FALSE}
+mi_grafica <- ToothGrowth |>
+  mutate(dose = factor(dose)) |>
+  ggplot(aes(x = dose, y = len, fill = dose)) +
+  geom_boxplot() +
+  theme_classic()
+
+ggsave(filename = "mi_grafica.png",
+       plot     = mi_grafica,
+       width    = 5,
+       height   = 4,
+       dpi      = 300)
+```
+
+::: {.callout-note}
+`dpi = 300` es la resolución estándar para publicaciones científicas.
+:::
+
+---
+
+## `ggpubr`: gráficas rápidas y listas
+
+`ggpubr` ofrece funciones de una sola línea para gráficas publication-ready:
+
+```{r, fig.width=5, fig.height=3.5, fig.align='center'}
+library(ggpubr)
+
+ggboxplot(ToothGrowth, x = "dose", y = "len",
+          color = "dose", add = "jitter")
+```
+
+---
+
+## `ggpubr`: barras con error
+
+```{r, fig.width=5, fig.height=3.5, fig.align='center'}
+ggbarplot(ToothGrowth, x = "dose", y = "len",
+          fill = "dose", add = "mean_sd",
+          palette = "Set2")
+```
+
+::: {.callout-tip}
+`add = "mean_sd"` agrega automáticamente las barras de error (media ± SD). También se puede usar `"mean_se"` para error estándar.
+:::
+
+---
+
+## `ggpubr`: multi-panel con `facet.by`
+
+```{r, fig.width=6, fig.height=3.5, fig.align='center'}
+ggboxplot(ToothGrowth, x = "dose", y = "len",
+          color = "dose", facet.by = "supp",
+          palette = "Set1")
+```
+
+---
+
+## Ejercicios
+
+::: {.callout-note}
+Usa el dataset `iris`. Cárgalo con `data(iris)`.
+:::
+
+1. Haz un histograma de `Petal.Length` con R base. Ponle título y color.
+
+2. Haz un boxplot de `Sepal.Width` por `Species` con R base. Usa tres colores distintos.
+
+3. Con `ggplot2`, haz un diagrama de dispersión de `Petal.Length` vs `Petal.Width`, coloreando por `Species`.
+
+---
+
+## Ejercicios (cont.)
+
+4. Agrega títulos al gráfico anterior usando `labs()`.
+
+5. Cambia el tema a `theme_minimal()` y la paleta de colores a una de `scale_color_brewer()`.
+
+6. Haz un histograma de `Sepal.Length` con `geom_histogram()`. Cambia el número de bins y observa cómo cambia el gráfico.
+
+7. Divide el histograma anterior en tres paneles (uno por especie) usando `facet_wrap(~ Species)`.
+
+8. Guarda la última gráfica como `ejercicio_iris.png` con `ggsave()` a 300 dpi.
+
+---
+
+## Referencias
+
+::: {.nonincremental}
+- Wickham, H. (2016). *ggplot2: Elegant Graphics for Data Analysis*. [ggplot2-book.org](https://ggplot2-book.org)
+- Kassambara, A. *ggpubr documentation*. [rpkgs.datanovia.com/ggpubr](https://rpkgs.datanovia.com/ggpubr)
+- Wickham, H. & Grolemund, G. (2017). *R for Data Science*. [r4ds.had.co.nz](https://r4ds.had.co.nz)
+- CRAN — Comprehensive R Archive Network: [cran.r-project.org](https://cran.r-project.org)
+:::

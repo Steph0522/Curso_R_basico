@@ -1,0 +1,502 @@
+---
+title: "R básico para ciencia de datos - Clase 3"
+author: "Ph D. Stephanie Hereira-Pacheco"
+institute: "Universidad Autónoma de Tlaxcala"
+date: "`r Sys.Date()`"
+format:
+  revealjs:
+    theme: [simple, copenhagen.scss]
+    slide-number: true
+    footer: "R básico para ciencia de datos · UAT 2026"
+    transition: none
+    background-transition: none
+    embed-resources: true
+    center: false
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## Estadísticos básicos en R — Clase 3
+
+- Estadísticos descriptivos
+- Gráficos descriptivos básicos
+- Exploración de normalidad
+- Correlación
+- Regresión lineal
+- ANOVA (1 vía) y prueba de Tukey
+- ANOVA (2 vías)
+- Otras pruebas
+- Ejercicios
+
+---
+
+## Dataset de trabajo
+
+Trabajaremos con `iris` — medidas de sépalos y pétalos de tres especies de flores.
+
+```{r}
+data(iris)
+colnames(iris) <- c("Largo_Sepalo", "Ancho_Sepalo",
+                    "Largo_Petalo", "Ancho_Petalo", "Especie")
+str(iris)
+```
+
+---
+
+## Dataset de trabajo: las especies
+
+::: {style="display: flex; justify-content: center; gap: 30px; align-items: center; height: 75%;"}
+![](../images/flores.jpg){width="42%"}
+![](../images/flores2.png){width="42%"}
+:::
+
+---
+
+## Estadísticos descriptivos: `summary()`
+
+`summary()` es el punto de partida — da el mínimo, máximo, promedio, mediana y cuartiles de cada variable:
+
+```{r}
+summary(iris)
+```
+
+---
+
+## Tendencia central
+
+```{r}
+mean(iris$Largo_Sepalo)      # promedio
+median(iris$Largo_Sepalo)    # mediana
+```
+
+```{r}
+min(iris$Largo_Sepalo)
+max(iris$Largo_Sepalo)
+```
+
+---
+
+## Dispersión
+
+```{r}
+sd(iris$Largo_Sepalo)        # desviación estándar
+var(iris$Largo_Sepalo)       # varianza
+IQR(iris$Largo_Sepalo)       # rango intercuartil
+```
+
+::: {.callout-tip}
+La **desviación estándar** mide cuánto se alejan los datos del promedio. A mayor SD, más dispersos son los datos.
+:::
+
+---
+
+## Dispersión: cuartiles
+
+```{r}
+quantile(iris$Largo_Sepalo, 0.25)   # primer cuartil (Q1)
+quantile(iris$Largo_Sepalo, 0.75)   # tercer cuartil (Q3)
+quantile(iris$Largo_Sepalo)         # todos los cuartiles a la vez
+```
+
+---
+
+## Estadísticos para varias columnas: promedio
+
+```{r}
+lapply(iris[, 1:4], mean)
+```
+
+---
+
+## Estadísticos para varias columnas: desviación estándar
+
+```{r}
+lapply(iris[, 1:4], sd)
+```
+
+---
+
+## Gráficos descriptivos: histograma
+
+```{r, fig.width=5, fig.height=4, fig.align='center'}
+hist(iris$Largo_Sepalo, main = "Distribución largo del sépalo",
+     xlab = "Largo (cm)", col = "steelblue")
+```
+
+---
+
+## Gráficos descriptivos: boxplot
+
+```{r, fig.width=6, fig.height=4.5, fig.align='center'}
+boxplot(Largo_Sepalo ~ Especie, data = iris,
+        xlab = "Especie", ylab = "Largo sépalo (cm)",
+        col = c("orchid", "lightblue", "lightgreen"))
+```
+
+---
+
+## ¿Cómo leer un boxplot?
+
+::: {.callout-note}
+- La **línea del medio** = mediana
+- La **caja** = rango intercuartil (Q1 a Q3)
+- Los **bigotes** llegan hasta 1.5 × IQR
+- Los **puntos** fuera de los bigotes = valores atípicos (*outliers*)
+:::
+
+---
+
+## Exploración de normalidad
+
+La prueba de **Shapiro-Wilk** verifica si los datos siguen una distribución normal:
+
+```{r}
+shapiro.test(iris$Ancho_Sepalo)
+```
+
+::: {.callout-note}
+**H₀:** los datos son normales.
+
+- **p-value > 0.05** → no rechazamos H₀ → **los datos son normales**
+- **p-value < 0.05** → los datos **no** son normales → usar pruebas no paramétricas
+:::
+
+---
+
+## Normalidad: gráfico Q-Q
+
+```{r, fig.width=5.5, fig.height=5, fig.align='center'}
+qqnorm(iris$Ancho_Sepalo, main = "Q-Q plot - Ancho Sépalo")
+qqline(iris$Ancho_Sepalo, col = "red")
+```
+
+---
+
+## Correlación: `cor.test()`
+
+¿Existe relación entre el largo y el ancho del pétalo?
+
+```{r}
+cor.test(iris$Largo_Petalo, iris$Ancho_Petalo)
+```
+
+---
+
+## Correlación: interpretar
+
+::: {.callout-note}
+- **cor ≈ 0.96** → correlación positiva muy fuerte
+- **p-value < 0.05** → la correlación es significativa
+- Signo **+** = cuando uno sube el otro también; signo **−** = cuando uno sube el otro baja
+:::
+
+::: {style="text-align: center;"}
+| Valor absoluto | Interpretación |
+|:---:|:---|
+| 0.9 – 1.0 | Muy fuerte |
+| 0.7 – 0.9 | Fuerte |
+| 0.5 – 0.7 | Moderada |
+| < 0.5 | Débil |
+:::
+
+---
+
+## Estructura de los modelos en R
+
+::: {style="font-size: 1.25em; text-align: center; font-family: monospace; background: #f5f5f5; border-radius: 8px; padding: 18px; margin: 10px 0;"}
+modelo `<-` lm([**Respuesta**]{style="color:#e74c3c;"} `~` [**Factor**]{style="color:#e74c3c;"}, data = [**Datos**]{style="color:#e74c3c;"})
+:::
+
+:::: {.columns style="margin-top: 10px;"}
+::: {.column width="50%"}
+**A la izquierda del `~`**
+
+Variable **numérica / dependiente** — lo que mides en el laboratorio
+:::
+::: {.column width="50%"}
+**A la derecha del `~`**
+
+Variable **categórica / independiente** — el factor o grupo a comparar
+:::
+::::
+
+::: {.callout-important style="margin-top: 10px;"}
+En la fórmula siempre modificarán tres cosas: [**Respuesta**]{style="color:#e74c3c;"}, [**Factor**]{style="color:#e74c3c;"} y [**Datos**]{style="color:#e74c3c;"}.
+:::
+
+---
+
+## Regresión lineal
+
+Describe la relación entre dos variables: **y = a·x + b**
+
+```{r}
+#            Respuesta   ~ Factor        data = Datos
+modelo <- lm(Ancho_Petalo ~ Largo_Petalo, data = iris)
+summary(modelo)
+```
+
+---
+
+## Regresión lineal: interpretar
+
+::: {.callout-note}
+Del `summary(modelo)`:
+
+- **Intercepto** = −0.363, **pendiente** = 0.416
+- Ecuación: `Ancho_Petalo = 0.416 × Largo_Petalo − 0.363`
+- **p-values < 0.05** → la relación es significativa
+- **R² ajustado ≈ 0.92** → el modelo explica el **92%** de la variación
+:::
+
+---
+
+## ANOVA (1 vía)
+
+Compara las **medias de más de dos grupos**.
+
+```{r}
+#                   Respuesta  ~ Factor  data = Datos
+modelo_anova <- lm(Ancho_Sepalo ~ Especie, data = iris)
+anova(modelo_anova)
+```
+
+::: {.callout-note}
+**p-value << 0.05** → las medias **son diferentes** entre al menos dos especies.
+:::
+
+---
+
+## Prueba de Tukey
+
+ANOVA dice que hay diferencias, pero no dice *entre cuáles grupos*. Tukey lo determina:
+
+```{r}
+fm <- aov(modelo_anova)
+TukeyHSD(fm, "Especie", ordered = TRUE)
+```
+
+---
+
+## Tukey: interpretar
+
+::: {.callout-note}
+Cada fila compara un par de especies:
+
+- **p adj < 0.05** → esas dos especies **son significativamente diferentes**
+- **p adj > 0.05** → no hay diferencia significativa entre ese par
+:::
+
+---
+
+## ANOVA (2 vías)
+
+Estudia el efecto de **dos factores** sobre una variable. Usaremos `ToothGrowth`: efecto de la dosis (`dose`) y el suplemento (`supp`) sobre el crecimiento dental (`len`).
+
+```{r}
+data("ToothGrowth")
+ToothGrowth$dose <- factor(ToothGrowth$dose,
+                           levels = c(0.5, 1, 2),
+                           labels = c("D0.5", "D1", "D2"))
+```
+
+---
+
+## ANOVA (2 vías): modelo aditivo
+
+Efectos **independientes** de cada factor:
+
+```{r}
+anova1 <- aov(len ~ supp + dose, data = ToothGrowth)
+summary(anova1)
+```
+
+---
+
+## ANOVA (2 vías): modelo con interacción
+
+El efecto de un factor **depende del otro**:
+
+```{r}
+anova2 <- aov(len ~ supp * dose, data = ToothGrowth)
+summary(anova2)
+```
+
+::: {.callout-note}
+La fila `supp:dose` con **p < 0.05** confirma **interacción**: el efecto de la dosis cambia según el tipo de suplemento.
+:::
+
+---
+
+## Otras pruebas: `t.test()`
+
+Para comparar **dos grupos** cuando los datos son normales:
+
+```{r}
+t.test(len ~ supp, data = ToothGrowth)
+```
+
+---
+
+## Otras pruebas: `wilcox.test()`
+
+Alternativa **no paramétrica** al t.test (cuando los datos no son normales):
+
+```{r}
+wilcox.test(len ~ supp, data = ToothGrowth)
+```
+
+---
+
+## Otras pruebas: `kruskal.test()`
+
+Alternativa no paramétrica al ANOVA — más de dos grupos:
+
+```{r}
+kruskal.test(len ~ dose, data = ToothGrowth)
+```
+
+::: {.callout-note}
+**p-value < 0.05** → hay diferencias significativas entre al menos dos grupos de dosis.
+:::
+
+---
+
+## Referencia: ¿qué prueba usar?
+
+::: {style="text-align: center;"}
+| Situación | Datos normales | Datos no normales |
+|:---|:---:|:---:|
+| 2 grupos independientes | `t.test()` | `wilcox.test()` |
+| 2 grupos pareados | `t.test(paired=TRUE)` | `wilcox.test(paired=TRUE)` |
+| Más de 2 grupos | `anova()` | `kruskal.test()` |
+| 2 factores | `aov(y ~ a + b)` | — |
+| 2 factores con interacción | `aov(y ~ a * b)` | — |
+:::
+
+---
+
+## Ejercicios
+
+::: {.callout-note}
+Usa el dataset `ToothGrowth`. Cárgalo con `data(ToothGrowth)`.
+:::
+
+1. Calcula el promedio, mediana y desviación estándar de `len`.
+2. Haz un histograma de `len`. ¿Tiene forma de campana?
+3. Haz un boxplot de `len` por `supp`. ¿Cuál grupo tiene la mediana más alta?
+4. Aplica `shapiro.test()` a `len`. ¿Son normales los datos?
+
+---
+
+## Ejercicios (cont.)
+
+5. Calcula la correlación entre `len` y `dose`. ¿Es significativa? ¿Positiva o negativa?
+6. Ajusta `lm(len ~ dose)`. Interpreta el R² y el p-value de la pendiente.
+7. Convierte `dose` a factor y corre un ANOVA de `len ~ dose`. ¿Hay diferencias?
+8. Aplica `TukeyHSD()`. ¿Entre cuáles pares de dosis hay diferencias?
+
+---
+
+## Soluciones: ejercicios 1 y 2
+
+**1.** Estadísticos descriptivos:
+
+```{r}
+data(ToothGrowth)
+mean(ToothGrowth$len)
+median(ToothGrowth$len)
+sd(ToothGrowth$len)
+```
+
+---
+
+## Soluciones: ejercicio 2
+
+**2.** Histograma:
+
+```{r, fig.width=5, fig.height=4, fig.align='center'}
+hist(ToothGrowth$len, main = "Distribución de len",
+     xlab = "Longitud", col = "steelblue")
+```
+
+---
+
+## Soluciones: ejercicio 3
+
+**3.** Boxplot por suplemento:
+
+```{r, fig.width=5.5, fig.height=4, fig.align='center'}
+boxplot(len ~ supp, data = ToothGrowth,
+        col = c("lightblue", "lightgreen"),
+        xlab = "Suplemento", ylab = "Longitud")
+```
+
+---
+
+## Soluciones: ejercicio 4
+
+**4.** Prueba de normalidad:
+
+```{r}
+shapiro.test(ToothGrowth$len)
+```
+
+::: {.callout-note}
+p-value > 0.05 → los datos son normales.
+:::
+
+---
+
+## Soluciones: ejercicio 5
+
+**5.** Correlación `len ~ dose`:
+
+```{r}
+cor.test(ToothGrowth$len, ToothGrowth$dose)
+```
+
+---
+
+## Soluciones: ejercicio 6
+
+**6.** Regresión lineal `len ~ dose`:
+
+```{r}
+summary(lm(len ~ dose, data = ToothGrowth))
+```
+
+---
+
+## Soluciones: ejercicios 7 y 8
+
+**7.** ANOVA con `dose` como factor:
+
+```{r}
+ToothGrowth$dose <- factor(ToothGrowth$dose)
+mod <- lm(len ~ dose, data = ToothGrowth)
+anova(mod)
+```
+
+---
+
+## Soluciones: ejercicio 8
+
+**8.** Prueba de Tukey:
+
+```{r}
+TukeyHSD(aov(mod), "dose", ordered = TRUE)
+```
+
+---
+
+## Referencias
+
+::: {.nonincremental}
+- Irizarry, R.A. (2019). *Introduction to Data Science*. [rafalab.dfci.harvard.edu/dsbook](https://rafalab.dfci.harvard.edu/dsbook)
+- Wickham, H. & Grolemund, G. (2017). *R for Data Science*. [r4ds.had.co.nz](https://r4ds.had.co.nz)
+- Kassambara, A. (2017). *Practical Statistics in R*. [sthda.com](http://www.sthda.com)
+- CRAN — Comprehensive R Archive Network: [cran.r-project.org](https://cran.r-project.org)
+:::
