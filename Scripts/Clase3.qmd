@@ -67,13 +67,13 @@ summary(iris)
 ## Tendencia central
 
 ```{r}
-mean(iris$Largo_Sepalo)      # promedio
-median(iris$Largo_Sepalo)    # mediana
+mean(iris$Ancho_Sepalo)      # promedio
+median(iris$Ancho_Sepalo)    # mediana
 ```
 
 ```{r}
-min(iris$Largo_Sepalo)
-max(iris$Largo_Sepalo)
+min(iris$Ancho_Sepalo)
+max(iris$Ancho_Sepalo)
 ```
 
 ---
@@ -81,9 +81,8 @@ max(iris$Largo_Sepalo)
 ## Dispersión
 
 ```{r}
-sd(iris$Largo_Sepalo)        # desviación estándar
-var(iris$Largo_Sepalo)       # varianza
-IQR(iris$Largo_Sepalo)       # rango intercuartil
+sd(iris$Ancho_Sepalo)        # desviación estándar
+var(iris$Ancho_Sepalo)       # varianza
 ```
 
 ::: {.callout-tip}
@@ -92,37 +91,34 @@ La **desviación estándar** mide cuánto se alejan los datos del promedio. A ma
 
 ---
 
-## Dispersión: cuartiles
+## Dispersión: cuartiles e IQR
 
 ```{r}
-quantile(iris$Largo_Sepalo, 0.25)   # primer cuartil (Q1)
-quantile(iris$Largo_Sepalo, 0.75)   # tercer cuartil (Q3)
-quantile(iris$Largo_Sepalo)         # todos los cuartiles a la vez
+quantile(iris$Ancho_Sepalo, 0.25)   # primer cuartil (Q1)
+quantile(iris$Ancho_Sepalo, 0.75)   # tercer cuartil (Q3)
+quantile(iris$Ancho_Sepalo)         # todos los cuartiles a la vez
+IQR(iris$Ancho_Sepalo)              # rango intercuartil
 ```
 
 ---
 
-## Estadísticos para varias columnas: promedio
+## Estadísticos para varias columnas
 
 ```{r}
-lapply(iris[, 1:4], mean)
+colMeans(iris[, 1:4])
 ```
 
----
-
-## Estadísticos para varias columnas: desviación estándar
-
-```{r}
-lapply(iris[, 1:4], sd)
-```
+::: {.callout-tip}
+`colMeans()` calcula el promedio de todas las columnas numéricas de un golpe. Para la desviación estándar, usa `sd(iris$columna)` en la columna que necesites.
+:::
 
 ---
 
 ## Gráficos descriptivos: histograma
 
 ```{r, fig.width=5, fig.height=4, fig.align='center'}
-hist(iris$Largo_Sepalo, main = "Distribución largo del sépalo",
-     xlab = "Largo (cm)", col = "steelblue")
+hist(iris$Ancho_Sepalo, main = "Distribución ancho del sépalo",
+     xlab = "Ancho (cm)", col = "steelblue")
 ```
 
 ---
@@ -171,35 +167,6 @@ shapiro.test(iris$Ancho_Sepalo)
 qqnorm(iris$Ancho_Sepalo, main = "Q-Q plot - Ancho Sépalo")
 qqline(iris$Ancho_Sepalo, col = "red")
 ```
-
----
-
-## Correlación: `cor.test()`
-
-¿Existe relación entre el largo y el ancho del pétalo?
-
-```{r}
-cor.test(iris$Largo_Petalo, iris$Ancho_Petalo)
-```
-
----
-
-## Correlación: interpretar
-
-::: {.callout-note}
-- **cor ≈ 0.96** → correlación positiva muy fuerte
-- **p-value < 0.05** → la correlación es significativa
-- Signo **+** = cuando uno sube el otro también; signo **−** = cuando uno sube el otro baja
-:::
-
-::: {style="text-align: center;"}
-| Valor absoluto | Interpretación |
-|:---:|:---|
-| 0.9 – 1.0 | Muy fuerte |
-| 0.7 – 0.9 | Fuerte |
-| 0.5 – 0.7 | Moderada |
-| < 0.5 | Débil |
-:::
 
 ---
 
@@ -293,13 +260,32 @@ Cada fila compara un par de especies:
 
 ## ANOVA (2 vías)
 
-Estudia el efecto de **dos factores** sobre una variable. Usaremos `ToothGrowth`: efecto de la dosis (`dose`) y el suplemento (`supp`) sobre el crecimiento dental (`len`).
+Estudia el efecto de **dos factores** sobre una variable.
+
+::: {.callout-note}
+Usaremos `ToothGrowth`: efecto de la dosis (`dose`) y el suplemento (`supp`) sobre el crecimiento dental (`len`).
+:::
+
+---
+
+## ANOVA (2 vías): los datos
+
+`dose` está guardada como número — la convertiremos a factor:
 
 ```{r}
 data("ToothGrowth")
+str(ToothGrowth)
+```
+
+---
+
+## ANOVA (2 vías): preparar los datos
+
+```{r}
 ToothGrowth$dose <- factor(ToothGrowth$dose,
                            levels = c(0.5, 1, 2),
                            labels = c("D0.5", "D1", "D2"))
+head(ToothGrowth)
 ```
 
 ---
@@ -327,6 +313,21 @@ summary(anova2)
 ::: {.callout-note}
 La fila `supp:dose` con **p < 0.05** confirma **interacción**: el efecto de la dosis cambia según el tipo de suplemento.
 :::
+
+---
+
+## ANOVA (2 vías): gráfico de interacción
+
+Las líneas **no paralelas** confirman visualmente la interacción:
+
+```{r, fig.width=6, fig.height=4, fig.align='center'}
+interaction.plot(x.factor   = ToothGrowth$dose,
+                 trace.factor = ToothGrowth$supp,
+                 response   = ToothGrowth$len,
+                 col = c("steelblue", "tomato"), lwd = 2,
+                 xlab = "Dosis", ylab = "Longitud media",
+                 trace.label = "Suplemento")
+```
 
 ---
 
@@ -378,37 +379,80 @@ kruskal.test(len ~ dose, data = ToothGrowth)
 
 ---
 
+## Correlación: `cor.test()`
+
+¿Existe relación entre el largo y el ancho del pétalo?
+
+```{r}
+cor.test(iris$Largo_Petalo, iris$Ancho_Petalo)
+```
+
+---
+
+## Correlación: gráfico
+
+```{r, fig.width=5.5, fig.height=4.5, fig.align='center'}
+plot(iris$Largo_Petalo, iris$Ancho_Petalo,
+     xlab = "Largo pétalo (cm)", ylab = "Ancho pétalo (cm)",
+     pch = 19, col = "steelblue")
+abline(lm(Ancho_Petalo ~ Largo_Petalo, data = iris),
+       col = "tomato", lwd = 2)
+```
+
+---
+
+## Correlación: interpretar
+
+::: {.callout-note}
+- **cor ≈ 0.96** → correlación positiva muy fuerte
+- **p-value < 0.05** → la correlación es significativa
+- Signo **+** = cuando uno sube el otro también; signo **−** = cuando uno sube el otro baja
+:::
+
+---
+
+## Correlación: ¿qué tan fuerte es?
+
+::: {style="text-align: center;"}
+| Valor absoluto | Interpretación |
+|:---:|:---|
+| 0.9 – 1.0 | Muy fuerte |
+| 0.7 – 0.9 | Fuerte |
+| 0.5 – 0.7 | Moderada |
+| < 0.5 | Débil |
+:::
+
+---
+
 ## Ejercicios
 
 ::: {.callout-note}
-Usa el dataset `ToothGrowth`. Cárgalo con `data(ToothGrowth)`.
+Usa el dataset `iris` — ya está cargado desde el inicio de la clase.
 :::
 
-1. Calcula el promedio, mediana y desviación estándar de `len`.
-2. Haz un histograma de `len`. ¿Tiene forma de campana?
-3. Haz un boxplot de `len` por `supp`. ¿Cuál grupo tiene la mediana más alta?
-4. Aplica `shapiro.test()` a `len`. ¿Son normales los datos?
+1. Calcula el promedio, mediana y desviación estándar de `Ancho_Sepalo`.
+2. Haz un histograma de `Ancho_Sepalo`. ¿Tiene forma de campana?
+3. Haz un boxplot de `Ancho_Sepalo` por `Especie`. ¿Cuál especie tiene la mediana más alta?
+4. Aplica `shapiro.test()` a `Ancho_Sepalo`. ¿Son normales los datos?
 
 ---
 
 ## Ejercicios (cont.)
 
-5. Calcula la correlación entre `len` y `dose`. ¿Es significativa? ¿Positiva o negativa?
-6. Ajusta `lm(len ~ dose)`. Interpreta el R² y el p-value de la pendiente.
-7. Convierte `dose` a factor y corre un ANOVA de `len ~ dose`. ¿Hay diferencias?
-8. Aplica `TukeyHSD()`. ¿Entre cuáles pares de dosis hay diferencias?
+5. Corre un ANOVA de `Ancho_Sepalo ~ Especie`. ¿Hay diferencias entre especies?
+6. Aplica `TukeyHSD()` al modelo anterior. ¿Entre cuáles pares de especies hay diferencias?
+7. Calcula la correlación entre `Largo_Petalo` y `Ancho_Petalo`. ¿Es significativa? ¿Positiva o negativa?
 
 ---
 
-## Soluciones: ejercicios 1 y 2
+## Soluciones: ejercicio 1
 
 **1.** Estadísticos descriptivos:
 
 ```{r}
-data(ToothGrowth)
-mean(ToothGrowth$len)
-median(ToothGrowth$len)
-sd(ToothGrowth$len)
+mean(iris$Ancho_Sepalo)
+median(iris$Ancho_Sepalo)
+sd(iris$Ancho_Sepalo)
 ```
 
 ---
@@ -418,20 +462,20 @@ sd(ToothGrowth$len)
 **2.** Histograma:
 
 ```{r, fig.width=5, fig.height=4, fig.align='center'}
-hist(ToothGrowth$len, main = "Distribución de len",
-     xlab = "Longitud", col = "steelblue")
+hist(iris$Ancho_Sepalo, main = "Distribución de Ancho_Sepalo",
+     xlab = "Ancho (cm)", col = "steelblue")
 ```
 
 ---
 
 ## Soluciones: ejercicio 3
 
-**3.** Boxplot por suplemento:
+**3.** Boxplot por especie:
 
 ```{r, fig.width=5.5, fig.height=4, fig.align='center'}
-boxplot(len ~ supp, data = ToothGrowth,
-        col = c("lightblue", "lightgreen"),
-        xlab = "Suplemento", ylab = "Longitud")
+boxplot(Ancho_Sepalo ~ Especie, data = iris,
+        col = c("orchid", "lightblue", "lightgreen"),
+        xlab = "Especie", ylab = "Ancho sépalo (cm)")
 ```
 
 ---
@@ -441,7 +485,7 @@ boxplot(len ~ supp, data = ToothGrowth,
 **4.** Prueba de normalidad:
 
 ```{r}
-shapiro.test(ToothGrowth$len)
+shapiro.test(iris$Ancho_Sepalo)
 ```
 
 ::: {.callout-note}
@@ -452,42 +496,31 @@ p-value > 0.05 → los datos son normales.
 
 ## Soluciones: ejercicio 5
 
-**5.** Correlación `len ~ dose`:
+**5.** ANOVA `Ancho_Sepalo ~ Especie`:
 
 ```{r}
-cor.test(ToothGrowth$len, ToothGrowth$dose)
+mod <- lm(Ancho_Sepalo ~ Especie, data = iris)
+anova(mod)
 ```
 
 ---
 
 ## Soluciones: ejercicio 6
 
-**6.** Regresión lineal `len ~ dose`:
+**6.** Prueba de Tukey:
 
 ```{r}
-summary(lm(len ~ dose, data = ToothGrowth))
+TukeyHSD(aov(mod), "Especie", ordered = TRUE)
 ```
 
 ---
 
-## Soluciones: ejercicios 7 y 8
+## Soluciones: ejercicio 7
 
-**7.** ANOVA con `dose` como factor:
-
-```{r}
-ToothGrowth$dose <- factor(ToothGrowth$dose)
-mod <- lm(len ~ dose, data = ToothGrowth)
-anova(mod)
-```
-
----
-
-## Soluciones: ejercicio 8
-
-**8.** Prueba de Tukey:
+**7.** Correlación `Largo_Petalo` ~ `Ancho_Petalo`:
 
 ```{r}
-TukeyHSD(aov(mod), "dose", ordered = TRUE)
+cor.test(iris$Largo_Petalo, iris$Ancho_Petalo)
 ```
 
 ---
