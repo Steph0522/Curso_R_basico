@@ -1,0 +1,474 @@
+---
+title: "R básico para ciencia de datos - Clases 4 y 5"
+author: "Ph D. Stephanie Hereira-Pacheco"
+institute: "Universidad Autónoma de Tlaxcala"
+date: "`r Sys.Date()`"
+format:
+  revealjs:
+    theme: [simple, copenhagen.scss]
+    slide-number: true
+    footer: "R básico para ciencia de datos · UAT 2026"
+    transition: none
+    background-transition: none
+    embed-resources: true
+    center: false
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## Manipulación de datos — Clases 4 y 5
+
+- Seleccionar columnas
+- Filtrar filas
+- Crear y modificar columnas
+- Resumir por grupos
+- Ordenar
+- Unir tablas
+- Reorganizar: *pivot*
+- Ejercicio aplicado
+
+---
+
+## Dataset de trabajo
+
+Usaremos `ToothGrowth` a lo largo de toda la clase:
+
+```{r}
+data("ToothGrowth")
+str(ToothGrowth)
+```
+
+---
+
+## Dos formas de hacer lo mismo
+
+A partir de aquí veremos cada operación en **dos versiones**:
+
+:::: {.columns}
+::: {.column width="50%"}
+**R base**
+
+Funciones nativas de R — no requieren instalar nada.
+:::
+::: {.column width="50%"}
+**dplyr** *(tidyverse)*
+
+Funciones más legibles, diseñadas para encadenarse.
+:::
+::::
+
+```{r}
+library(dplyr)
+library(tidyr)
+```
+
+---
+
+## El *pipe*
+
+Hay dos versiones del *pipe* — hacen lo mismo:
+
+- `|>` — nativo de R (desde R 4.1)
+- `%>%` — del paquete **magrittr** (tidyverse)
+
+Usaremos **`%>%`** en esta clase. Pasa el resultado de la izquierda como entrada de la función de la derecha:
+
+```{r}
+library(magrittr)
+16 %>% sqrt()
+16 %>% sqrt() %>% log2()
+```
+
+::: {.callout-tip}
+Atajo de teclado: **Ctrl + Shift + M** (Windows) · **Cmd + Shift + M** (Mac)
+
+Se lee de izquierda a derecha — mucho más natural que anidar funciones.
+:::
+
+---
+
+## Seleccionar columnas
+
+:::: {.columns}
+::: {.column width="50%"}
+**R base**
+```{r}
+head(ToothGrowth[, c("len", "supp")], 4)
+```
+Excluir una columna:
+```{r}
+head(ToothGrowth[, -2], 4)
+```
+:::
+::: {.column width="50%"}
+**dplyr**
+```{r}
+ToothGrowth %>%
+  select(len, supp) %>%
+  head(4)
+```
+Excluir una columna:
+```{r}
+ToothGrowth %>%
+  select(-supp) %>%
+  head(4)
+```
+:::
+::::
+
+---
+
+## Filtrar filas
+
+:::: {.columns}
+::: {.column width="50%"}
+**R base**
+```{r}
+head(ToothGrowth[ToothGrowth$supp == "OJ", ], 4)
+```
+Con `subset()`:
+```{r}
+head(subset(ToothGrowth, supp == "OJ"), 4)
+```
+:::
+::: {.column width="50%"}
+**dplyr**
+```{r}
+ToothGrowth %>%
+  filter(supp == "OJ") %>%
+  head(4)
+```
+:::
+::::
+
+---
+
+## Filtrar con varias condiciones
+
+:::: {.columns}
+::: {.column width="50%"}
+**R base**
+```{r}
+subset(ToothGrowth,
+       supp == "OJ" & len > 20)
+```
+:::
+::: {.column width="50%"}
+**dplyr**
+```{r}
+ToothGrowth %>%
+  filter(supp == "OJ", len > 20)
+```
+:::
+::::
+
+::: {.callout-tip}
+En `dplyr`, separar condiciones con `,` equivale a `&` — ambas deben cumplirse.
+:::
+
+---
+
+## Crear una nueva columna
+
+:::: {.columns}
+::: {.column width="50%"}
+**R base**
+```{r}
+ToothGrowth$len_cm <- ToothGrowth$len / 10
+head(ToothGrowth, 4)
+```
+:::
+::: {.column width="50%"}
+**dplyr**
+```{r}
+ToothGrowth %>%
+  mutate(len_cm = len / 10) %>%
+  head(4)
+```
+:::
+::::
+
+---
+
+## Modificar una columna existente
+
+:::: {.columns}
+::: {.column width="50%"}
+**R base**
+```{r}
+tg <- ToothGrowth
+tg$dose <- factor(tg$dose,
+  levels = c(0.5, 1, 2),
+  labels = c("Baja","Media","Alta"))
+head(tg, 4)
+```
+:::
+::: {.column width="50%"}
+**dplyr**
+```{r}
+ToothGrowth %>%
+  mutate(dose = factor(dose,
+    levels = c(0.5, 1, 2),
+    labels = c("Baja","Media","Alta"))) %>%
+  head(4)
+```
+:::
+::::
+
+---
+
+## Crear categorías
+
+:::: {.columns}
+::: {.column width="50%"}
+**R base**
+```{r}
+ToothGrowth$dosis_alta <-
+  ifelse(ToothGrowth$dose > 1,
+         "alta", "baja")
+head(ToothGrowth, 4)
+```
+:::
+::: {.column width="50%"}
+**dplyr** — más de 2 categorías con `case_when()`:
+```{r}
+ToothGrowth %>%
+  mutate(dosis_label = case_when(
+    dose == 0.5 ~ "Baja",
+    dose == 1.0 ~ "Media",
+    dose == 2.0 ~ "Alta")) %>%
+  head(4)
+```
+:::
+::::
+
+---
+
+## Resumir por grupos
+
+:::: {.columns}
+::: {.column width="50%"}
+**R base**
+```{r}
+aggregate(len ~ supp,
+          data = ToothGrowth,
+          mean)
+```
+:::
+::: {.column width="50%"}
+**dplyr**
+```{r}
+ToothGrowth %>%
+  group_by(supp) %>%
+  summarise(
+    promedio = mean(len),
+    desv_est = sd(len),
+    n        = n())
+```
+:::
+::::
+
+---
+
+## Resumir con dos grupos
+
+:::: {.columns}
+::: {.column width="50%"}
+**R base**
+```{r}
+aggregate(len ~ supp + dose,
+          data = ToothGrowth,
+          mean)
+```
+:::
+::: {.column width="50%"}
+**dplyr**
+```{r}
+ToothGrowth %>%
+  group_by(supp, dose) %>%
+  summarise(promedio = mean(len),
+            .groups = "drop")
+```
+:::
+::::
+
+---
+
+## Ordenar
+
+:::: {.columns}
+::: {.column width="50%"}
+**R base**
+```{r}
+head(ToothGrowth[
+  order(ToothGrowth$len), ], 4)
+```
+:::
+::: {.column width="50%"}
+**dplyr**
+```{r}
+ToothGrowth %>%
+  arrange(len) %>%
+  head(4)
+```
+:::
+::::
+
+---
+
+## Unir tablas: agregar columnas
+
+:::: {.columns}
+::: {.column width="50%"}
+**R base**
+```{r}
+extra <- data.frame(
+  vitamina = rep(c("C","E"), 30))
+head(cbind(ToothGrowth, extra), 4)
+```
+:::
+::: {.column width="50%"}
+**dplyr**
+```{r}
+extra <- data.frame(
+  vitamina = rep(c("C","E"), 30))
+ToothGrowth %>%
+  bind_cols(extra) %>%
+  head(4)
+```
+:::
+::::
+
+---
+
+## Unir tablas: por columna clave
+
+:::: {.columns}
+::: {.column width="50%"}
+**R base**
+```{r}
+x <- data.frame(id = 1:3,
+                valor_x = c("a","b","c"))
+y <- data.frame(id = 2:4,
+                valor_y = c("x","y","z"))
+merge(x, y, by = "id", all = TRUE)
+```
+:::
+::: {.column width="50%"}
+**dplyr**
+```{r}
+x %>% full_join(y, by = "id")
+```
+`left_join()` → conserva todos los de x
+
+`inner_join()` → solo los que coinciden
+:::
+::::
+
+---
+
+## Reorganizar: *pivot*
+
+A veces los datos están en **formato ancho** y los necesitamos en **formato largo** (o al revés).
+
+Primero creamos un subconjunto de ejemplo:
+
+```{r}
+data(iris)
+iris_sub <- iris %>%
+  select(Sepal.Length, Sepal.Width) %>%
+  head(4) %>%
+  mutate(id = row_number())
+iris_sub
+```
+
+---
+
+## Reorganizar: `pivot_longer()`
+
+```{r}
+iris_sub %>%
+  pivot_longer(cols      = c(Sepal.Length, Sepal.Width),
+               names_to  = "variable",
+               values_to = "valor") %>%
+  head(6)
+```
+
+---
+
+## Reorganizar: *pivot* — ¿cuándo usarlo?
+
+::: {.callout-note}
+`pivot_longer()` es el más usado — `ggplot2` y la mayoría de análisis esperan datos en formato **largo**.
+:::
+
+`pivot_wider()` hace lo contrario: convierte formato largo a ancho.
+
+---
+
+## Encadenar operaciones con *pipe*
+
+El poder de `dplyr`: varios pasos en una cadena legible:
+
+```{r}
+ToothGrowth %>%
+  filter(supp == "OJ") %>%
+  mutate(len_log = log(len)) %>%
+  group_by(dose) %>%
+  summarise(promedio_log = mean(len_log),
+            .groups = "drop") %>%
+  arrange(desc(promedio_log))
+```
+
+---
+
+## Ejercicio aplicado: los datos
+
+```{r}
+primera <- data.frame(
+  Nombre = c("Astrid","Lea","Sarina","Remon","Letizia",
+             "Babice","Jonas","Wendy","Nivedithia","Gioia"),
+  Sexo   = c("F","F","F","M","F","F","M","F","F","F"),
+  Edad   = c(30,25,25,29,22,22,35,19,32,21))
+
+segunda <- data.frame(
+  Nombre     = c("Astrid","Lea","Sarina","Remon","Letizia",
+                 "Babice","Jonas","Wendy","Nivedithia","Gioia"),
+  Superheroe = c("Batman","Superman","Batman","Spiderman","Batman",
+                 "Antman","Batman","Superman","Maggot","Superman"),
+  Tatuajes   = c(11,15,12,5,65,3,9,13,900,0))
+```
+
+---
+
+## Ejercicio aplicado: preguntas
+
+Usando R base **o** dplyr (¡o los dos!):
+
+::: {.nonincremental}
+1. Combina las dos tablas en una sola
+2. ¿Cuál es la edad media de mujeres y hombres?
+3. ¿Cuál fue el máximo de tatuajes en un hombre?
+4. ¿Qué porcentaje de mujeres tiene menos de 32 años?
+5. Agrega una columna `tatuajes_por_año` (tatuajes / edad)
+6. ¿Quién tiene más tatuajes por año?
+7. ¿Nombres de las mujeres cuyo superhéroe es Superman?
+8. ¿Mediana de tatuajes de mayores de 20 cuyo favorito es Batman?
+:::
+
+::: {.notes}
+Respuestas: clase4-5_respuestas.html
+:::
+
+---
+
+## Referencias
+
+::: {.nonincremental}
+- Wickham, H. & Grolemund, G. (2017). *R for Data Science*. [r4ds.had.co.nz](https://r4ds.had.co.nz)
+- Wickham, H. (2023). *dplyr documentation*. [dplyr.tidyverse.org](https://dplyr.tidyverse.org)
+- Irizarry, R.A. (2019). *Introduction to Data Science*. [rafalab.dfci.harvard.edu/dsbook](https://rafalab.dfci.harvard.edu/dsbook)
+- CRAN — Comprehensive R Archive Network: [cran.r-project.org](https://cran.r-project.org)
+:::

@@ -55,15 +55,15 @@ execute:
 
 ---
 
-## R base: histograma
+## R base: barplot
 
-```{r, fig.width=4.5, fig.height=3.5, fig.align='center'}
+```{r, fig.width=5, fig.height=3.8, fig.align='center'}
 data(iris)
-hist(iris$Sepal.Length,
-     main = "Longitud del sépalo",
-     xlab = "Longitud (cm)",
-     ylab = "Frecuencia",
-     col  = "steelblue")
+counts <- table(iris$Species)
+barplot(counts,
+        main = "Número de flores por especie",
+        xlab = "Especie", ylab = "Frecuencia",
+        col  = c("orchid", "lightblue", "lightgreen"))
 ```
 
 ---
@@ -88,6 +88,21 @@ plot(x = iris$Petal.Length, y = iris$Petal.Width,
      main = "Relación largo vs ancho del pétalo")
 legend("topleft", legend = levels(iris$Species),
        fill = 1:3, title = "Especie")
+```
+
+---
+
+## R base: tipos de línea y punto (`type`, `lty`)
+
+```{r, fig.width=7, fig.height=4.5, fig.align='center'}
+df <- data.frame(x = 1:5, y = c(200, 400, 600, 700, 500))
+par(mfrow = c(2, 3))
+plot(df$x, df$y, type = "p", main = 'type = "p"  puntos')
+plot(df$x, df$y, type = "l", main = 'type = "l"  líneas')
+plot(df$x, df$y, type = "b", main = 'type = "b"  ambos')
+plot(df$x, df$y, type = "l", lty = 1, main = "lty = 1  sólida")
+plot(df$x, df$y, type = "l", lty = 2, main = "lty = 2  guiones")
+plot(df$x, df$y, type = "l", lty = 3, main = "lty = 3  puntos")
 ```
 
 ---
@@ -156,8 +171,8 @@ Primero convertimos `dose` a factor para que sea una variable discreta:
 
 ```{r, fig.width=5, fig.height=3.2, fig.align='center'}
 library(tidyverse)
-ToothGrowth |>
-  mutate(dose = factor(dose)) |>
+ToothGrowth %>%
+  mutate(dose = factor(dose)) %>%
   ggplot(aes(x = dose, y = len, fill = supp)) +
   geom_boxplot()
 ```
@@ -191,8 +206,8 @@ ggplot(iris, aes(x = Species, fill = Species)) +
 ## Títulos y etiquetas: `labs()`
 
 ```{r, fig.width=5, fig.height=3, fig.align='center'}
-ToothGrowth |>
-  mutate(dose = factor(dose)) |>
+ToothGrowth %>%
+  mutate(dose = factor(dose)) %>%
   ggplot(aes(x = dose, y = len, fill = supp)) +
   geom_boxplot() +
   labs(title = "Longitud dental por dosis",
@@ -208,8 +223,8 @@ ToothGrowth |>
 Para definir los colores exactos que quieres:
 
 ```{r, fig.width=5, fig.height=3, fig.align='center'}
-ToothGrowth |>
-  mutate(dose = factor(dose)) |>
+ToothGrowth %>%
+  mutate(dose = factor(dose)) %>%
   ggplot(aes(x = dose, y = len, fill = supp)) +
   geom_boxplot() +
   scale_fill_manual(values = c("OJ" = "#E69F00", "VC" = "#56B4E9"))
@@ -219,27 +234,23 @@ ToothGrowth |>
 
 ## Colores: paletas listas para usar
 
-`scale_fill_brewer()` incluye paletas de colores probadas y accesibles:
+`scale_fill_brewer()` incluye paletas probadas. Ver todas: `RColorBrewer::display.brewer.all()`
 
-```{r, fig.width=5, fig.height=3, fig.align='center'}
-ToothGrowth |>
-  mutate(dose = factor(dose)) |>
+```{r, fig.width=7.5, fig.height=4.8, fig.align='center'}
+ToothGrowth %>%
+  mutate(dose = factor(dose)) %>%
   ggplot(aes(x = dose, y = len, fill = dose)) +
   geom_boxplot() +
   scale_fill_brewer(palette = "Set2")
 ```
-
-::: {.callout-tip}
-Para ver todas las paletas: `RColorBrewer::display.brewer.all()`
-:::
 
 ---
 
 ## Temas: cambiar el aspecto general
 
 ```{r, fig.width=5, fig.height=3, fig.align='center'}
-ToothGrowth |>
-  mutate(dose = factor(dose)) |>
+ToothGrowth %>%
+  mutate(dose = factor(dose)) %>%
   ggplot(aes(x = dose, y = len, fill = dose)) +
   geom_boxplot() +
   scale_fill_brewer(palette = "Set2") +
@@ -270,8 +281,8 @@ En RStudio: escribe `theme_` y presiona **Tab** para ver todas las opciones.
 Divide la gráfica en paneles según una variable categórica:
 
 ```{r, fig.width=6, fig.height=3.5, fig.align='center'}
-ToothGrowth |>
-  mutate(dose = factor(dose)) |>
+ToothGrowth %>%
+  mutate(dose = factor(dose)) %>%
   ggplot(aes(x = dose, y = len, fill = dose)) +
   geom_boxplot() +
   facet_wrap(~ supp) +
@@ -283,8 +294,8 @@ ToothGrowth |>
 ## Guardar con `ggsave()`
 
 ```{r, eval=FALSE}
-mi_grafica <- ToothGrowth |>
-  mutate(dose = factor(dose)) |>
+mi_grafica <- ToothGrowth %>%
+  mutate(dose = factor(dose)) %>%
   ggplot(aes(x = dose, y = len, fill = dose)) +
   geom_boxplot() +
   theme_classic()
@@ -339,17 +350,71 @@ ggboxplot(ToothGrowth, x = "dose", y = "len",
 
 ---
 
+## Misceláneos: `ggcats`
+
+`ggplot2` tiene una comunidad enorme que desarrolla extensiones creativas. **`ggcats`** reemplaza los puntos de una gráfica por imágenes de gatos 🐱
+
+Se instala desde GitHub (no está en CRAN):
+
+```{r, eval=FALSE}
+# install.packages("remotes")   # solo si no lo tienes
+remotes::install_github("R-CoderDotCom/ggcats@main")
+```
+
+::: {.callout-note}
+Repositorio y documentación: [github.com/R-CoderDotCom/ggcats](https://github.com/R-CoderDotCom/ggcats)
+:::
+
+---
+
+## Misceláneos: `ggcats` — opciones disponibles
+
+```{r, fig.width=6, fig.height=3.8, fig.align='center'}
+library(ggcats)
+grid <- expand.grid(1:5, 3:1)
+df_cats <- data.frame(
+  x     = grid[, 1],
+  y     = grid[, 2],
+  image = c("nyancat","bongo","colonel","grumpy","hipster",
+            "lil_bub","maru","mouth","pop","pop_close",
+            "pusheen","pusheen_pc","toast","venus","shironeko"))
+ggplot(df_cats) +
+  geom_cat(aes(x, y, cat = image), size = 5) +
+  geom_text(aes(x, y - 0.45, label = image), size = 2.3) +
+  xlim(c(0.25, 5.5)) + ylim(c(0.25, 3.5)) +
+  theme_void()
+```
+
+---
+
+## Misceláneos: `ggcats` en datos reales
+
+```{r, fig.width=5.5, fig.height=3.8, fig.align='center'}
+ToothGrowth$cats <- factor(ToothGrowth$dose,
+  levels = c(0.5, 1, 2),
+  labels = c("mouth", "grumpy", "pusheen_pc"))
+
+ggplot(ToothGrowth, aes(x = dose, y = len)) +
+  geom_cat(aes(cat = cats), size = 4) +
+  xlim(c(0.25, 2.25)) +
+  labs(x = "Dosis", y = "Longitud") +
+  theme_classic()
+```
+
+---
+
 ## Ejercicios
 
 ::: {.callout-note}
-Usa el dataset `iris`. Cárgalo con `data(iris)`.
+Usa el dataset `mtcars`. Cárgalo con `data(mtcars)`.
+Variables útiles: `mpg` (millas/galón), `wt` (peso), `hp` (caballos de fuerza), `cyl` (cilindros: 4, 6 u 8).
 :::
 
-1. Haz un histograma de `Petal.Length` con R base. Ponle título y color.
+1. Convierte `cyl` a factor y haz un **barplot** del número de autos por cilindros con R base. Ponle título y colores.
 
-2. Haz un boxplot de `Sepal.Width` por `Species` con R base. Usa tres colores distintos.
+2. Haz un **boxplot** de `mpg` por `cyl` con R base. Usa tres colores distintos.
 
-3. Con `ggplot2`, haz un diagrama de dispersión de `Petal.Length` vs `Petal.Width`, coloreando por `Species`.
+3. Con `ggplot2`, haz un diagrama de dispersión de `wt` vs `mpg`, coloreando por `cyl` (como factor).
 
 ---
 
@@ -357,13 +422,13 @@ Usa el dataset `iris`. Cárgalo con `data(iris)`.
 
 4. Agrega títulos al gráfico anterior usando `labs()`.
 
-5. Cambia el tema a `theme_minimal()` y la paleta de colores a una de `scale_color_brewer()`.
+5. Cambia el tema a `theme_classic()` y la paleta de colores con `scale_color_brewer()`.
 
-6. Haz un histograma de `Sepal.Length` con `geom_histogram()`. Cambia el número de bins y observa cómo cambia el gráfico.
+6. Haz una gráfica de barras con `geom_bar()` de `cyl` (como factor), usando `fill = factor(cyl)`.
 
-7. Divide el histograma anterior en tres paneles (uno por especie) usando `facet_wrap(~ Species)`.
+7. Haz un diagrama de dispersión de `hp` vs `mpg` con `geom_point()` y aplica `facet_wrap(~ cyl)` para ver cada grupo de cilindros en un panel separado.
 
-8. Guarda la última gráfica como `ejercicio_iris.png` con `ggsave()` a 300 dpi.
+8. Guarda la última gráfica como `ejercicio_mtcars.png` con `ggsave()` a 300 dpi.
 
 ---
 

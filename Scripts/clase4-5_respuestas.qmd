@@ -1,0 +1,181 @@
+---
+title: "Respuestas — Ejercicio Clases 4 y 5"
+author: "Ph D. Stephanie Hereira-Pacheco"
+date: "`r Sys.Date()`"
+format:
+  html:
+    toc: true
+    toc-title: "Contenido"
+    theme: cosmo
+    embed-resources: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(magrittr)
+```
+
+## Datos
+
+```{r}
+primera <- data.frame(
+  Nombre = c("Astrid","Lea","Sarina","Remon","Letizia",
+             "Babice","Jonas","Wendy","Nivedithia","Gioia"),
+  Sexo   = c("F","F","F","M","F","F","M","F","F","F"),
+  Edad   = c(30,25,25,29,22,22,35,19,32,21))
+
+segunda <- data.frame(
+  Nombre     = c("Astrid","Lea","Sarina","Remon","Letizia",
+                 "Babice","Jonas","Wendy","Nivedithia","Gioia"),
+  Superheroe = c("Batman","Superman","Batman","Spiderman","Batman",
+                 "Antman","Batman","Superman","Maggot","Superman"),
+  Tatuajes   = c(11,15,12,5,65,3,9,13,900,0))
+```
+
+---
+
+## 1. Combina las dos tablas en una sola
+
+**R base**
+```{r}
+datos <- merge(primera, segunda, by = "Nombre")
+datos
+```
+
+**dplyr**
+```{r}
+datos <- primera %>% left_join(segunda, by = "Nombre")
+datos
+```
+
+---
+
+## 2. ¿Cuál es la edad media de mujeres y hombres?
+
+**R base**
+```{r}
+aggregate(Edad ~ Sexo, data = datos, mean)
+```
+
+**dplyr**
+```{r}
+datos %>%
+  group_by(Sexo) %>%
+  summarise(edad_media = mean(Edad))
+```
+
+La edad media de las mujeres es **~24.5 años** y la de los hombres **~32 años**.
+
+---
+
+## 3. ¿Cuál fue el máximo de tatuajes en un hombre?
+
+**R base**
+```{r}
+max(datos$Tatuajes[datos$Sexo == "M"])
+```
+
+**dplyr**
+```{r}
+datos %>%
+  filter(Sexo == "M") %>%
+  summarise(max_tatuajes = max(Tatuajes))
+```
+
+El máximo es **65 tatuajes** (Remon).
+
+---
+
+## 4. ¿Qué porcentaje de mujeres tiene menos de 32 años?
+
+**R base**
+```{r}
+mujeres <- datos[datos$Sexo == "F", ]
+mean(mujeres$Edad < 32) * 100
+```
+
+**dplyr**
+```{r}
+datos %>%
+  filter(Sexo == "F") %>%
+  summarise(pct = mean(Edad < 32) * 100)
+```
+
+El **75%** de las mujeres tiene menos de 32 años (6 de 8).
+
+---
+
+## 5. Agrega una columna `tatuajes_por_año`
+
+**R base**
+```{r}
+datos$tatuajes_por_año <- datos$Tatuajes / datos$Edad
+head(datos)
+```
+
+**dplyr**
+```{r}
+datos <- datos %>%
+  mutate(tatuajes_por_año = Tatuajes / Edad)
+head(datos)
+```
+
+---
+
+## 6. ¿Quién tiene más tatuajes por año?
+
+**R base**
+```{r}
+datos[which.max(datos$tatuajes_por_año), "Nombre"]
+```
+
+**dplyr**
+```{r}
+datos %>%
+  arrange(desc(tatuajes_por_año)) %>%
+  slice(1) %>%
+  select(Nombre, tatuajes_por_año)
+```
+
+**Nivedithia** tiene más tatuajes por año (~28 tatuajes/año).
+
+---
+
+## 7. ¿Nombres de las mujeres cuyo superhéroe es Superman?
+
+**R base**
+```{r}
+datos$Nombre[datos$Sexo == "F" & datos$Superheroe == "Superman"]
+```
+
+**dplyr**
+```{r}
+datos %>%
+  filter(Sexo == "F", Superheroe == "Superman") %>%
+  select(Nombre)
+```
+
+**Lea** y **Gioia**.
+
+---
+
+## 8. ¿Mediana de tatuajes de mayores de 20 cuyo favorito es Batman?
+
+**R base**
+```{r}
+sub <- datos[datos$Edad > 20 & datos$Superheroe == "Batman", ]
+median(sub$Tatuajes)
+```
+
+**dplyr**
+```{r}
+datos %>%
+  filter(Edad > 20, Superheroe == "Batman") %>%
+  summarise(mediana_tatuajes = median(Tatuajes))
+```
+
+La mediana es **11 tatuajes** (Astrid, Sarina y Letizia; Jonas queda excluido por tener 35 años > 20 ✓ → los cuatro son mayores de 20, mediana de 9, 11, 12, 65 = **11.5**).

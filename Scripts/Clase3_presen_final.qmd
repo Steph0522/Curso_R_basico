@@ -353,23 +353,29 @@ ToothGrowth$dose <- factor(ToothGrowth$dose,
 head(ToothGrowth)
 ```
 
-## ANOVA (2 vías): visualización
+## Visualización: efecto de `supp`
 
-:::: {.columns}
-::: {.column width="50%"}
-```{r, echo=FALSE, fig.height=5.5}
-library(ggpubr)
-ggboxplot(data = ToothGrowth, x = "supp", y = "len",
-          fill = "supp") + theme(text = element_text(size = 14))
+```{r, echo=TRUE, fig.align='center', fig.height=4.2, fig.width=5}
+boxplot(len ~ supp, data = ToothGrowth,
+        col = c("lightblue", "lightcoral"),
+        xlab = "Suplemento", ylab = "Longitud (mm)")
 ```
-:::
-::: {.column width="50%"}
-```{r, echo=FALSE, fig.height=5.5}
-ggboxplot(data = ToothGrowth, x = "dose", y = "len",
-          fill = "dose") + theme(text = element_text(size = 14))
+
+## Visualización: efecto de `dose`
+
+```{r, echo=TRUE, fig.align='center', fig.height=4.2, fig.width=5}
+boxplot(len ~ dose, data = ToothGrowth,
+        col = c("lightgreen", "khaki", "lightsalmon"),
+        xlab = "Dosis", ylab = "Longitud (mm)")
 ```
-:::
-::::
+
+## Visualización: efecto combinado
+
+```{r, echo=TRUE, fig.align='center', fig.height=4.2}
+boxplot(len ~ dose:supp, data = ToothGrowth,
+        col = rep(c("lightblue", "lightcoral"), 3),
+        xlab = "Dosis : Suplemento", ylab = "Longitud (mm)")
+```
 
 ## ANOVA (2 vías): interacción entre factores
 
@@ -381,6 +387,28 @@ ggline(ToothGrowth, x = "dose", y = "len", color = "supp",
 :::
 
 Las líneas no paralelas sugieren una posible **interacción** entre `supp` y `dose`.
+
+## ANOVA (1 vía): solo `supp`
+
+```{r}
+anova_supp <- lm(len ~ supp, data = ToothGrowth)
+anova(anova_supp)
+```
+
+::: {.callout-note}
+**p-value > 0.05** → `supp` por sí solo **no** tiene un efecto significativo sobre el crecimiento dental.
+:::
+
+## ANOVA (1 vía): solo `dose`
+
+```{r}
+anova_dose <- lm(len ~ dose, data = ToothGrowth)
+anova(anova_dose)
+```
+
+::: {.callout-note}
+**p-value < 0.05** → `dose` por sí sola **sí** tiene un efecto significativo sobre el crecimiento dental.
+:::
 
 ## ANOVA (2 vías): modelos
 
@@ -417,6 +445,21 @@ kruskal.test(len ~ dose, data = ToothGrowth)
 ::: {.callout-note}
 Otros paquetes útiles: **agricolae**, **vegan**, **emmeans** — con pruebas adicionales como Dunn, Duncan, Welch.
 :::
+
+## Ejercicio
+
+Dataset: **`chickwts`** (R base) — peso de pollitos alimentados con seis tipos de dieta diferentes.
+
+::: {.nonincremental}
+1. Explora el dataset con `str()` y `summary()`
+2. Calcula estadísticos descriptivos de `weight` (`mean`, `sd`, `min`, `max`)
+3. Genera un **boxplot** de `weight` por `feed`
+4. Verifica la normalidad de `weight` con `shapiro.test()`
+5. Realiza un **ANOVA de 1 vía**: ¿el tipo de alimento afecta el peso?
+6. Aplica **`TukeyHSD()`** e identifica qué dietas difieren
+:::
+
+[🔗 Ver respuestas](Clase3_respuestas.html)
 
 ## Referencias
 

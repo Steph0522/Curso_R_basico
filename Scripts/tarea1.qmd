@@ -1,0 +1,62 @@
+---
+title: "Tarea 1 — R básico para ciencia de datos"
+author: "Ph D. Stephanie Hereira-Pacheco"
+institute: "Universidad Autónoma de Tlaxcala"
+date: "`r Sys.Date()`"
+format:
+  pdf:
+    toc: false
+    geometry:
+      - top=2.5cm
+      - bottom=2.5cm
+      - left=2.5cm
+      - right=2.5cm
+    fontsize: 11pt
+    colorlinks: true
+execute:
+  echo: false
+  eval: false
+---
+
+## Instrucciones generales
+
+Crea un script nuevo en RStudio llamado `tarea1_apellido.R`. Escribe todo tu código en ese script, comenta cada paso con `#` y explica con tus propias palabras lo que estás haciendo y los resultados que obtienes. Al terminar entrega únicamente el archivo `.R`.
+
+------------------------------------------------------------------------
+
+## Dataset de trabajo
+
+Trabajaremos con el dataset `PlantGrowth`, disponible directamente en R base. Este dataset registra el peso seco de plantas sometidas a tres condiciones diferentes: un grupo control y dos tratamientos distintos.
+
+Sus variables son:
+
+-   `weight`: peso seco de la planta (numérico)
+-   `group`: grupo de tratamiento — `ctrl` (control), `trt1` (tratamiento 1), `trt2` (tratamiento 2)
+
+------------------------------------------------------------------------
+
+## Parte 1 — Abre y explora los datos
+
+1.  Llama el dataset con `data(PlantGrowth)` y explóralo usando al menos tres de las siguientes funciones: `str()`, `head()`, `tail()`, `dim()`, `summary()`, `colnames()`. Describe en un comentario qué información te da cada una.
+
+2.  Identifica en un comentario: ¿cuál variable es categórica y cuál es numérica? ¿El tipo de dato que muestra R corresponde a lo que esperas?
+
+3.  Exporta el dataset como archivo `.csv`. Puedes usar `write_csv()` del paquete `readr` o `write.csv()` de R base.
+
+------------------------------------------------------------------------
+
+## Parte 2 — Estadísticos descriptivos y gráficos
+
+4.  Calcula los principales estadísticos descriptivos de la variable `weight`: usa funciones como `mean()`, `median()`, `sd()`, `min()`, `max()` y `summary()`. Comenta qué te dicen esos valores sobre los datos.
+
+5.  Genera un **boxplot** de `weight` agrupado por `group`. Y analiza si los grupos varían muy diferente entre ellos o si son similares.
+
+------------------------------------------------------------------------
+
+## Parte 3 — Análisis estadístico
+
+6.  Antes de hacer cualquier prueba, explora la normalidad de la variable `weight` usando un histograma o la función `shapiro.test()`. ¿Se cumple el supuesto de normalidad? Interpreta el valor p en un comentario.
+
+7.  Realiza un **ANOVA de una vía** para evaluar si el tratamiento (`group`) tiene un efecto significativo sobre el peso de las plantas (`weight`). Ajusta el modelo con `lm()` y obtén la tabla ANOVA con `anova()`. Interpreta el resultado: ¿el factor es significativo?
+
+8.  Aplica la **prueba de Tukey** con `TukeyHSD()` para identificar entre qué grupos hay diferencias e interprétalo con tus palabras.

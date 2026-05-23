@@ -1,0 +1,374 @@
+---
+title: "Tarea 1 — R básico para ciencia de datos"
+author: "Ph D. Stephanie Hereira-Pacheco"
+institute: "Universidad Autónoma de Tlaxcala"
+date: "`r Sys.Date()`"
+format:
+  pdf:
+    toc: false
+    number-sections: true
+    colorlinks: true
+    geometry:
+      - top=2.5cm
+      - bottom=2.5cm
+      - left=2.5cm
+      - right=2.5cm
+    fontsize: 11pt
+execute:
+  echo: true
+  eval: false
+  warning: false
+  message: false
+---
+
+\begin{center}
+\large\textbf{Instrucciones generales}
+\end{center}
+
+Entrega un \textbf{script de R} (.R) con tu nombre en el nombre del archivo (ej. `tarea\_apellido.R`). Asegúrate de que el script corra de inicio a fin sin errores, esté bien comentado con `#` y que las interpretaciones de cada ejercicio estén escritas también como comentarios dentro del script. Cada sección aplica los conceptos de una clase diferente.
+
+**Dataset a utilizar:** `CO2` — disponible directamente en R base (no requiere instalar paquetes).
+
+Este dataset contiene datos de un experimento sobre la tolerancia al frío en plantas de pasto de dos orígenes geográficos. Las variables son:
+
+| Variable | Tipo | Descripción |
+|---|---|---|
+| `Plant` | Factor (12 niveles) | Identificador de planta individual |
+| `Type` | Factor | Origen: `Quebec` o `Mississippi` |
+| `Treatment` | Factor | Tratamiento: `chilled` (enfriada) o `nonchilled` (no enfriada) |
+| `conc` | Numérico | Concentración ambiental de CO₂ (mL/L) |
+| `uptake` | Numérico | Tasa de absorción de CO₂ (μmol/m² seg) |
+
+```{r}
+# Cargar el dataset
+data(CO2)
+```
+
+---
+
+# Parte 1 — Objetos, estructuras y funciones (Clase 1) {.unnumbered}
+
+**Ejercicio 1.** Explora la estructura general del dataset.
+
+a. Usa `str()` para ver la estructura del objeto `CO2`. ¿Cuántas observaciones y variables tiene?
+b. Usa `class()` en cada columna del dataframe para identificar el tipo de dato de cada variable.
+c. Usa `summary()` para obtener un resumen general del dataset.
+
+```{r}
+str(CO2)
+class(CO2$Plant)
+class(CO2$Type)
+class(CO2$Treatment)
+class(CO2$conc)
+class(CO2$uptake)
+summary(CO2)
+```
+
+---
+
+**Ejercicio 2.** Trabaja con vectores y matrices.
+
+a. Crea un vector llamado `conc_unica` con los valores únicos (sin repetición) de la columna `conc`. ¿Cuántos valores únicos existen? Usa `length()`.
+b. Extrae los valores de `uptake` de las primeras 12 filas y organízalos en una matriz de 4 filas y 3 columnas. Llámala `mat_uptake`.
+c. Aplica la función `t()` para transponer `mat_uptake` e imprime el resultado.
+
+```{r}
+conc_unica <- unique(CO2$conc)
+length(conc_unica)
+
+mat_uptake <- matrix(CO2$uptake[1:12], nrow = 4, ncol = 3)
+mat_uptake
+t(mat_uptake)
+```
+
+---
+
+**Ejercicio 3.** Crea tu propia función.
+
+Escribe una función llamada `coef_variacion` que reciba un vector numérico y devuelva el coeficiente de variación (CV = desviación estándar / media × 100). Aplícala a la columna `uptake` del dataset.
+
+```{r}
+coef_variacion <- function(x) {
+  (sd(x) / mean(x)) * 100
+}
+
+coef_variacion(CO2$uptake)
+```
+
+---
+
+**Ejercicio 4.** Exporta datos.
+
+Filtra el dataset para conservar solo las plantas de origen `Quebec` y guarda el resultado en un objeto llamado `CO2_quebec`. Exporta este objeto como archivo CSV con el nombre `CO2_quebec.csv` usando la función `write_csv()` del paquete `readr`.
+
+```{r}
+library(readr)
+CO2_quebec <- CO2[CO2$Type == "Quebec", ]
+write_csv(CO2_quebec, "CO2_quebec.csv")
+```
+
+---
+
+# Parte 2 — Manipulación de datos (Clase 2) {.unnumbered}
+
+**Ejercicio 5.** Acceso y subconjuntos.
+
+a. Usando el operador `$`, imprime los valores de la columna `uptake`.
+b. Selecciona únicamente las columnas numéricas del dataset (`conc` y `uptake`) usando indexación por nombre.
+c. Filtra las filas donde `uptake > 35` **y** `Treatment == "nonchilled"`. ¿Cuántas filas cumple esta condición?
+
+```{r}
+CO2$uptake
+
+CO2_num <- CO2[, c("conc", "uptake")]
+head(CO2_num)
+
+CO2_filtrado <- CO2[CO2$uptake > 35 & CO2$Treatment == "nonchilled", ]
+nrow(CO2_filtrado)
+CO2_filtrado
+```
+
+---
+
+**Ejercicio 6.** Familia `apply()`.
+
+a. Usa `apply()` con `MARGIN = 2` para calcular la media y la desviación estándar de las columnas `conc` y `uptake` simultáneamente. Escribe una función anónima o nombrada que devuelva ambos estadísticos.
+b. Usa `sapply()` para calcular el valor máximo de `conc` y `uptake`.
+
+```{r}
+apply(CO2[, c("conc", "uptake")], MARGIN = 2, FUN = function(x) {
+  c(media = mean(x), desv_est = sd(x))
+})
+
+sapply(CO2[, c("conc", "uptake")], max)
+```
+
+---
+
+**Ejercicio 7.** Estructuras de control.
+
+a. Usa `ifelse()` para crear una nueva columna en `CO2` llamada `absorcion` que clasifique las plantas como `"Alta"` si `uptake > 25` o `"Baja"` si `uptake <= 25`.
+b. Escribe un bucle `for` que recorra los niveles únicos de `Type` e imprima en consola la media de `uptake` para cada origen.
+
+```{r}
+CO2$absorcion <- ifelse(CO2$uptake > 25, "Alta", "Baja")
+head(CO2)
+
+for (tipo in unique(CO2$Type)) {
+  media_tipo <- mean(CO2$uptake[CO2$Type == tipo])
+  print(paste("Origen:", tipo, "— Media uptake:", round(media_tipo, 2)))
+}
+```
+
+---
+
+**Ejercicio 8.** Datos faltantes.
+
+a. Verifica si el dataset `CO2` tiene valores `NA` usando `is.na()` y `sum()`. ¿Cuántos hay en total?
+b. Para practicar, introduce artificialmente 5 valores `NA` en la columna `uptake` y guárdalos en un nuevo objeto `CO2_na`. Luego calcula la media de `uptake` ignorando los `NA` con `na.rm = TRUE`. Finalmente, reemplaza los `NA` con la mediana de `uptake`.
+
+```{r}
+sum(is.na(CO2))
+
+CO2_na <- CO2
+CO2_na$uptake[c(3, 10, 25, 50, 72)] <- NA
+sum(is.na(CO2_na$uptake))
+
+mean(CO2_na$uptake, na.rm = TRUE)
+
+CO2_na$uptake[is.na(CO2_na$uptake)] <- median(CO2_na$uptake, na.rm = TRUE)
+sum(is.na(CO2_na$uptake))
+```
+
+---
+
+# Parte 3 — Estadísticos y pruebas (Clase 3) {.unnumbered}
+
+**Ejercicio 9.** Estadísticos descriptivos.
+
+Calcula para la variable `uptake` los siguientes estadísticos e interpreta brevemente cada resultado:
+
+a. Media, mediana, mínimo y máximo
+b. Desviación estándar y varianza
+c. Cuantiles 25 % y 75 %, y rango intercuartil (IQR)
+d. Coeficiente de variación (usa la función que creaste en el Ejercicio 3)
+
+```{r}
+mean(CO2$uptake)
+median(CO2$uptake)
+min(CO2$uptake)
+max(CO2$uptake)
+
+sd(CO2$uptake)
+var(CO2$uptake)
+
+quantile(CO2$uptake, 0.25)
+quantile(CO2$uptake, 0.75)
+IQR(CO2$uptake)
+
+coef_variacion(CO2$uptake)
+```
+
+---
+
+**Ejercicio 10.** Gráficos descriptivos.
+
+a. Genera un boxplot de `uptake` agrupado por `Type` usando la función base `boxplot()`.
+b. Genera un gráfico de barras con barras de error (media ± sd) usando `ggbarplot()` del paquete `ggpubr`, con `Type` en el eje x y `uptake` en el eje y. Colorea las barras por `Treatment`.
+
+```{r}
+boxplot(uptake ~ Type, data = CO2,
+        main = "Absorción de CO2 por origen",
+        xlab = "Origen", ylab = "Uptake (μmol/m² seg)")
+
+library(ggpubr)
+ggbarplot(data = CO2, x = "Type", y = "uptake",
+          fill = "Treatment",
+          add = "mean_sd",
+          position = position_dodge(0.8),
+          palette = "jco",
+          xlab = "Origen", ylab = "Uptake (μmol/m² seg)")
+```
+
+---
+
+**Ejercicio 11.** Exploración de normalidad.
+
+Para la variable `uptake`:
+
+a. Genera un histograma y una gráfica de densidad. ¿Visualmente parece normal?
+b. Genera un Q-Q plot con `qqnorm()` y `qqline()`.
+c. Aplica la prueba de Shapiro-Wilk con `shapiro.test()`. Interpreta el resultado indicando: ¿se cumple el supuesto de normalidad? ¿Por qué?
+
+```{r}
+hist(CO2$uptake, main = "Histograma de uptake", xlab = "Uptake")
+plot(density(CO2$uptake), main = "Densidad de uptake")
+
+qqnorm(CO2$uptake)
+qqline(CO2$uptake)
+
+shapiro.test(CO2$uptake)
+```
+
+> **Interpretación:** escribe aquí tu conclusión sobre la normalidad de los datos.
+
+---
+
+**Ejercicio 12.** Correlación.
+
+¿Existe una relación lineal entre la concentración ambiental de CO₂ (`conc`) y la tasa de absorción (`uptake`)?
+
+a. Calcula el coeficiente de correlación de Pearson usando `cor.test()`.
+b. Interpreta: ¿la correlación es positiva o negativa? ¿Es significativa (p < 0.05)?
+c. Calcula también la correlación de Spearman. ¿Cambia la conclusión?
+
+```{r}
+cor.test(CO2$conc, CO2$uptake)
+
+cor(CO2$conc, CO2$uptake, method = "spearman")
+```
+
+> **Interpretación:** escribe aquí tu conclusión sobre la relación entre concentración y absorción.
+
+---
+
+**Ejercicio 13.** Regresión lineal simple.
+
+Ajusta un modelo de regresión lineal donde `uptake` es la variable respuesta y `conc` la variable predictora.
+
+a. Ajusta el modelo con `lm()` y guárdalo en `modelo_co2`.
+b. Revisa los gráficos diagnósticos (`plot(modelo_co2, which = c(1, 2))`). ¿Se cumplen los supuestos?
+c. Muestra el resumen con `summary()`. Reporta: intercepto, pendiente, R² ajustado y significancia del modelo.
+d. Escribe la ecuación de la recta.
+
+```{r}
+modelo_co2 <- lm(uptake ~ conc, data = CO2)
+
+plot(modelo_co2, which = c(1, 2))
+
+summary(modelo_co2)
+```
+
+> **Interpretación:** escribe la ecuación de la recta y explica qué porcentaje de la varianza explica el modelo.
+
+---
+
+**Ejercicio 14.** ANOVA de 1 vía.
+
+¿El origen geográfico (`Type`) afecta la absorción de CO₂ (`uptake`)?
+
+a. Ajusta el modelo lineal: `lm(uptake ~ Type, data = CO2)`.
+b. Verifica los supuestos con `plot(modelo, which = c(1, 2))`.
+c. Realiza el ANOVA con `anova()` e interpreta el resultado.
+
+```{r}
+modelo_1v <- lm(uptake ~ Type, data = CO2)
+plot(modelo_1v, which = c(1, 2))
+anova(modelo_1v)
+```
+
+> **Interpretación:** ¿hay diferencias significativas entre Quebec y Mississippi? ¿Por qué no es necesaria la prueba de Tukey en este caso?
+
+---
+
+**Ejercicio 15.** ANOVA de 2 vías.
+
+¿El origen (`Type`), el tratamiento (`Treatment`) o su interacción afectan la absorción de CO₂?
+
+a. Ajusta un modelo **aditivo**: `aov(uptake ~ Type + Treatment, data = CO2)`.
+b. Ajusta un modelo **con interacción**: `aov(uptake ~ Type * Treatment, data = CO2)`.
+c. Compara los resultados con `summary()`. ¿La interacción es significativa?
+
+```{r}
+anova_adit <- aov(uptake ~ Type + Treatment, data = CO2)
+summary(anova_adit)
+
+anova_inter <- aov(uptake ~ Type * Treatment, data = CO2)
+summary(anova_inter)
+```
+
+> **Interpretación:** ¿qué factores son significativos? ¿La interacción entre origen y tratamiento modifica el efecto de cada factor?
+
+---
+
+**Ejercicio 16.** Prueba de Tukey.
+
+Aunque el ANOVA de 1 vía con `Type` solo tiene 2 grupos, usa el modelo del ANOVA de 2 vías para identificar diferencias entre todos los grupos de `Type:Treatment`.
+
+a. Aplica `TukeyHSD()` al modelo de interacción.
+b. Usa `HSD.test()` del paquete `agricolae` para obtener las letras de agrupamiento.
+
+```{r}
+TukeyHSD(anova_inter)
+
+library(agricolae)
+tuk <- HSD.test(anova_inter, trt = c("Type", "Treatment"),
+                group = TRUE, console = FALSE)
+tuk$groups
+```
+
+> **Interpretación:** ¿qué combinaciones de origen y tratamiento difieren significativamente entre sí?
+
+
+---
+
+\newpage
+
+# Lista de verificación para la entrega {.unnumbered}
+
+Antes de entregar, asegúrate de cumplir con lo siguiente:
+
+\begin{itemize}
+  \item[$\square$] Nombre del archivo correcto: \texttt{tarea\_apellido.R}
+  \item[$\square$] El script corre de inicio a fin sin errores
+  \item[$\square$] Cada bloque de código tiene comentarios con \texttt{\#} explicando qué hace
+  \item[$\square$] Las interpretaciones (ejercicios que dicen ``Interpretación'') están escritas como comentarios \texttt{\#} dentro del script
+  \item[$\square$] El script incluye tu nombre y matrícula en las primeras líneas
+  \item[$\square$] Los 16 ejercicios están respondidos
+\end{itemize}
+
+\vspace{0.5cm}
+
+**Fecha de entrega:** \underline{\hspace{5cm}}
+
+**Valor:** \underline{\hspace{3cm}} puntos

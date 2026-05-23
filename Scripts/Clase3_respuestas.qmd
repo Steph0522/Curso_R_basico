@@ -1,0 +1,103 @@
+---
+title: "Respuestas — Ejercicio Clase 3"
+author: "Ph D. Stephanie Hereira-Pacheco"
+date: "`r Sys.Date()`"
+format:
+  html:
+    toc: true
+    toc-title: "Contenido"
+    theme: cosmo
+    embed-resources: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## Dataset: `chickwts`
+
+```{r}
+data(chickwts)
+```
+
+Dataset con **71 observaciones** y **2 variables**:
+
+- `weight`: peso del pollito en gramos (numérico)
+- `feed`: tipo de alimento (factor, 6 niveles: casein, horsebean, linseed, meatmeal, soybean, sunflower)
+
+---
+
+## 1. Exploración
+
+```{r}
+str(chickwts)
+summary(chickwts)
+```
+
+---
+
+## 2. Estadísticos descriptivos de `weight`
+
+```{r}
+mean(chickwts$weight)
+sd(chickwts$weight)
+min(chickwts$weight)
+max(chickwts$weight)
+```
+
+El peso promedio es **~261 g** con una desviación estándar de ~78 g, lo que indica bastante variación entre los grupos de dieta.
+
+---
+
+## 3. Boxplot de `weight` por `feed`
+
+```{r, fig.align='center', fig.width=7, fig.height=5}
+boxplot(weight ~ feed, data = chickwts,
+        col = c("lightblue", "lightgreen", "khaki",
+                "lightcoral", "lavender", "lightsalmon"),
+        xlab = "Tipo de alimento", ylab = "Peso (g)",
+        main = "Peso de pollitos por tipo de dieta")
+```
+
+Las dietas **casein** y **sunflower** producen los pollitos más pesados; **horsebean** produce los más livianos.
+
+---
+
+## 4. Normalidad de `weight`
+
+```{r, fig.align='center', fig.width=5, fig.height=4}
+hist(chickwts$weight, main = "Histograma de weight",
+     xlab = "Peso (g)", col = "lightblue")
+
+shapiro.test(chickwts$weight)
+```
+
+::: {.callout-note}
+**p-value > 0.05** → no rechazamos H₀ → los datos **sí son normales**. Se puede aplicar ANOVA.
+:::
+
+---
+
+## 5. ANOVA de 1 vía
+
+```{r}
+modelo <- lm(weight ~ feed, data = chickwts)
+anova(modelo)
+```
+
+::: {.callout-note}
+**p-value < 0.05** → el tipo de alimento **sí tiene efecto significativo** sobre el peso. Al menos una dieta produce pollitos con peso diferente al resto.
+:::
+
+---
+
+## 6. Prueba de Tukey
+
+```{r}
+fm <- aov(modelo)
+TukeyHSD(fm, "feed")
+```
+
+::: {.callout-note}
+Las comparaciones con **p adj < 0.05** indican diferencias significativas. Las dietas **horsebean** y **linseed** producen pollitos significativamente más livianos que **casein** y **sunflower**.
+:::

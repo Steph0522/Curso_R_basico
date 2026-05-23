@@ -290,6 +290,77 @@ head(ToothGrowth)
 
 ---
 
+## Visualización: efecto de `supp`
+
+```{r, fig.align='center', fig.height=4.2, fig.width=5}
+boxplot(len ~ supp, data = ToothGrowth,
+        col = c("lightblue", "lightcoral"),
+        xlab = "Suplemento", ylab = "Longitud (mm)")
+```
+
+---
+
+## Visualización: efecto de `dose`
+
+```{r, fig.align='center', fig.height=4.2, fig.width=5}
+boxplot(len ~ dose, data = ToothGrowth,
+        col = c("lightgreen", "khaki", "lightsalmon"),
+        xlab = "Dosis", ylab = "Longitud (mm)")
+```
+
+---
+
+## Visualización: efecto combinado
+
+```{r, fig.align='center', fig.height=5.5, fig.width=8}
+boxplot(len ~ supp:dose, data = ToothGrowth,
+        col = rep(c("lightblue", "lightcoral"), 3),
+        xlab = "Dosis : Suplemento", ylab = "Longitud (mm)")
+```
+
+---
+
+## ANOVA (2 vías): gráfico de interacción
+
+Las líneas **no paralelas** confirman visualmente la interacción:
+
+```{r, fig.width=8, fig.height=5.5, fig.align='center'}
+interaction.plot(x.factor    = ToothGrowth$dose,
+                 trace.factor = ToothGrowth$supp,
+                 response    = ToothGrowth$len,
+                 col = c("steelblue", "tomato"), lwd = 2,
+                 xlab = "Dosis", ylab = "Longitud media",
+                 trace.label = "Suplemento")
+```
+
+---
+
+## ANOVA (1 vía): solo `supp`
+
+```{r}
+anova_supp <- lm(len ~ supp, data = ToothGrowth)
+anova(anova_supp)
+```
+
+::: {.callout-note}
+**p-value > 0.05** → `supp` por sí solo **no** tiene efecto significativo sobre `len`.
+:::
+
+---
+
+## ANOVA (1 vía): solo `dose`
+
+```{r}
+anova_dose <- lm(len ~ dose, data = ToothGrowth)
+anova(anova_dose)
+```
+
+::: {.callout-note}
+**p-value < 0.05** → `dose` por sí sola **sí** tiene efecto significativo sobre `len`.
+:::
+
+---
+
 ## ANOVA (2 vías): modelo aditivo
 
 Efectos **independientes** de cada factor:
@@ -316,17 +387,20 @@ La fila `supp:dose` con **p < 0.05** confirma **interacción**: el efecto de la 
 
 ---
 
-## ANOVA (2 vías): gráfico de interacción
+## Tukey (2 vías): efecto de cada factor
 
-Las líneas **no paralelas** confirman visualmente la interacción:
+```{r}
+tuk <- TukeyHSD(anova2)
+tuk$supp
+tuk$dose
+```
 
-```{r, fig.width=6, fig.height=4, fig.align='center'}
-interaction.plot(x.factor   = ToothGrowth$dose,
-                 trace.factor = ToothGrowth$supp,
-                 response   = ToothGrowth$len,
-                 col = c("steelblue", "tomato"), lwd = 2,
-                 xlab = "Dosis", ylab = "Longitud media",
-                 trace.label = "Suplemento")
+---
+
+## Tukey (2 vías): interacción `supp:dose`
+
+```{r}
+tuk$`supp:dose`
 ```
 
 ---
@@ -424,104 +498,23 @@ abline(lm(Ancho_Petalo ~ Largo_Petalo, data = iris),
 
 ---
 
-## Ejercicios
+## Ejercicio
 
-::: {.callout-note}
-Usa el dataset `iris` — ya está cargado desde el inicio de la clase.
+Con el dataset **`chickwts`** (R base) — peso de pollitos con seis tipos de dieta:
+
+::: {.nonincremental}
+1. Explora el dataset con `str()` y `summary()`
+2. Calcula estadísticos descriptivos de `weight`: `mean()`, `sd()`, `min()`, `max()`
+3. Genera un **boxplot** de `weight` por `feed`
+4. Verifica la normalidad de `weight` con `shapiro.test()`. ¿Se cumple el supuesto?
+5. Realiza un **ANOVA de 1 vía**: ¿el tipo de alimento afecta el peso?
+6. Aplica **`TukeyHSD()`** e identifica qué dietas difieren
 :::
 
-1. Calcula el promedio, mediana y desviación estándar de `Ancho_Sepalo`.
-2. Haz un histograma de `Ancho_Sepalo`. ¿Tiene forma de campana?
-3. Haz un boxplot de `Ancho_Sepalo` por `Especie`. ¿Cuál especie tiene la mediana más alta?
-4. Aplica `shapiro.test()` a `Ancho_Sepalo`. ¿Son normales los datos?
-
----
-
-## Ejercicios (cont.)
-
-5. Corre un ANOVA de `Ancho_Sepalo ~ Especie`. ¿Hay diferencias entre especies?
-6. Aplica `TukeyHSD()` al modelo anterior. ¿Entre cuáles pares de especies hay diferencias?
-7. Calcula la correlación entre `Largo_Petalo` y `Ancho_Petalo`. ¿Es significativa? ¿Positiva o negativa?
-
----
-
-## Soluciones: ejercicio 1
-
-**1.** Estadísticos descriptivos:
-
-```{r}
-mean(iris$Ancho_Sepalo)
-median(iris$Ancho_Sepalo)
-sd(iris$Ancho_Sepalo)
-```
-
----
-
-## Soluciones: ejercicio 2
-
-**2.** Histograma:
-
-```{r, fig.width=5, fig.height=4, fig.align='center'}
-hist(iris$Ancho_Sepalo, main = "Distribución de Ancho_Sepalo",
-     xlab = "Ancho (cm)", col = "steelblue")
-```
-
----
-
-## Soluciones: ejercicio 3
-
-**3.** Boxplot por especie:
-
-```{r, fig.width=5.5, fig.height=4, fig.align='center'}
-boxplot(Ancho_Sepalo ~ Especie, data = iris,
-        col = c("orchid", "lightblue", "lightgreen"),
-        xlab = "Especie", ylab = "Ancho sépalo (cm)")
-```
-
----
-
-## Soluciones: ejercicio 4
-
-**4.** Prueba de normalidad:
-
-```{r}
-shapiro.test(iris$Ancho_Sepalo)
-```
-
-::: {.callout-note}
-p-value > 0.05 → los datos son normales.
+::: {.notes}
+Respuestas: Clase3_respuestas.html
 :::
 
----
-
-## Soluciones: ejercicio 5
-
-**5.** ANOVA `Ancho_Sepalo ~ Especie`:
-
-```{r}
-mod <- lm(Ancho_Sepalo ~ Especie, data = iris)
-anova(mod)
-```
-
----
-
-## Soluciones: ejercicio 6
-
-**6.** Prueba de Tukey:
-
-```{r}
-TukeyHSD(aov(mod), "Especie", ordered = TRUE)
-```
-
----
-
-## Soluciones: ejercicio 7
-
-**7.** Correlación `Largo_Petalo` ~ `Ancho_Petalo`:
-
-```{r}
-cor.test(iris$Largo_Petalo, iris$Ancho_Petalo)
-```
 
 ---
 

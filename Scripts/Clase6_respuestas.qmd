@@ -1,0 +1,137 @@
+---
+title: "Respuestas — Ejercicio Clase 6"
+author: "Ph D. Stephanie Hereira-Pacheco"
+date: "`r Sys.Date()`"
+format:
+  html:
+    toc: true
+    toc-title: "Contenido"
+    theme: cosmo
+    embed-resources: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+```{r setup, include=FALSE}
+library(ggplot2)
+data(mtcars)
+mtcars$cyl <- factor(mtcars$cyl)
+```
+
+Dataset: **`mtcars`** — características de 32 automóviles (1973–74).
+Variables usadas: `mpg` (millas/galón), `wt` (peso en miles de libras), `hp` (caballos de fuerza), `cyl` (cilindros: 4, 6 u 8).
+
+---
+
+## 1. Barplot con R base
+
+```{r, fig.align='center', fig.width=5, fig.height=4}
+mtcars$cyl <- factor(mtcars$cyl)
+counts <- table(mtcars$cyl)
+barplot(counts,
+        main  = "Número de autos por cilindros",
+        xlab  = "Cilindros", ylab = "Frecuencia",
+        col   = c("lightblue", "lightgreen", "lightsalmon"),
+        names.arg = c("4 cil.", "6 cil.", "8 cil."))
+```
+
+---
+
+## 2. Boxplot con R base
+
+```{r, fig.align='center', fig.width=5, fig.height=4}
+boxplot(mpg ~ cyl, data = mtcars,
+        main = "Consumo por número de cilindros",
+        xlab = "Cilindros", ylab = "Millas por galón (mpg)",
+        col  = c("lightblue", "lightgreen", "lightsalmon"))
+```
+
+Los autos con 4 cilindros tienen mayor rendimiento (más mpg); los de 8 cilindros consumen más.
+
+---
+
+## 3. Diagrama de dispersión con `ggplot2`
+
+```{r, fig.align='center', fig.width=5.5, fig.height=4}
+ggplot(mtcars, aes(x = wt, y = mpg, color = cyl)) +
+  geom_point(size = 2)
+```
+
+---
+
+## 4. Agregar títulos con `labs()`
+
+```{r, fig.align='center', fig.width=5.5, fig.height=4}
+ggplot(mtcars, aes(x = wt, y = mpg, color = cyl)) +
+  geom_point(size = 2) +
+  labs(title = "Peso vs consumo de combustible",
+       x     = "Peso (miles de libras)",
+       y     = "Millas por galón",
+       color = "Cilindros")
+```
+
+---
+
+## 5. Tema y paleta de colores
+
+```{r, fig.align='center', fig.width=5.5, fig.height=4}
+ggplot(mtcars, aes(x = wt, y = mpg, color = cyl)) +
+  geom_point(size = 2) +
+  labs(title = "Peso vs consumo de combustible",
+       x     = "Peso (miles de libras)",
+       y     = "Millas por galón",
+       color = "Cilindros") +
+  theme_classic() +
+  scale_color_brewer(palette = "Set1")
+```
+
+---
+
+## 6. Gráfica de barras con `geom_bar()`
+
+```{r, fig.align='center', fig.width=5, fig.height=4}
+ggplot(mtcars, aes(x = cyl, fill = cyl)) +
+  geom_bar() +
+  labs(title = "Número de autos por cilindros",
+       x = "Cilindros", y = "Frecuencia") +
+  theme_classic() +
+  theme(legend.position = "none")
+```
+
+---
+
+## 7. Dispersión con `facet_wrap()`
+
+```{r, fig.align='center', fig.width=7.5, fig.height=3.5}
+ggplot(mtcars, aes(x = hp, y = mpg, color = cyl)) +
+  geom_point(size = 2) +
+  facet_wrap(~ cyl, labeller = label_both) +
+  labs(title = "Caballos de fuerza vs consumo por grupo de cilindros",
+       x = "Caballos de fuerza (hp)", y = "Millas por galón (mpg)") +
+  theme_bw() +
+  theme(legend.position = "none")
+```
+
+`facet_wrap(~ cyl)` genera un panel separado para cada grupo de cilindros.
+
+---
+
+## 8. Guardar con `ggsave()`
+
+```{r, eval=FALSE}
+p <- ggplot(mtcars, aes(x = hp, y = mpg, color = cyl)) +
+  geom_point(size = 2) +
+  facet_wrap(~ cyl, labeller = label_both) +
+  theme_bw() +
+  theme(legend.position = "none")
+
+ggsave(filename = "ejercicio_mtcars.png",
+       plot     = p,
+       width    = 7.5,
+       height   = 3.5,
+       dpi      = 300)
+```
+
+El archivo se guarda en el directorio de trabajo con resolución de 300 dpi.
