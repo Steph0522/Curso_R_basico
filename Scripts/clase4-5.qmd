@@ -75,8 +75,11 @@ Hay dos versiones del *pipe* — hacen lo mismo:
 
 Usaremos **`%>%`** en esta clase. Pasa el resultado de la izquierda como entrada de la función de la derecha:
 
-```{r}
+```{r, echo=FALSE}
 library(magrittr)
+```
+
+```{r}
 16 %>% sqrt()
 16 %>% sqrt() %>% log2()
 ```
@@ -95,11 +98,11 @@ Se lee de izquierda a derecha — mucho más natural que anidar funciones.
 ::: {.column width="50%"}
 **R base**
 ```{r}
-head(ToothGrowth[, c("len", "supp")], 4)
+head(ToothGrowth[, c("len", "supp")], 3)
 ```
 Excluir una columna:
 ```{r}
-head(ToothGrowth[, -2], 4)
+head(ToothGrowth[, -2], 3)
 ```
 :::
 ::: {.column width="50%"}
@@ -107,13 +110,13 @@ head(ToothGrowth[, -2], 4)
 ```{r}
 ToothGrowth %>%
   select(len, supp) %>%
-  head(4)
+  head(3)
 ```
 Excluir una columna:
 ```{r}
 ToothGrowth %>%
   select(-supp) %>%
-  head(4)
+  head(3)
 ```
 :::
 ::::
@@ -126,11 +129,7 @@ ToothGrowth %>%
 ::: {.column width="50%"}
 **R base**
 ```{r}
-head(ToothGrowth[ToothGrowth$supp == "OJ", ], 4)
-```
-Con `subset()`:
-```{r}
-head(subset(ToothGrowth, supp == "OJ"), 4)
+head(subset(ToothGrowth, supp == "OJ"), 3)
 ```
 :::
 ::: {.column width="50%"}
@@ -138,7 +137,7 @@ head(subset(ToothGrowth, supp == "OJ"), 4)
 ```{r}
 ToothGrowth %>%
   filter(supp == "OJ") %>%
-  head(4)
+  head(3)
 ```
 :::
 ::::
@@ -151,15 +150,16 @@ ToothGrowth %>%
 ::: {.column width="50%"}
 **R base**
 ```{r}
-subset(ToothGrowth,
-       supp == "OJ" & len > 20)
+head(subset(ToothGrowth,
+       supp == "OJ" & len > 20), 4)
 ```
 :::
 ::: {.column width="50%"}
 **dplyr**
 ```{r}
 ToothGrowth %>%
-  filter(supp == "OJ", len > 20)
+  filter(supp == "OJ", len > 20) %>%
+  head(4)
 ```
 :::
 ::::
