@@ -1,0 +1,78 @@
+---
+title: "Tarea 2 — Estadísticos y pruebas en R"
+author: "Ph D. Stephanie Hereira-Pacheco"
+institute: "Universidad Autónoma de Tlaxcala"
+date: "`r Sys.Date()`"
+format:
+  pdf:
+    toc: false
+    geometry:
+      - top=2.5cm
+      - bottom=2.5cm
+      - left=2.5cm
+      - right=2.5cm
+    fontsize: 11pt
+    colorlinks: true
+execute:
+  echo: false
+  eval: false
+---
+
+## Instrucciones generales
+
+Crea un script nuevo en RStudio llamado `tarea2_apellido.R`. Escribe todo tu código en ese script, comenta cada paso con `#` y explica con tus propias palabras lo que estás haciendo y los resultados que obtienes. Al terminar entrega únicamente el archivo `.R`.
+
+------------------------------------------------------------------------
+
+## Dataset de trabajo
+
+Trabajaremos con los datos de pasajeros del **Titanic**. Carga el archivo directamente desde internet con la función `read.csv()` usando la siguiente dirección:
+
+`https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv`
+
+Las variables que usaremos son:
+
+-   `Age`: edad del pasajero en años (numérico, tiene valores faltantes)
+-   `Fare`: precio del boleto en libras (numérico)
+-   `Pclass`: clase del boleto — 1 (primera), 2 (segunda), 3 (tercera)
+-   `Sex`: sexo del pasajero
+
+------------------------------------------------------------------------
+
+## Parte 1 — Exploración inicial
+
+1.  Carga el dataset y explóralo usando al menos tres de las siguientes funciones: `str()`, `head()`, `dim()`, `summary()`. Describe en un comentario qué te muestra cada una.
+
+2.  Convierte `Pclass` y `Sex` a factor con `factor()`. Verifica el cambio con `str()`. ¿Por qué es importante hacerlo antes del análisis?
+
+3.  La variable `Age` tiene valores faltantes (`NA`). Usa `sum(!is.na(titanic$Age))` para saber cuántos pasajeros tienen dato de edad. Comenta el resultado.
+
+------------------------------------------------------------------------
+
+## Parte 2 — Estadísticos descriptivos y gráficos
+
+4.  Calcula para `Age` y para `Fare` los siguientes estadísticos: media (`mean()`), mediana (`median()`), desviación estándar (`sd()`), mínimo y máximo. Recuerda usar `na.rm = TRUE` en `Age`. Comenta qué te dicen esos valores.
+
+5.  Genera un **boxplot** de `Fare` agrupado por `Pclass`. ¿En qué clase pagaron más por el boleto?
+
+6.  Genera un **boxplot** de `Age` agrupado por `Sex`. ¿Hay diferencias visibles entre hombres y mujeres?
+
+------------------------------------------------------------------------
+
+## Parte 3 — Exploración de normalidad
+
+7.  Aplica `shapiro.test()` a `Age` (sin valores NA) y a `Fare`. Para quitar los NA de Age puedes usar: `Age_sin_na <- titanic$Age[!is.na(titanic$Age)]`. Interpreta el p-value en cada caso: ¿son normales los datos?
+
+8.  Genera un **Q-Q plot** o un histograma para `Fare` . ¿El gráfico confirma lo que encontraste con la prueba de Shapiro-Wilk?
+
+------------------------------------------------------------------------
+
+## Parte 4 — Pruebas estadísticas
+
+Usa los resultados de la Parte 3 para elegir la prueba correcta en cada pregunta.
+
+9.  **¿El precio del boleto (`Fare`) difiere entre las tres clases (`Pclass`)?** Si los datos son normales usa `lm()` + `anova()`; si no lo son usa `kruskal.test()`. Interpreta el resultado.
+
+10. **¿La edad (`Age`) difiere entre hombres y mujeres (`Sex`)?** Si los datos son normales usa `t.test()`; si no lo son usa `wilcox.test()`. Interpreta el resultado.
+
+11. **¿Existe correlación entre la edad (`Age`) y el precio del boleto (`Fare`)?** Usa `cor.test()` eligiendo el método adecuado: `"pearson"` si ambas variables son normales, `"spearman"` si no lo son. Agrega `use = "complete.obs"` para ignorar los NA. Interpreta el coeficiente y el p-value.

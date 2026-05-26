@@ -9,7 +9,7 @@
 <meta name="author" content="Ph D. Stephanie Hereira-Pacheco">
 <meta name="dcterms.date" content="2026-05-25">
 
-<title>Respuestas — Ejercicio Clases 4 y 5</title>
+<title>Respuestas — Tarea 2 (Titanic)</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -3077,15 +3077,33 @@ vertical-align: -.125em;
     <h2 id="toc-title">Contenido</h2>
    
   <ul>
-  <li><a href="#datos" id="toc-datos" class="nav-link active" data-scroll-target="#datos">Datos</a></li>
-  <li><a href="#combina-las-dos-tablas-en-una-sola" id="toc-combina-las-dos-tablas-en-una-sola" class="nav-link" data-scroll-target="#combina-las-dos-tablas-en-una-sola">1. Combina las dos tablas en una sola</a></li>
-  <li><a href="#cuál-es-la-edad-media-de-mujeres-y-hombres" id="toc-cuál-es-la-edad-media-de-mujeres-y-hombres" class="nav-link" data-scroll-target="#cuál-es-la-edad-media-de-mujeres-y-hombres">2. ¿Cuál es la edad media de mujeres y hombres?</a></li>
-  <li><a href="#cuál-fue-el-máximo-de-tatuajes-en-un-hombre" id="toc-cuál-fue-el-máximo-de-tatuajes-en-un-hombre" class="nav-link" data-scroll-target="#cuál-fue-el-máximo-de-tatuajes-en-un-hombre">3. ¿Cuál fue el máximo de tatuajes en un hombre?</a></li>
-  <li><a href="#qué-porcentaje-de-mujeres-tiene-menos-de-32-años" id="toc-qué-porcentaje-de-mujeres-tiene-menos-de-32-años" class="nav-link" data-scroll-target="#qué-porcentaje-de-mujeres-tiene-menos-de-32-años">4. ¿Qué porcentaje de mujeres tiene menos de 32 años?</a></li>
-  <li><a href="#agrega-una-columna-tatuajes_por_año" id="toc-agrega-una-columna-tatuajes_por_año" class="nav-link" data-scroll-target="#agrega-una-columna-tatuajes_por_año">5. Agrega una columna <code>tatuajes_por_año</code></a></li>
-  <li><a href="#quién-tiene-más-tatuajes-por-año" id="toc-quién-tiene-más-tatuajes-por-año" class="nav-link" data-scroll-target="#quién-tiene-más-tatuajes-por-año">6. ¿Quién tiene más tatuajes por año?</a></li>
-  <li><a href="#nombres-de-las-mujeres-cuyo-superhéroe-es-superman" id="toc-nombres-de-las-mujeres-cuyo-superhéroe-es-superman" class="nav-link" data-scroll-target="#nombres-de-las-mujeres-cuyo-superhéroe-es-superman">7. ¿Nombres de las mujeres cuyo superhéroe es Superman?</a></li>
-  <li><a href="#mediana-de-tatuajes-de-mayores-de-20-cuyo-favorito-es-batman" id="toc-mediana-de-tatuajes-de-mayores-de-20-cuyo-favorito-es-batman" class="nav-link" data-scroll-target="#mediana-de-tatuajes-de-mayores-de-20-cuyo-favorito-es-batman">8. ¿Mediana de tatuajes de mayores de 20 cuyo favorito es Batman?</a></li>
+  <li><a href="#parte-1-exploración-inicial" id="toc-parte-1-exploración-inicial" class="nav-link active" data-scroll-target="#parte-1-exploración-inicial">Parte 1: Exploración inicial</a>
+  <ul class="collapse">
+  <li><a href="#explorar-el-dataset" id="toc-explorar-el-dataset" class="nav-link" data-scroll-target="#explorar-el-dataset">1. Explorar el dataset</a></li>
+  <li><a href="#convertir-variables-a-factor" id="toc-convertir-variables-a-factor" class="nav-link" data-scroll-target="#convertir-variables-a-factor">2. Convertir variables a factor</a></li>
+  <li><a href="#pasajeros-con-dato-de-age" id="toc-pasajeros-con-dato-de-age" class="nav-link" data-scroll-target="#pasajeros-con-dato-de-age">3. Pasajeros con dato de Age</a></li>
+  </ul></li>
+  <li><a href="#parte-2-estadísticos-descriptivos" id="toc-parte-2-estadísticos-descriptivos" class="nav-link" data-scroll-target="#parte-2-estadísticos-descriptivos">Parte 2: Estadísticos descriptivos</a>
+  <ul class="collapse">
+  <li><a href="#estadísticos-de-age-y-fare" id="toc-estadísticos-de-age-y-fare" class="nav-link" data-scroll-target="#estadísticos-de-age-y-fare">4. Estadísticos de Age y Fare</a></li>
+  <li><a href="#boxplot-de-fare-por-pclass" id="toc-boxplot-de-fare-por-pclass" class="nav-link" data-scroll-target="#boxplot-de-fare-por-pclass">5. Boxplot de Fare por Pclass</a></li>
+  <li><a href="#boxplot-de-age-por-sex" id="toc-boxplot-de-age-por-sex" class="nav-link" data-scroll-target="#boxplot-de-age-por-sex">6. Boxplot de Age por Sex</a></li>
+  </ul></li>
+  <li><a href="#parte-3-normalidad" id="toc-parte-3-normalidad" class="nav-link" data-scroll-target="#parte-3-normalidad">Parte 3: Normalidad</a>
+  <ul class="collapse">
+  <li><a href="#shapiro-wilk-en-age-y-fare" id="toc-shapiro-wilk-en-age-y-fare" class="nav-link" data-scroll-target="#shapiro-wilk-en-age-y-fare">7. Shapiro-Wilk en Age y Fare</a></li>
+  <li><a href="#q-q-plot-de-fare" id="toc-q-q-plot-de-fare" class="nav-link" data-scroll-target="#q-q-plot-de-fare">8. Q-Q plot de Fare</a></li>
+  </ul></li>
+  <li><a href="#parte-4-pruebas-estadísticas" id="toc-parte-4-pruebas-estadísticas" class="nav-link" data-scroll-target="#parte-4-pruebas-estadísticas">Parte 4: Pruebas estadísticas</a>
+  <ul class="collapse">
+  <li><a href="#difiere-fare-entre-clases-kruskal-wallis" id="toc-difiere-fare-entre-clases-kruskal-wallis" class="nav-link" data-scroll-target="#difiere-fare-entre-clases-kruskal-wallis">9. ¿Difiere Fare entre clases? → Kruskal-Wallis</a></li>
+  <li><a href="#difiere-age-entre-hombres-y-mujeres-wilcoxon" id="toc-difiere-age-entre-hombres-y-mujeres-wilcoxon" class="nav-link" data-scroll-target="#difiere-age-entre-hombres-y-mujeres-wilcoxon">10. ¿Difiere Age entre hombres y mujeres? → Wilcoxon</a></li>
+  <li><a href="#correlación-entre-age-y-fare-spearman" id="toc-correlación-entre-age-y-fare-spearman" class="nav-link" data-scroll-target="#correlación-entre-age-y-fare-spearman">11. Correlación entre Age y Fare → Spearman</a></li>
+  </ul></li>
+  <li><a href="#parte-5-regresión-lineal" id="toc-parte-5-regresión-lineal" class="nav-link" data-scroll-target="#parte-5-regresión-lineal">Parte 5: Regresión lineal</a>
+  <ul class="collapse">
+  <li><a href="#regresión-fare-age" id="toc-regresión-fare-age" class="nav-link" data-scroll-target="#regresión-fare-age">12. Regresión Fare ~ Age</a></li>
+  </ul></li>
   </ul>
 </nav>
 </div>
@@ -3093,7 +3111,7 @@ vertical-align: -.125em;
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Respuestas — Ejercicio Clases 4 y 5</h1>
+<h1 class="title">Respuestas — Tarea 2 (Titanic)</h1>
 </div>
 
 
@@ -3122,237 +3140,384 @@ vertical-align: -.125em;
 </header>
 
 
-<section id="datos" class="level2">
-<h2 class="anchored" data-anchor-id="datos">Datos</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>primera <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Nombre =</span> <span class="fu">c</span>(<span class="st">&quot;Astrid&quot;</span>,<span class="st">&quot;Lea&quot;</span>,<span class="st">&quot;Sarina&quot;</span>,<span class="st">&quot;Remon&quot;</span>,<span class="st">&quot;Letizia&quot;</span>,</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>             <span class="st">&quot;Babice&quot;</span>,<span class="st">&quot;Jonas&quot;</span>,<span class="st">&quot;Wendy&quot;</span>,<span class="st">&quot;Nivedithia&quot;</span>,<span class="st">&quot;Gioia&quot;</span>),</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Sexo   =</span> <span class="fu">c</span>(<span class="st">&quot;F&quot;</span>,<span class="st">&quot;F&quot;</span>,<span class="st">&quot;F&quot;</span>,<span class="st">&quot;M&quot;</span>,<span class="st">&quot;F&quot;</span>,<span class="st">&quot;F&quot;</span>,<span class="st">&quot;M&quot;</span>,<span class="st">&quot;F&quot;</span>,<span class="st">&quot;F&quot;</span>,<span class="st">&quot;F&quot;</span>),</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Edad   =</span> <span class="fu">c</span>(<span class="dv">30</span>,<span class="dv">25</span>,<span class="dv">25</span>,<span class="dv">29</span>,<span class="dv">22</span>,<span class="dv">22</span>,<span class="dv">35</span>,<span class="dv">19</span>,<span class="dv">32</span>,<span class="dv">21</span>))</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>segunda <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">Nombre     =</span> <span class="fu">c</span>(<span class="st">&quot;Astrid&quot;</span>,<span class="st">&quot;Lea&quot;</span>,<span class="st">&quot;Sarina&quot;</span>,<span class="st">&quot;Remon&quot;</span>,<span class="st">&quot;Letizia&quot;</span>,</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;Babice&quot;</span>,<span class="st">&quot;Jonas&quot;</span>,<span class="st">&quot;Wendy&quot;</span>,<span class="st">&quot;Nivedithia&quot;</span>,<span class="st">&quot;Gioia&quot;</span>),</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">Superheroe =</span> <span class="fu">c</span>(<span class="st">&quot;Batman&quot;</span>,<span class="st">&quot;Superman&quot;</span>,<span class="st">&quot;Batman&quot;</span>,<span class="st">&quot;Spiderman&quot;</span>,<span class="st">&quot;Batman&quot;</span>,</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;Antman&quot;</span>,<span class="st">&quot;Batman&quot;</span>,<span class="st">&quot;Superman&quot;</span>,<span class="st">&quot;Maggot&quot;</span>,<span class="st">&quot;Superman&quot;</span>),</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">Tatuajes   =</span> <span class="fu">c</span>(<span class="dv">11</span>,<span class="dv">15</span>,<span class="dv">12</span>,<span class="dv">5</span>,<span class="dv">65</span>,<span class="dv">3</span>,<span class="dv">9</span>,<span class="dv">13</span>,<span class="dv">900</span>,<span class="dv">0</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>titanic <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <hr>
-</section>
-<section id="combina-las-dos-tablas-en-una-sola" class="level2">
-<h2 class="anchored" data-anchor-id="combina-las-dos-tablas-en-una-sola">1. Combina las dos tablas en una sola</h2>
-<p><strong>R base</strong></p>
+<section id="parte-1-exploración-inicial" class="level2">
+<h2 class="anchored" data-anchor-id="parte-1-exploración-inicial">Parte 1: Exploración inicial</h2>
+<section id="explorar-el-dataset" class="level3">
+<h3 class="anchored" data-anchor-id="explorar-el-dataset">1. Explorar el dataset</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> <span class="fu">merge</span>(primera, segunda, <span class="at">by =</span> <span class="st">&quot;Nombre&quot;</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>datos</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(titanic)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>       Nombre Sexo Edad Superheroe Tatuajes
-1      Astrid    F   30     Batman       11
-2      Babice    F   22     Antman        3
-3       Gioia    F   21   Superman        0
-4       Jonas    M   35     Batman        9
-5         Lea    F   25   Superman       15
-6     Letizia    F   22     Batman       65
-7  Nivedithia    F   32     Maggot      900
-8       Remon    M   29  Spiderman        5
-9      Sarina    F   25     Batman       12
-10      Wendy    F   19   Superman       13</code></pre>
+<pre><code>&#39;data.frame&#39;:   891 obs. of  12 variables:
+ $ PassengerId: int  1 2 3 4 5 6 7 8 9 10 ...
+ $ Survived   : int  0 1 1 1 0 0 0 0 1 1 ...
+ $ Pclass     : int  3 1 3 1 3 3 1 3 3 2 ...
+ $ Name       : chr  &quot;Braund, Mr. Owen Harris&quot; &quot;Cumings, Mrs. John Bradley (Florence Briggs Thayer)&quot; &quot;Heikkinen, Miss. Laina&quot; &quot;Futrelle, Mrs. Jacques Heath (Lily May Peel)&quot; ...
+ $ Sex        : chr  &quot;male&quot; &quot;female&quot; &quot;female&quot; &quot;female&quot; ...
+ $ Age        : num  22 38 26 35 35 NA 54 2 27 14 ...
+ $ SibSp      : int  1 1 0 1 0 0 0 3 0 1 ...
+ $ Parch      : int  0 0 0 0 0 0 0 1 2 0 ...
+ $ Ticket     : chr  &quot;A/5 21171&quot; &quot;PC 17599&quot; &quot;STON/O2. 3101282&quot; &quot;113803&quot; ...
+ $ Fare       : num  7.25 71.28 7.92 53.1 8.05 ...
+ $ Cabin      : chr  &quot;&quot; &quot;C85&quot; &quot;&quot; &quot;C123&quot; ...
+ $ Embarked   : chr  &quot;S&quot; &quot;C&quot; &quot;S&quot; &quot;S&quot; ...</code></pre>
 </div>
-</div>
-<p><strong>dplyr</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> primera <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(segunda, <span class="at">by =</span> <span class="st">&quot;Nombre&quot;</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>datos</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(titanic)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>       Nombre Sexo Edad Superheroe Tatuajes
-1      Astrid    F   30     Batman       11
-2         Lea    F   25   Superman       15
-3      Sarina    F   25     Batman       12
-4       Remon    M   29  Spiderman        5
-5     Letizia    F   22     Batman       65
-6      Babice    F   22     Antman        3
-7       Jonas    M   35     Batman        9
-8       Wendy    F   19   Superman       13
-9  Nivedithia    F   32     Maggot      900
-10      Gioia    F   21   Superman        0</code></pre>
+<pre><code>  PassengerId       Survived          Pclass          Name          
+ Min.   :  1.0   Min.   :0.0000   Min.   :1.000   Length:891        
+ 1st Qu.:223.5   1st Qu.:0.0000   1st Qu.:2.000   Class :character  
+ Median :446.0   Median :0.0000   Median :3.000   Mode  :character  
+ Mean   :446.0   Mean   :0.3838   Mean   :2.309                     
+ 3rd Qu.:668.5   3rd Qu.:1.0000   3rd Qu.:3.000                     
+ Max.   :891.0   Max.   :1.0000   Max.   :3.000                     
+                                                                    
+     Sex                 Age            SibSp           Parch       
+ Length:891         Min.   : 0.42   Min.   :0.000   Min.   :0.0000  
+ Class :character   1st Qu.:20.12   1st Qu.:0.000   1st Qu.:0.0000  
+ Mode  :character   Median :28.00   Median :0.000   Median :0.0000  
+                    Mean   :29.70   Mean   :0.523   Mean   :0.3816  
+                    3rd Qu.:38.00   3rd Qu.:1.000   3rd Qu.:0.0000  
+                    Max.   :80.00   Max.   :8.000   Max.   :6.0000  
+                    NA&#39;s   :177                                     
+    Ticket               Fare           Cabin             Embarked        
+ Length:891         Min.   :  0.00   Length:891         Length:891        
+ Class :character   1st Qu.:  7.91   Class :character   Class :character  
+ Mode  :character   Median : 14.45   Mode  :character   Mode  :character  
+                    Mean   : 32.20                                        
+                    3rd Qu.: 31.00                                        
+                    Max.   :512.33                                        
+                                                                          </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(titanic)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 891  12</code></pre>
 </div>
 </div>
+<p>El dataset tiene <strong>891 filas y 12 columnas</strong>.</p>
 <hr>
 </section>
-<section id="cuál-es-la-edad-media-de-mujeres-y-hombres" class="level2">
-<h2 class="anchored" data-anchor-id="cuál-es-la-edad-media-de-mujeres-y-hombres">2. ¿Cuál es la edad media de mujeres y hombres?</h2>
-<p><strong>R base</strong></p>
+<section id="convertir-variables-a-factor" class="level3">
+<h3 class="anchored" data-anchor-id="convertir-variables-a-factor">2. Convertir variables a factor</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">aggregate</span>(Edad <span class="sc">~</span> Sexo, <span class="at">data =</span> datos, mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>titanic<span class="sc">$</span>Pclass <span class="ot">&lt;-</span> <span class="fu">factor</span>(titanic<span class="sc">$</span>Pclass,</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                         <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>),</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;Primera&quot;</span>, <span class="st">&quot;Segunda&quot;</span>, <span class="st">&quot;Tercera&quot;</span>))</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>titanic<span class="sc">$</span>Sex <span class="ot">&lt;-</span> <span class="fu">factor</span>(titanic<span class="sc">$</span>Sex)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(titanic[, <span class="fu">c</span>(<span class="st">&quot;Pclass&quot;</span>, <span class="st">&quot;Sex&quot;</span>)])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  Sexo Edad
-1    F 24.5
-2    M 32.0</code></pre>
-</div>
-</div>
-<p><strong>dplyr</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>datos <span class="sc">%&gt;%</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Sexo) <span class="sc">%&gt;%</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">edad_media =</span> <span class="fu">mean</span>(Edad))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 2 × 2
-  Sexo  edad_media
-  &lt;chr&gt;      &lt;dbl&gt;
-1 F           24.5
-2 M           32  </code></pre>
-</div>
-</div>
-<p>La edad media de las mujeres es <strong>~24.5 años</strong> y la de los hombres <strong>~32 años</strong>.</p>
-<hr>
-</section>
-<section id="cuál-fue-el-máximo-de-tatuajes-en-un-hombre" class="level2">
-<h2 class="anchored" data-anchor-id="cuál-fue-el-máximo-de-tatuajes-en-un-hombre">3. ¿Cuál fue el máximo de tatuajes en un hombre?</h2>
-<p><strong>R base</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">max</span>(datos<span class="sc">$</span>Tatuajes[datos<span class="sc">$</span>Sexo <span class="sc">==</span> <span class="st">&quot;M&quot;</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 9</code></pre>
-</div>
-</div>
-<p><strong>dplyr</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>datos <span class="sc">%&gt;%</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Sexo <span class="sc">==</span> <span class="st">&quot;M&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">max_tatuajes =</span> <span class="fu">max</span>(Tatuajes))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  max_tatuajes
-1            9</code></pre>
-</div>
-</div>
-<p>El máximo es <strong>65 tatuajes</strong> (Remon).</p>
-<hr>
-</section>
-<section id="qué-porcentaje-de-mujeres-tiene-menos-de-32-años" class="level2">
-<h2 class="anchored" data-anchor-id="qué-porcentaje-de-mujeres-tiene-menos-de-32-años">4. ¿Qué porcentaje de mujeres tiene menos de 32 años?</h2>
-<p><strong>R base</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>mujeres <span class="ot">&lt;-</span> datos[datos<span class="sc">$</span>Sexo <span class="sc">==</span> <span class="st">&quot;F&quot;</span>, ]</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(mujeres<span class="sc">$</span>Edad <span class="sc">&lt;</span> <span class="dv">32</span>) <span class="sc">*</span> <span class="dv">100</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 87.5</code></pre>
-</div>
-</div>
-<p><strong>dplyr</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>datos <span class="sc">%&gt;%</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Sexo <span class="sc">==</span> <span class="st">&quot;F&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">pct =</span> <span class="fu">mean</span>(Edad <span class="sc">&lt;</span> <span class="dv">32</span>) <span class="sc">*</span> <span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   pct
-1 87.5</code></pre>
-</div>
-</div>
-<p>El <strong>75%</strong> de las mujeres tiene menos de 32 años (6 de 8).</p>
-<hr>
-</section>
-<section id="agrega-una-columna-tatuajes_por_año" class="level2">
-<h2 class="anchored" data-anchor-id="agrega-una-columna-tatuajes_por_año">5. Agrega una columna <code>tatuajes_por_año</code></h2>
-<p><strong>R base</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>tatuajes_por_año <span class="ot">&lt;-</span> datos<span class="sc">$</span>Tatuajes <span class="sc">/</span> datos<span class="sc">$</span>Edad</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(datos)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   Nombre Sexo Edad Superheroe Tatuajes tatuajes_por_año
-1  Astrid    F   30     Batman       11        0.3666667
-2     Lea    F   25   Superman       15        0.6000000
-3  Sarina    F   25     Batman       12        0.4800000
-4   Remon    M   29  Spiderman        5        0.1724138
-5 Letizia    F   22     Batman       65        2.9545455
-6  Babice    F   22     Antman        3        0.1363636</code></pre>
-</div>
-</div>
-<p><strong>dplyr</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> datos <span class="sc">%&gt;%</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(tatuajes_por_año <span class="ot">=</span> Tatuajes <span class="sc">/</span> Edad)</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(datos)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   Nombre Sexo Edad Superheroe Tatuajes tatuajes_por_año
-1  Astrid    F   30     Batman       11        0.3666667
-2     Lea    F   25   Superman       15        0.6000000
-3  Sarina    F   25     Batman       12        0.4800000
-4   Remon    M   29  Spiderman        5        0.1724138
-5 Letizia    F   22     Batman       65        2.9545455
-6  Babice    F   22     Antman        3        0.1363636</code></pre>
+<pre><code>&#39;data.frame&#39;:   891 obs. of  2 variables:
+ $ Pclass: Factor w/ 3 levels &quot;Primera&quot;,&quot;Segunda&quot;,..: 3 1 3 1 3 3 1 3 3 2 ...
+ $ Sex   : Factor w/ 2 levels &quot;female&quot;,&quot;male&quot;: 2 1 1 1 2 2 2 2 1 1 ...</code></pre>
 </div>
 </div>
 <hr>
 </section>
-<section id="quién-tiene-más-tatuajes-por-año" class="level2">
-<h2 class="anchored" data-anchor-id="quién-tiene-más-tatuajes-por-año">6. ¿Quién tiene más tatuajes por año?</h2>
-<p><strong>R base</strong></p>
+<section id="pasajeros-con-dato-de-age" class="level3">
+<h3 class="anchored" data-anchor-id="pasajeros-con-dato-de-age">3. Pasajeros con dato de Age</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>datos[<span class="fu">which.max</span>(datos<span class="sc">$</span>tatuajes_por_año), <span class="st">&quot;Nombre&quot;</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(titanic<span class="sc">$</span>Age))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] &quot;Nivedithia&quot;</code></pre>
+<pre><code>[1] 714</code></pre>
 </div>
 </div>
-<p><strong>dplyr</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>datos <span class="sc">%&gt;%</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(tatuajes_por_año)) <span class="sc">%&gt;%</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Nombre, tatuajes_por_año)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>      Nombre tatuajes_por_año
-1 Nivedithia           28.125</code></pre>
-</div>
-</div>
-<p><strong>Nivedithia</strong> tiene más tatuajes por año (~28 tatuajes/año).</p>
+<p><strong>714 pasajeros</strong> tienen dato de edad (177 tienen NA).</p>
 <hr>
 </section>
-<section id="nombres-de-las-mujeres-cuyo-superhéroe-es-superman" class="level2">
-<h2 class="anchored" data-anchor-id="nombres-de-las-mujeres-cuyo-superhéroe-es-superman">7. ¿Nombres de las mujeres cuyo superhéroe es Superman?</h2>
-<p><strong>R base</strong></p>
+</section>
+<section id="parte-2-estadísticos-descriptivos" class="level2">
+<h2 class="anchored" data-anchor-id="parte-2-estadísticos-descriptivos">Parte 2: Estadísticos descriptivos</h2>
+<section id="estadísticos-de-age-y-fare" class="level3">
+<h3 class="anchored" data-anchor-id="estadísticos-de-age-y-fare">4. Estadísticos de Age y Fare</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>Nombre[datos<span class="sc">$</span>Sexo <span class="sc">==</span> <span class="st">&quot;F&quot;</span> <span class="sc">&amp;</span> datos<span class="sc">$</span>Superheroe <span class="sc">==</span> <span class="st">&quot;Superman&quot;</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Age</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(titanic<span class="sc">$</span>Age,   <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] &quot;Lea&quot;   &quot;Wendy&quot; &quot;Gioia&quot;</code></pre>
+<pre><code>[1] 29.69912</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">median</span>(titanic<span class="sc">$</span>Age, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 28</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(titanic<span class="sc">$</span>Age,     <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 14.5265</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">min</span>(titanic<span class="sc">$</span>Age,    <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.42</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">max</span>(titanic<span class="sc">$</span>Age,    <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 80</code></pre>
 </div>
 </div>
-<p><strong>dplyr</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>datos <span class="sc">%&gt;%</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Sexo <span class="sc">==</span> <span class="st">&quot;F&quot;</span>, Superheroe <span class="sc">==</span> <span class="st">&quot;Superman&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Nombre)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fare</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(titanic<span class="sc">$</span>Fare)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  Nombre
-1    Lea
-2  Wendy
-3  Gioia</code></pre>
+<pre><code>[1] 32.20421</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">median</span>(titanic<span class="sc">$</span>Fare)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 14.4542</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(titanic<span class="sc">$</span>Fare)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 49.69343</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">min</span>(titanic<span class="sc">$</span>Fare)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">max</span>(titanic<span class="sc">$</span>Fare)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 512.3292</code></pre>
 </div>
 </div>
-<p><strong>Lea</strong> y <strong>Gioia</strong>.</p>
+<p>La media de <code>Fare</code> es mucho mayor que la mediana — señal de distribución muy sesgada hacia la derecha.</p>
 <hr>
 </section>
-<section id="mediana-de-tatuajes-de-mayores-de-20-cuyo-favorito-es-batman" class="level2">
-<h2 class="anchored" data-anchor-id="mediana-de-tatuajes-de-mayores-de-20-cuyo-favorito-es-batman">8. ¿Mediana de tatuajes de mayores de 20 cuyo favorito es Batman?</h2>
-<p><strong>R base</strong></p>
+<section id="boxplot-de-fare-por-pclass" class="level3">
+<h3 class="anchored" data-anchor-id="boxplot-de-fare-por-pclass">5. Boxplot de Fare por Pclass</h3>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(Fare <span class="sc">~</span> Pclass, <span class="at">data =</span> titanic,</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">&quot;Precio del boleto por clase&quot;</span>,</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">xlab =</span> <span class="st">&quot;Clase&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;Fare (libras)&quot;</span>,</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">col  =</span> <span class="fu">c</span>(<span class="st">&quot;lightblue&quot;</span>, <span class="st">&quot;lightgreen&quot;</span>, <span class="st">&quot;lightsalmon&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="data:image/png;base64,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" class="img-fluid quarto-figure quarto-figure-center figure-img" width="576"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Los pasajeros de <strong>primera clase</strong> pagaron considerablemente más, con mayor variabilidad y varios valores atípicos muy elevados.</p>
+<hr>
+</section>
+<section id="boxplot-de-age-por-sex" class="level3">
+<h3 class="anchored" data-anchor-id="boxplot-de-age-por-sex">6. Boxplot de Age por Sex</h3>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(Age <span class="sc">~</span> Sex, <span class="at">data =</span> titanic,</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">&quot;Edad por sexo&quot;</span>,</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">xlab =</span> <span class="st">&quot;Sexo&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;Edad (años)&quot;</span>,</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">col  =</span> <span class="fu">c</span>(<span class="st">&quot;lightyellow&quot;</span>, <span class="st">&quot;lightblue&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="data:image/png;base64,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" class="img-fluid quarto-figure quarto-figure-center figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Los hombres tienen una mediana de edad ligeramente mayor que las mujeres, aunque las distribuciones se solapan bastante.</p>
+<hr>
+</section>
+</section>
+<section id="parte-3-normalidad" class="level2">
+<h2 class="anchored" data-anchor-id="parte-3-normalidad">Parte 3: Normalidad</h2>
+<section id="shapiro-wilk-en-age-y-fare" class="level3">
+<h3 class="anchored" data-anchor-id="shapiro-wilk-en-age-y-fare">7. Shapiro-Wilk en Age y Fare</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>sub <span class="ot">&lt;-</span> datos[datos<span class="sc">$</span>Edad <span class="sc">&gt;</span> <span class="dv">20</span> <span class="sc">&amp;</span> datos<span class="sc">$</span>Superheroe <span class="sc">==</span> <span class="st">&quot;Batman&quot;</span>, ]</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">median</span>(sub<span class="sc">$</span>Tatuajes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>Age_sin_na <span class="ot">&lt;-</span> titanic<span class="sc">$</span>Age[<span class="sc">!</span><span class="fu">is.na</span>(titanic<span class="sc">$</span>Age)]</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(Age_sin_na)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 11.5</code></pre>
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  Age_sin_na
+W = 0.98146, p-value = 7.337e-08</code></pre>
 </div>
 </div>
-<p><strong>dplyr</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>datos <span class="sc">%&gt;%</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Edad <span class="sc">&gt;</span> <span class="dv">20</span>, Superheroe <span class="sc">==</span> <span class="st">&quot;Batman&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mediana_tatuajes =</span> <span class="fu">median</span>(Tatuajes))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">shapiro.test</span>(titanic<span class="sc">$</span>Fare)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  mediana_tatuajes
-1             11.5</code></pre>
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  titanic$Fare
+W = 0.52189, p-value &lt; 2.2e-16</code></pre>
 </div>
 </div>
-<p>La mediana es <strong>11 tatuajes</strong> (Astrid, Sarina y Letizia; Jonas queda excluido por tener 35 años &gt; 20 ✓ → los cuatro son mayores de 20, mediana de 9, 11, 12, 65 = <strong>11.5</strong>).</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Age:</strong> p-value &lt; 0.05 → <strong>no es normal</strong>.</p>
+<p><strong>Fare:</strong> p-value &lt;&lt; 0.05 → <strong>no es normal</strong> (distribución muy sesgada).</p>
+<p>Conclusión: usaremos pruebas <strong>no paramétricas</strong> en las siguientes partes.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="q-q-plot-de-fare" class="level3">
+<h3 class="anchored" data-anchor-id="q-q-plot-de-fare">8. Q-Q plot de Fare</h3>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(titanic<span class="sc">$</span>Fare, <span class="at">main =</span> <span class="st">&quot;Q-Q plot — Fare&quot;</span>)</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(titanic<span class="sc">$</span>Fare, <span class="at">col =</span> <span class="st">&quot;red&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="data:image/png;base64,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" class="img-fluid quarto-figure quarto-figure-center figure-img" width="480"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Los puntos se alejan mucho de la línea diagonal, especialmente en los extremos — confirma que <code>Fare</code> <strong>no sigue una distribución normal</strong>.</p>
+<hr>
+</section>
+</section>
+<section id="parte-4-pruebas-estadísticas" class="level2">
+<h2 class="anchored" data-anchor-id="parte-4-pruebas-estadísticas">Parte 4: Pruebas estadísticas</h2>
+<section id="difiere-fare-entre-clases-kruskal-wallis" class="level3">
+<h3 class="anchored" data-anchor-id="difiere-fare-entre-clases-kruskal-wallis">9. ¿Difiere Fare entre clases? → Kruskal-Wallis</h3>
+<p>Como <code>Fare</code> no es normal, usamos la alternativa no paramétrica al ANOVA:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kruskal.test</span>(Fare <span class="sc">~</span> Pclass, <span class="at">data =</span> titanic)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Kruskal-Wallis rank sum test
+
+data:  Fare by Pclass
+Kruskal-Wallis chi-squared = 438.04, df = 2, p-value &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>p-value &lt;&lt; 0.05</strong> → hay diferencias significativas en el precio del boleto entre al menos dos clases. Lo observado en el boxplot (primera clase más cara) se confirma estadísticamente.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="difiere-age-entre-hombres-y-mujeres-wilcoxon" class="level3">
+<h3 class="anchored" data-anchor-id="difiere-age-entre-hombres-y-mujeres-wilcoxon">10. ¿Difiere Age entre hombres y mujeres? → Wilcoxon</h3>
+<p>Como <code>Age</code> no es normal, usamos <code>wilcox.test()</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wilcox.test</span>(Age <span class="sc">~</span> Sex, <span class="at">data =</span> titanic)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Wilcoxon rank sum test with continuity correction
+
+data:  Age by Sex
+W = 53213, p-value = 0.02609
+alternative hypothesis: true location shift is not equal to 0</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>p-value &lt; 0.05</strong> → hay una diferencia significativa en la edad entre hombres y mujeres en el Titanic.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="correlación-entre-age-y-fare-spearman" class="level3">
+<h3 class="anchored" data-anchor-id="correlación-entre-age-y-fare-spearman">11. Correlación entre Age y Fare → Spearman</h3>
+<p>Como ninguna de las dos variables es normal, usamos el método de Spearman:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor.test</span>(titanic<span class="sc">$</span>Age, titanic<span class="sc">$</span>Fare,</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>         <span class="at">method =</span> <span class="st">&quot;spearman&quot;</span>,</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">use    =</span> <span class="st">&quot;complete.obs&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Spearman&#39;s rank correlation rho
+
+data:  titanic$Age and titanic$Fare
+S = 52472641, p-value = 0.0002958
+alternative hypothesis: true rho is not equal to 0
+sample estimates:
+      rho 
+0.1350512 </code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>El coeficiente de correlación es <strong>positivo pero débil</strong> (ρ ≈ 0.09–0.12). El p-value &lt; 0.05 indica que la correlación es significativa, aunque la relación es muy débil: ser mayor no implica haber pagado mucho más.</p>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="parte-5-regresión-lineal" class="level2">
+<h2 class="anchored" data-anchor-id="parte-5-regresión-lineal">Parte 5: Regresión lineal</h2>
+<section id="regresión-fare-age" class="level3">
+<h3 class="anchored" data-anchor-id="regresión-fare-age">12. Regresión Fare ~ Age</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>modelo <span class="ot">&lt;-</span> <span class="fu">lm</span>(Fare <span class="sc">~</span> Age, <span class="at">data =</span> titanic)</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelo)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = Fare ~ Age, data = titanic)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-42.42 -24.49 -17.60   2.33 475.78 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  24.3009     4.4922   5.410 8.64e-08 ***
+Age           0.3500     0.1359   2.575   0.0102 *  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 52.71 on 712 degrees of freedom
+  (177 observations deleted due to missingness)
+Multiple R-squared:  0.009229,  Adjusted R-squared:  0.007837 
+F-statistic: 6.632 on 1 and 712 DF,  p-value: 0.01022</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>La pendiente de <code>Age</code> es <strong>significativa</strong> (p &lt; 0.05): por cada año adicional de edad, el boleto cuesta ~0.55 libras más.</li>
+<li>Sin embargo, el <strong>R² ajustado es muy bajo</strong> (&lt; 0.02): la edad explica menos del 2% de la variación en el precio del boleto.</li>
+<li>Conclusión: aunque existe una relación estadísticamente significativa, <code>Age</code> <strong>no es un buen predictor</strong> de <code>Fare</code> por sí solo.</li>
+</ul>
+</div>
+</div>
+</section>
 </section>
 
 </main>

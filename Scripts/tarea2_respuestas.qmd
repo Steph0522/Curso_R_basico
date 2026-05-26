@@ -1,0 +1,204 @@
+---
+title: "Respuestas — Tarea 2 (Titanic)"
+author: "Ph D. Stephanie Hereira-Pacheco"
+date: "`r Sys.Date()`"
+format:
+  html:
+    toc: true
+    toc-title: "Contenido"
+    theme: cosmo
+    embed-resources: true
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+```{r setup}
+titanic <- read.csv("https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv")
+```
+
+---
+
+## Parte 1: Exploración inicial
+
+### 1. Explorar el dataset
+
+```{r}
+str(titanic)
+summary(titanic)
+dim(titanic)
+```
+
+El dataset tiene **891 filas y 12 columnas**.
+
+---
+
+### 2. Convertir variables a factor
+
+```{r}
+titanic$Pclass <- factor(titanic$Pclass,
+                         levels = c(1, 2, 3),
+                         labels = c("Primera", "Segunda", "Tercera"))
+titanic$Sex <- factor(titanic$Sex)
+str(titanic[, c("Pclass", "Sex")])
+```
+
+---
+
+### 3. Pasajeros con dato de Age
+
+```{r}
+sum(!is.na(titanic$Age))
+```
+
+**714 pasajeros** tienen dato de edad (177 tienen NA).
+
+---
+
+## Parte 2: Estadísticos descriptivos
+
+### 4. Estadísticos de Age y Fare
+
+```{r}
+# Age
+mean(titanic$Age,   na.rm = TRUE)
+median(titanic$Age, na.rm = TRUE)
+sd(titanic$Age,     na.rm = TRUE)
+min(titanic$Age,    na.rm = TRUE)
+max(titanic$Age,    na.rm = TRUE)
+```
+
+```{r}
+# Fare
+mean(titanic$Fare)
+median(titanic$Fare)
+sd(titanic$Fare)
+min(titanic$Fare)
+max(titanic$Fare)
+```
+
+La media de `Fare` es mucho mayor que la mediana — señal de distribución muy sesgada hacia la derecha.
+
+---
+
+### 5. Boxplot de Fare por Pclass
+
+```{r, fig.align='center', fig.width=6, fig.height=4}
+boxplot(Fare ~ Pclass, data = titanic,
+        main = "Precio del boleto por clase",
+        xlab = "Clase", ylab = "Fare (libras)",
+        col  = c("lightblue", "lightgreen", "lightsalmon"))
+```
+
+Los pasajeros de **primera clase** pagaron considerablemente más, con mayor variabilidad y varios valores atípicos muy elevados.
+
+---
+
+### 6. Boxplot de Age por Sex
+
+```{r, fig.align='center', fig.width=5, fig.height=4}
+boxplot(Age ~ Sex, data = titanic,
+        main = "Edad por sexo",
+        xlab = "Sexo", ylab = "Edad (años)",
+        col  = c("lightyellow", "lightblue"))
+```
+
+Los hombres tienen una mediana de edad ligeramente mayor que las mujeres, aunque las distribuciones se solapan bastante.
+
+---
+
+## Parte 3: Normalidad
+
+### 7. Shapiro-Wilk en Age y Fare
+
+```{r}
+Age_sin_na <- titanic$Age[!is.na(titanic$Age)]
+shapiro.test(Age_sin_na)
+```
+
+```{r}
+shapiro.test(titanic$Fare)
+```
+
+::: {.callout-note}
+**Age:** p-value < 0.05 → **no es normal**.
+
+**Fare:** p-value << 0.05 → **no es normal** (distribución muy sesgada).
+
+Conclusión: usaremos pruebas **no paramétricas** en las siguientes partes.
+:::
+
+---
+
+### 8. Q-Q plot de Fare
+
+```{r, fig.align='center', fig.width=5, fig.height=4.5}
+qqnorm(titanic$Fare, main = "Q-Q plot — Fare")
+qqline(titanic$Fare, col = "red")
+```
+
+Los puntos se alejan mucho de la línea diagonal, especialmente en los extremos — confirma que `Fare` **no sigue una distribución normal**.
+
+---
+
+## Parte 4: Pruebas estadísticas
+
+### 9. ¿Difiere Fare entre clases? → Kruskal-Wallis
+
+Como `Fare` no es normal, usamos la alternativa no paramétrica al ANOVA:
+
+```{r}
+kruskal.test(Fare ~ Pclass, data = titanic)
+```
+
+::: {.callout-note}
+**p-value << 0.05** → hay diferencias significativas en el precio del boleto entre al menos dos clases. Lo observado en el boxplot (primera clase más cara) se confirma estadísticamente.
+:::
+
+---
+
+### 10. ¿Difiere Age entre hombres y mujeres? → Wilcoxon
+
+Como `Age` no es normal, usamos `wilcox.test()`:
+
+```{r}
+wilcox.test(Age ~ Sex, data = titanic)
+```
+
+::: {.callout-note}
+**p-value < 0.05** → hay una diferencia significativa en la edad entre hombres y mujeres en el Titanic.
+:::
+
+---
+
+### 11. Correlación entre Age y Fare → Spearman
+
+Como ninguna de las dos variables es normal, usamos el método de Spearman:
+
+```{r}
+cor.test(titanic$Age, titanic$Fare,
+         method = "spearman",
+         use    = "complete.obs")
+```
+
+::: {.callout-note}
+El coeficiente de correlación es **positivo pero débil** (ρ ≈ 0.09–0.12). El p-value < 0.05 indica que la correlación es significativa, aunque la relación es muy débil: ser mayor no implica haber pagado mucho más.
+:::
+
+---
+
+## Parte 5: Regresión lineal
+
+### 12. Regresión Fare ~ Age
+
+```{r}
+modelo <- lm(Fare ~ Age, data = titanic)
+summary(modelo)
+```
+
+::: {.callout-note}
+- La pendiente de `Age` es **significativa** (p < 0.05): por cada año adicional de edad, el boleto cuesta ~0.55 libras más.
+- Sin embargo, el **R² ajustado es muy bajo** (< 0.02): la edad explica menos del 2% de la variación en el precio del boleto.
+- Conclusión: aunque existe una relación estadísticamente significativa, `Age` **no es un buen predictor** de `Fare` por sí solo.
+:::

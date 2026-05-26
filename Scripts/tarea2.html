@@ -7,9 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Ph D. Stephanie Hereira-Pacheco">
-<meta name="dcterms.date" content="2026-05-25">
 
-<title>Respuestas — Ejercicio Clases 4 y 5</title>
+<title>Tarea 2 — Estadísticos y pruebas en R</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -3077,15 +3076,13 @@ vertical-align: -.125em;
     <h2 id="toc-title">Contenido</h2>
    
   <ul>
-  <li><a href="#datos" id="toc-datos" class="nav-link active" data-scroll-target="#datos">Datos</a></li>
-  <li><a href="#combina-las-dos-tablas-en-una-sola" id="toc-combina-las-dos-tablas-en-una-sola" class="nav-link" data-scroll-target="#combina-las-dos-tablas-en-una-sola">1. Combina las dos tablas en una sola</a></li>
-  <li><a href="#cuál-es-la-edad-media-de-mujeres-y-hombres" id="toc-cuál-es-la-edad-media-de-mujeres-y-hombres" class="nav-link" data-scroll-target="#cuál-es-la-edad-media-de-mujeres-y-hombres">2. ¿Cuál es la edad media de mujeres y hombres?</a></li>
-  <li><a href="#cuál-fue-el-máximo-de-tatuajes-en-un-hombre" id="toc-cuál-fue-el-máximo-de-tatuajes-en-un-hombre" class="nav-link" data-scroll-target="#cuál-fue-el-máximo-de-tatuajes-en-un-hombre">3. ¿Cuál fue el máximo de tatuajes en un hombre?</a></li>
-  <li><a href="#qué-porcentaje-de-mujeres-tiene-menos-de-32-años" id="toc-qué-porcentaje-de-mujeres-tiene-menos-de-32-años" class="nav-link" data-scroll-target="#qué-porcentaje-de-mujeres-tiene-menos-de-32-años">4. ¿Qué porcentaje de mujeres tiene menos de 32 años?</a></li>
-  <li><a href="#agrega-una-columna-tatuajes_por_año" id="toc-agrega-una-columna-tatuajes_por_año" class="nav-link" data-scroll-target="#agrega-una-columna-tatuajes_por_año">5. Agrega una columna <code>tatuajes_por_año</code></a></li>
-  <li><a href="#quién-tiene-más-tatuajes-por-año" id="toc-quién-tiene-más-tatuajes-por-año" class="nav-link" data-scroll-target="#quién-tiene-más-tatuajes-por-año">6. ¿Quién tiene más tatuajes por año?</a></li>
-  <li><a href="#nombres-de-las-mujeres-cuyo-superhéroe-es-superman" id="toc-nombres-de-las-mujeres-cuyo-superhéroe-es-superman" class="nav-link" data-scroll-target="#nombres-de-las-mujeres-cuyo-superhéroe-es-superman">7. ¿Nombres de las mujeres cuyo superhéroe es Superman?</a></li>
-  <li><a href="#mediana-de-tatuajes-de-mayores-de-20-cuyo-favorito-es-batman" id="toc-mediana-de-tatuajes-de-mayores-de-20-cuyo-favorito-es-batman" class="nav-link" data-scroll-target="#mediana-de-tatuajes-de-mayores-de-20-cuyo-favorito-es-batman">8. ¿Mediana de tatuajes de mayores de 20 cuyo favorito es Batman?</a></li>
+  <li><a href="#instrucciones-generales" id="toc-instrucciones-generales" class="nav-link active" data-scroll-target="#instrucciones-generales">Instrucciones generales</a></li>
+  <li><a href="#dataset" id="toc-dataset" class="nav-link" data-scroll-target="#dataset">Dataset</a></li>
+  <li><a href="#parte-1-exploración-inicial" id="toc-parte-1-exploración-inicial" class="nav-link" data-scroll-target="#parte-1-exploración-inicial">Parte 1: Exploración inicial</a></li>
+  <li><a href="#parte-2-estadísticos-descriptivos" id="toc-parte-2-estadísticos-descriptivos" class="nav-link" data-scroll-target="#parte-2-estadísticos-descriptivos">Parte 2: Estadísticos descriptivos</a></li>
+  <li><a href="#parte-3-normalidad" id="toc-parte-3-normalidad" class="nav-link" data-scroll-target="#parte-3-normalidad">Parte 3: Normalidad</a></li>
+  <li><a href="#parte-4-pruebas-estadísticas" id="toc-parte-4-pruebas-estadísticas" class="nav-link" data-scroll-target="#parte-4-pruebas-estadísticas">Parte 4: Pruebas estadísticas</a></li>
+  <li><a href="#parte-5-regresión-lineal" id="toc-parte-5-regresión-lineal" class="nav-link" data-scroll-target="#parte-5-regresión-lineal">Parte 5: Regresión lineal</a></li>
   </ul>
 </nav>
 </div>
@@ -3093,24 +3090,32 @@ vertical-align: -.125em;
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Respuestas — Ejercicio Clases 4 y 5</h1>
+<h1 class="title">Tarea 2 — Estadísticos y pruebas en R</h1>
+<p class="subtitle lead">Dataset: Titanic</p>
 </div>
 
 
+<div class="quarto-title-meta-author">
+  <div class="quarto-title-meta-heading">Author</div>
+  <div class="quarto-title-meta-heading">Affiliation</div>
+  
+    <div class="quarto-title-meta-contents">
+    <p class="author">Ph D. Stephanie Hereira-Pacheco </p>
+  </div>
+  <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            Universidad Autónoma de Tlaxcala
+          </p>
+      </div>
+  </div>
 
 <div class="quarto-title-meta">
 
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>Ph D. Stephanie Hereira-Pacheco </p>
-          </div>
-  </div>
-    
+      
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">May 25, 2026</p>
+      <p class="date">Invalid Date</p>
     </div>
   </div>
   
@@ -3122,237 +3127,120 @@ vertical-align: -.125em;
 </header>
 
 
-<section id="datos" class="level2">
-<h2 class="anchored" data-anchor-id="datos">Datos</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>primera <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Nombre =</span> <span class="fu">c</span>(<span class="st">&quot;Astrid&quot;</span>,<span class="st">&quot;Lea&quot;</span>,<span class="st">&quot;Sarina&quot;</span>,<span class="st">&quot;Remon&quot;</span>,<span class="st">&quot;Letizia&quot;</span>,</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>             <span class="st">&quot;Babice&quot;</span>,<span class="st">&quot;Jonas&quot;</span>,<span class="st">&quot;Wendy&quot;</span>,<span class="st">&quot;Nivedithia&quot;</span>,<span class="st">&quot;Gioia&quot;</span>),</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Sexo   =</span> <span class="fu">c</span>(<span class="st">&quot;F&quot;</span>,<span class="st">&quot;F&quot;</span>,<span class="st">&quot;F&quot;</span>,<span class="st">&quot;M&quot;</span>,<span class="st">&quot;F&quot;</span>,<span class="st">&quot;F&quot;</span>,<span class="st">&quot;M&quot;</span>,<span class="st">&quot;F&quot;</span>,<span class="st">&quot;F&quot;</span>,<span class="st">&quot;F&quot;</span>),</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Edad   =</span> <span class="fu">c</span>(<span class="dv">30</span>,<span class="dv">25</span>,<span class="dv">25</span>,<span class="dv">29</span>,<span class="dv">22</span>,<span class="dv">22</span>,<span class="dv">35</span>,<span class="dv">19</span>,<span class="dv">32</span>,<span class="dv">21</span>))</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>segunda <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">Nombre     =</span> <span class="fu">c</span>(<span class="st">&quot;Astrid&quot;</span>,<span class="st">&quot;Lea&quot;</span>,<span class="st">&quot;Sarina&quot;</span>,<span class="st">&quot;Remon&quot;</span>,<span class="st">&quot;Letizia&quot;</span>,</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;Babice&quot;</span>,<span class="st">&quot;Jonas&quot;</span>,<span class="st">&quot;Wendy&quot;</span>,<span class="st">&quot;Nivedithia&quot;</span>,<span class="st">&quot;Gioia&quot;</span>),</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">Superheroe =</span> <span class="fu">c</span>(<span class="st">&quot;Batman&quot;</span>,<span class="st">&quot;Superman&quot;</span>,<span class="st">&quot;Batman&quot;</span>,<span class="st">&quot;Spiderman&quot;</span>,<span class="st">&quot;Batman&quot;</span>,</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>                 <span class="st">&quot;Antman&quot;</span>,<span class="st">&quot;Batman&quot;</span>,<span class="st">&quot;Superman&quot;</span>,<span class="st">&quot;Maggot&quot;</span>,<span class="st">&quot;Superman&quot;</span>),</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">Tatuajes   =</span> <span class="fu">c</span>(<span class="dv">11</span>,<span class="dv">15</span>,<span class="dv">12</span>,<span class="dv">5</span>,<span class="dv">65</span>,<span class="dv">3</span>,<span class="dv">9</span>,<span class="dv">13</span>,<span class="dv">900</span>,<span class="dv">0</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
+<section id="instrucciones-generales" class="level2">
+<h2 class="anchored" data-anchor-id="instrucciones-generales">Instrucciones generales</h2>
+<ul>
+<li>Entrega un script de R comentado (<code>.R</code>) con tu nombre en el encabezado.</li>
+<li>Cada sección corresponde a una parte del análisis — síguelas en orden.</li>
+<li>Cuando se mencione una función, úsala; si no se menciona, elige la que consideres adecuada según lo visto en clase.</li>
+<li>Usa <code>na.rm = TRUE</code> cuando sea necesario.</li>
+</ul>
 <hr>
 </section>
-<section id="combina-las-dos-tablas-en-una-sola" class="level2">
-<h2 class="anchored" data-anchor-id="combina-las-dos-tablas-en-una-sola">1. Combina las dos tablas en una sola</h2>
-<p><strong>R base</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> <span class="fu">merge</span>(primera, segunda, <span class="at">by =</span> <span class="st">&quot;Nombre&quot;</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>datos</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>       Nombre Sexo Edad Superheroe Tatuajes
-1      Astrid    F   30     Batman       11
-2      Babice    F   22     Antman        3
-3       Gioia    F   21   Superman        0
-4       Jonas    M   35     Batman        9
-5         Lea    F   25   Superman       15
-6     Letizia    F   22     Batman       65
-7  Nivedithia    F   32     Maggot      900
-8       Remon    M   29  Spiderman        5
-9      Sarina    F   25     Batman       12
-10      Wendy    F   19   Superman       13</code></pre>
-</div>
-</div>
-<p><strong>dplyr</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> primera <span class="sc">%&gt;%</span> <span class="fu">left_join</span>(segunda, <span class="at">by =</span> <span class="st">&quot;Nombre&quot;</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>datos</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>       Nombre Sexo Edad Superheroe Tatuajes
-1      Astrid    F   30     Batman       11
-2         Lea    F   25   Superman       15
-3      Sarina    F   25     Batman       12
-4       Remon    M   29  Spiderman        5
-5     Letizia    F   22     Batman       65
-6      Babice    F   22     Antman        3
-7       Jonas    M   35     Batman        9
-8       Wendy    F   19   Superman       13
-9  Nivedithia    F   32     Maggot      900
-10      Gioia    F   21   Superman        0</code></pre>
-</div>
-</div>
+<section id="dataset" class="level2">
+<h2 class="anchored" data-anchor-id="dataset">Dataset</h2>
+<p>Trabajaremos con los datos de pasajeros del <strong>Titanic</strong>. Carga el archivo directamente desde internet con:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>titanic <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Variables que usaremos:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>Age</code></td>
+<td>Edad del pasajero (años)</td>
+</tr>
+<tr class="even">
+<td><code>Fare</code></td>
+<td>Precio del boleto (libras)</td>
+</tr>
+<tr class="odd">
+<td><code>Pclass</code></td>
+<td>Clase del boleto (1 = primera, 2 = segunda, 3 = tercera)</td>
+</tr>
+<tr class="even">
+<td><code>Sex</code></td>
+<td>Sexo del pasajero</td>
+</tr>
+<tr class="odd">
+<td><code>Survived</code></td>
+<td>Sobrevivió (1) o no (0)</td>
+</tr>
+</tbody>
+</table>
 <hr>
 </section>
-<section id="cuál-es-la-edad-media-de-mujeres-y-hombres" class="level2">
-<h2 class="anchored" data-anchor-id="cuál-es-la-edad-media-de-mujeres-y-hombres">2. ¿Cuál es la edad media de mujeres y hombres?</h2>
-<p><strong>R base</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">aggregate</span>(Edad <span class="sc">~</span> Sexo, <span class="at">data =</span> datos, mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  Sexo Edad
-1    F 24.5
-2    M 32.0</code></pre>
-</div>
-</div>
-<p><strong>dplyr</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>datos <span class="sc">%&gt;%</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Sexo) <span class="sc">%&gt;%</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">edad_media =</span> <span class="fu">mean</span>(Edad))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 2 × 2
-  Sexo  edad_media
-  &lt;chr&gt;      &lt;dbl&gt;
-1 F           24.5
-2 M           32  </code></pre>
-</div>
-</div>
-<p>La edad media de las mujeres es <strong>~24.5 años</strong> y la de los hombres <strong>~32 años</strong>.</p>
+<section id="parte-1-exploración-inicial" class="level2">
+<h2 class="anchored" data-anchor-id="parte-1-exploración-inicial">Parte 1: Exploración inicial</h2>
+<ol type="1">
+<li><p>Usa <code>str()</code> y <code>summary()</code> para explorar el dataset. ¿Cuántas filas y columnas tiene?</p></li>
+<li><p>Convierte <code>Pclass</code> y <code>Sex</code> a factor con <code>factor()</code>. Verifica el cambio con <code>str()</code>.</p></li>
+<li><p>¿Cuántos pasajeros tienen dato de <code>Age</code>? Usa <code>sum(!is.na(...))</code> para contarlo.</p></li>
+</ol>
 <hr>
 </section>
-<section id="cuál-fue-el-máximo-de-tatuajes-en-un-hombre" class="level2">
-<h2 class="anchored" data-anchor-id="cuál-fue-el-máximo-de-tatuajes-en-un-hombre">3. ¿Cuál fue el máximo de tatuajes en un hombre?</h2>
-<p><strong>R base</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">max</span>(datos<span class="sc">$</span>Tatuajes[datos<span class="sc">$</span>Sexo <span class="sc">==</span> <span class="st">&quot;M&quot;</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 9</code></pre>
-</div>
-</div>
-<p><strong>dplyr</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>datos <span class="sc">%&gt;%</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Sexo <span class="sc">==</span> <span class="st">&quot;M&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">max_tatuajes =</span> <span class="fu">max</span>(Tatuajes))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  max_tatuajes
-1            9</code></pre>
-</div>
-</div>
-<p>El máximo es <strong>65 tatuajes</strong> (Remon).</p>
+<section id="parte-2-estadísticos-descriptivos" class="level2">
+<h2 class="anchored" data-anchor-id="parte-2-estadísticos-descriptivos">Parte 2: Estadísticos descriptivos</h2>
+<ol start="4" type="1">
+<li><p>Calcula para <code>Age</code> y para <code>Fare</code>: media, mediana, desviación estándar, mínimo y máximo. Recuerda usar <code>na.rm = TRUE</code> en <code>Age</code>.</p></li>
+<li><p>Genera un <strong>boxplot</strong> de <code>Fare</code> por <code>Pclass</code>. ¿En qué clase pagaron más?</p></li>
+<li><p>Genera un <strong>boxplot</strong> de <code>Age</code> por <code>Sex</code>. ¿Hay diferencias visibles entre hombres y mujeres?</p></li>
+</ol>
 <hr>
 </section>
-<section id="qué-porcentaje-de-mujeres-tiene-menos-de-32-años" class="level2">
-<h2 class="anchored" data-anchor-id="qué-porcentaje-de-mujeres-tiene-menos-de-32-años">4. ¿Qué porcentaje de mujeres tiene menos de 32 años?</h2>
-<p><strong>R base</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>mujeres <span class="ot">&lt;-</span> datos[datos<span class="sc">$</span>Sexo <span class="sc">==</span> <span class="st">&quot;F&quot;</span>, ]</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(mujeres<span class="sc">$</span>Edad <span class="sc">&lt;</span> <span class="dv">32</span>) <span class="sc">*</span> <span class="dv">100</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 87.5</code></pre>
-</div>
-</div>
-<p><strong>dplyr</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>datos <span class="sc">%&gt;%</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Sexo <span class="sc">==</span> <span class="st">&quot;F&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">pct =</span> <span class="fu">mean</span>(Edad <span class="sc">&lt;</span> <span class="dv">32</span>) <span class="sc">*</span> <span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   pct
-1 87.5</code></pre>
-</div>
-</div>
-<p>El <strong>75%</strong> de las mujeres tiene menos de 32 años (6 de 8).</p>
+<section id="parte-3-normalidad" class="level2">
+<h2 class="anchored" data-anchor-id="parte-3-normalidad">Parte 3: Normalidad</h2>
+<ol start="7" type="1">
+<li>Aplica <code>shapiro.test()</code> a <code>Age</code> (sin valores NA) y a <code>Fare</code>.
+<ul>
+<li>Para quitar NAs de Age puedes usar: <code>Age_sin_na &lt;- titanic$Age[!is.na(titanic$Age)]</code></li>
+<li>¿Siguen una distribución normal? Interpreta el p-value.</li>
+</ul></li>
+<li>Genera un <strong>Q-Q plot</strong> (<code>qqnorm()</code> + <code>qqline()</code>) para <code>Fare</code>. ¿Confirma lo que encontraste con Shapiro-Wilk?</li>
+</ol>
 <hr>
 </section>
-<section id="agrega-una-columna-tatuajes_por_año" class="level2">
-<h2 class="anchored" data-anchor-id="agrega-una-columna-tatuajes_por_año">5. Agrega una columna <code>tatuajes_por_año</code></h2>
-<p><strong>R base</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>tatuajes_por_año <span class="ot">&lt;-</span> datos<span class="sc">$</span>Tatuajes <span class="sc">/</span> datos<span class="sc">$</span>Edad</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(datos)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   Nombre Sexo Edad Superheroe Tatuajes tatuajes_por_año
-1  Astrid    F   30     Batman       11        0.3666667
-2     Lea    F   25   Superman       15        0.6000000
-3  Sarina    F   25     Batman       12        0.4800000
-4   Remon    M   29  Spiderman        5        0.1724138
-5 Letizia    F   22     Batman       65        2.9545455
-6  Babice    F   22     Antman        3        0.1363636</code></pre>
-</div>
-</div>
-<p><strong>dplyr</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> datos <span class="sc">%&gt;%</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(tatuajes_por_año <span class="ot">=</span> Tatuajes <span class="sc">/</span> Edad)</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(datos)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>   Nombre Sexo Edad Superheroe Tatuajes tatuajes_por_año
-1  Astrid    F   30     Batman       11        0.3666667
-2     Lea    F   25   Superman       15        0.6000000
-3  Sarina    F   25     Batman       12        0.4800000
-4   Remon    M   29  Spiderman        5        0.1724138
-5 Letizia    F   22     Batman       65        2.9545455
-6  Babice    F   22     Antman        3        0.1363636</code></pre>
-</div>
-</div>
+<section id="parte-4-pruebas-estadísticas" class="level2">
+<h2 class="anchored" data-anchor-id="parte-4-pruebas-estadísticas">Parte 4: Pruebas estadísticas</h2>
+<p>Usa los resultados de normalidad de la Parte 3 para elegir la prueba correcta.</p>
+<ol start="9" type="1">
+<li><strong>¿El precio del boleto (<code>Fare</code>) difiere entre las tres clases (<code>Pclass</code>)?</strong>
+<ul>
+<li>Si los datos son normales: usa <code>lm()</code> + <code>anova()</code></li>
+<li>Si <strong>no</strong> son normales: usa <code>kruskal.test()</code></li>
+<li>Interpreta el resultado: ¿hay diferencias significativas?</li>
+</ul></li>
+<li><strong>¿La edad (<code>Age</code>) difiere entre hombres y mujeres (<code>Sex</code>)?</strong>
+<ul>
+<li>Si los datos son normales: usa <code>t.test()</code></li>
+<li>Si <strong>no</strong> son normales: usa <code>wilcox.test()</code></li>
+<li>Interpreta el resultado.</li>
+</ul></li>
+<li><strong>¿Existe correlación entre la edad (<code>Age</code>) y el precio del boleto (<code>Fare</code>)?</strong>
+<ul>
+<li>Elige el método adecuado en <code>cor.test()</code>: <code>&quot;pearson&quot;</code> si ambas son normales, <code>&quot;spearman&quot;</code> si no.</li>
+<li>Agrega <code>use = &quot;complete.obs&quot;</code> para ignorar NAs.</li>
+<li>Interpreta el coeficiente y el p-value.</li>
+</ul></li>
+</ol>
 <hr>
 </section>
-<section id="quién-tiene-más-tatuajes-por-año" class="level2">
-<h2 class="anchored" data-anchor-id="quién-tiene-más-tatuajes-por-año">6. ¿Quién tiene más tatuajes por año?</h2>
-<p><strong>R base</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>datos[<span class="fu">which.max</span>(datos<span class="sc">$</span>tatuajes_por_año), <span class="st">&quot;Nombre&quot;</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] &quot;Nivedithia&quot;</code></pre>
+<section id="parte-5-regresión-lineal" class="level2">
+<h2 class="anchored" data-anchor-id="parte-5-regresión-lineal">Parte 5: Regresión lineal</h2>
+<ol start="12" type="1">
+<li>Ajusta un modelo de regresión lineal: <code>Fare</code> como variable respuesta y <code>Age</code> como predictora. Usa <code>lm()</code> y examina el resultado con <code>summary()</code>.
+<ul>
+<li>¿Es significativa la relación?</li>
+<li>¿Qué porcentaje de la variación en <code>Fare</code> explica <code>Age</code>?</li>
+</ul></li>
+</ol>
+<div class="notes">
+<p>Respuestas: tarea2_respuestas.html</p>
 </div>
-</div>
-<p><strong>dplyr</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>datos <span class="sc">%&gt;%</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(tatuajes_por_año)) <span class="sc">%&gt;%</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Nombre, tatuajes_por_año)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>      Nombre tatuajes_por_año
-1 Nivedithia           28.125</code></pre>
-</div>
-</div>
-<p><strong>Nivedithia</strong> tiene más tatuajes por año (~28 tatuajes/año).</p>
-<hr>
-</section>
-<section id="nombres-de-las-mujeres-cuyo-superhéroe-es-superman" class="level2">
-<h2 class="anchored" data-anchor-id="nombres-de-las-mujeres-cuyo-superhéroe-es-superman">7. ¿Nombres de las mujeres cuyo superhéroe es Superman?</h2>
-<p><strong>R base</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>datos<span class="sc">$</span>Nombre[datos<span class="sc">$</span>Sexo <span class="sc">==</span> <span class="st">&quot;F&quot;</span> <span class="sc">&amp;</span> datos<span class="sc">$</span>Superheroe <span class="sc">==</span> <span class="st">&quot;Superman&quot;</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] &quot;Lea&quot;   &quot;Wendy&quot; &quot;Gioia&quot;</code></pre>
-</div>
-</div>
-<p><strong>dplyr</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>datos <span class="sc">%&gt;%</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Sexo <span class="sc">==</span> <span class="st">&quot;F&quot;</span>, Superheroe <span class="sc">==</span> <span class="st">&quot;Superman&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Nombre)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  Nombre
-1    Lea
-2  Wendy
-3  Gioia</code></pre>
-</div>
-</div>
-<p><strong>Lea</strong> y <strong>Gioia</strong>.</p>
-<hr>
-</section>
-<section id="mediana-de-tatuajes-de-mayores-de-20-cuyo-favorito-es-batman" class="level2">
-<h2 class="anchored" data-anchor-id="mediana-de-tatuajes-de-mayores-de-20-cuyo-favorito-es-batman">8. ¿Mediana de tatuajes de mayores de 20 cuyo favorito es Batman?</h2>
-<p><strong>R base</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>sub <span class="ot">&lt;-</span> datos[datos<span class="sc">$</span>Edad <span class="sc">&gt;</span> <span class="dv">20</span> <span class="sc">&amp;</span> datos<span class="sc">$</span>Superheroe <span class="sc">==</span> <span class="st">&quot;Batman&quot;</span>, ]</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">median</span>(sub<span class="sc">$</span>Tatuajes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 11.5</code></pre>
-</div>
-</div>
-<p><strong>dplyr</strong></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>datos <span class="sc">%&gt;%</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Edad <span class="sc">&gt;</span> <span class="dv">20</span>, Superheroe <span class="sc">==</span> <span class="st">&quot;Batman&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mediana_tatuajes =</span> <span class="fu">median</span>(Tatuajes))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>  mediana_tatuajes
-1             11.5</code></pre>
-</div>
-</div>
-<p>La mediana es <strong>11 tatuajes</strong> (Astrid, Sarina y Letizia; Jonas queda excluido por tener 35 años &gt; 20 ✓ → los cuatro son mayores de 20, mediana de 9, 11, 12, 65 = <strong>11.5</strong>).</p>
 </section>
 
 </main>
